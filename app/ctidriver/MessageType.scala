@@ -1,0 +1,1015 @@
+/**
+ *
+ */
+package ctidriver
+
+import ctidriver.Tag._
+
+/**
+ * Constants indicating CTI server protocol message type
+ *
+ */
+
+object MessageType extends Enumeration {  
+  type MessageType = Value
+  val UNKNOWN_TYPE                          = Value(  0)
+  val FAILURE_CONF                          = Value(  1)
+  val FAILURE_EVENT                         = Value(  2)
+  val OPEN_REQ                              = Value(  3)
+  val OPEN_CONF                             = Value(  4)
+  val HEARTBEAT_REQ                         = Value(  5)
+  val HEARTBEAT_CONF                        = Value(  6)
+  val CLOSE_REQ                             = Value(  7)
+  val CLOSE_CONF                            = Value(  8)
+  val CALL_DELIVERED_EVENT                  = Value(  9)
+  val CALL_ESTABLISHED_EVENT                = Value( 10)
+  val CALL_HELD_EVENT                       = Value( 11)
+  val CALL_RETRIEVED_EVENT                  = Value( 12)
+  val CALL_CLEARED_EVENT                    = Value( 13)
+  val CALL_CONNECTION_CLEARED_EVENT         = Value( 14)
+  val CALL_ORIGINATED_EVENT                 = Value( 15)
+  val CALL_FAILED_EVENT                     = Value( 16)
+  val CALL_CONFERENCED_EVENT                = Value( 17)
+  val CALL_TRANSFERRED_EVENT                = Value( 18)
+  val CALL_DIVERTED_EVENT                   = Value( 19)
+  val CALL_SERVICE_INITIATED_EVENT          = Value( 20)
+  val CALL_QUEUED_EVENT                     = Value( 21)
+  val CALL_TRANSLATION_ROUTE_EVENT          = Value( 22)
+  val BEGIN_CALL_EVENT                      = Value( 23)
+  val END_CALL_EVENT                        = Value( 24)
+  val CALL_DATA_UPDATE_EVENT                = Value( 25)
+  val SET_CALL_DATA_REQ                     = Value( 26)
+  val SET_CALL_DATA_CONF                    = Value( 27)
+  val RELEASE_CALL_REQ                      = Value( 28)
+  val RELEASE_CALL_CONF                     = Value( 29)
+  val AGENT_STATE_EVENT                     = Value( 30)
+  val SYSTEM_EVENT                          = Value( 31)
+  val CLIENT_EVENT_REPORT_REQ               = Value( 32)
+  val CLIENT_EVENT_REPORT_CONF              = Value( 33)
+  val CALL_REACHED_NETWORK_EVENT            = Value( 34)
+  val CONTROL_FAILURE_CONF                  = Value( 35)
+  val QUERY_AGENT_STATE_REQ                 = Value( 36)
+  val QUERY_AGENT_STATE_CONF                = Value( 37)
+  val SET_AGENT_STATE_REQ                   = Value( 38)
+  val SET_AGENT_STATE_CONF                  = Value( 39)
+  val ALTERNATE_CALL_REQ                    = Value( 40)
+  val ALTERNATE_CALL_CONF                   = Value( 41)
+  val ANSWER_CALL_REQ                       = Value( 42)
+  val ANSWER_CALL_CONF                      = Value( 43)
+  val CLEAR_CALL_REQ                        = Value( 44)
+  val CLEAR_CALL_CONF                       = Value( 45)
+  val CLEAR_CONNECTION_REQ                  = Value( 46)
+  val CLEAR_CONNECTION_CONF                 = Value( 47)
+  val CONFERENCE_CALL_REQ                   = Value( 48)
+  val CONFERENCE_CALL_CONF                  = Value( 49)
+  val CONSULTATION_CALL_REQ                 = Value( 50)
+  val CONSULTATION_CALL_CONF                = Value( 51)
+  val DEFLECT_CALL_REQ                      = Value( 52)
+  val DEFLECT_CALL_CONF                     = Value( 53)
+  val HOLD_CALL_REQ                         = Value( 54)
+  val HOLD_CALL_CONF                        = Value( 55)
+  val MAKE_CALL_REQ                         = Value( 56)
+  val MAKE_CALL_CONF                        = Value( 57)
+  val MAKE_PREDICTIVE_CALL_REQ              = Value( 58)
+  val MAKE_PREDICTIVE_CALL_CONF             = Value( 59)
+  val RECONNECT_CALL_REQ                    = Value( 60)
+  val RECONNECT_CALL_CONF                   = Value( 61)
+  val RETRIEVE_CALL_REQ                     = Value( 62)
+  val RETRIEVE_CALL_CONF                    = Value( 63)
+  val TRANSFER_CALL_REQ                     = Value( 64)
+  val TRANSFER_CALL_CONF                    = Value( 65)
+  val RESERVED_66                           = Value( 66)
+  val RESERVED_67                           = Value( 67)
+  val RESERVED_68                           = Value( 68)
+  val RESERVED_69                           = Value( 69)
+  val RESERVED_70                           = Value( 70)
+  val RESERVED_71                           = Value( 71)
+  val RESERVED_72                           = Value( 72)
+  val RESERVED_73                           = Value( 73)
+  val RESERVED_74                           = Value( 74)
+  val RESERVED_75                           = Value( 75)
+  val RESERVED_76                           = Value( 76)
+  val RESERVED_77                           = Value( 77)
+  val QUERY_DEVICE_INFO_REQ                 = Value( 78)
+  val QUERY_DEVICE_INFO_CONF                = Value( 79)
+  val RESERVED_80                           = Value( 80)
+  val RESERVED_81                           = Value( 81)
+  val SNAPSHOT_CALL_REQ                     = Value( 82)
+  val SNAPSHOT_CALL_CONF                    = Value( 83)
+  val SNAPSHOT_DEVICE_REQ                   = Value( 84)
+  val SNAPSHOT_DEVICE_CONF                  = Value( 85)
+  val CALL_DEQUEUED_EVENT                   = Value( 86)
+  val RESERVED_87                           = Value( 87)
+  val RESERVED_88                           = Value( 88)
+  val RESERVED_89                           = Value( 89)
+  val RESERVED_90                           = Value( 90)
+  val SEND_DTMF_SIGNAL_REQ                  = Value( 91)
+  val SEND_DTMF_SIGNAL_CONF                 = Value( 92)
+  val MONITOR_START_REQ                     = Value( 93)
+  val MONITOR_START_CONF                    = Value( 94)
+  val MONITOR_STOP_REQ                      = Value( 95)
+  val MONITOR_STOP_CONF                     = Value( 96)
+  val CHANGE_MONITOR_MASK_REQ               = Value( 97)
+  val CHANGE_MONITOR_MASK_CONF              = Value( 98)
+  val CLIENT_SESSION_OPENED_EVENT           = Value( 99)
+  val CLIENT_SESSION_CLOSED_EVENT           = Value(100)
+  val SESSION_MONITOR_START_REQ             = Value(101)
+  val SESSION_MONITOR_START_CONF            = Value(102)
+  val SESSION_MONITOR_STOP_REQ              = Value(103)
+  val SESSION_MONITOR_STOP_CONF             = Value(104)
+  val AGENT_PRE_CALL_EVENT                  = Value(105)
+  val AGENT_PRE_CALL_ABORT_EVENT            = Value(106)
+  val USER_MESSAGE_REQ                      = Value(107)
+  val USER_MESSAGE_CONF                     = Value(108)
+  val USER_MESSAGE_EVENT                    = Value(109)
+  val REGISTER_VARIABLES_REQ                = Value(110)
+  val REGISTER_VARIABLES_CONF               = Value(111)
+  val QUERY_AGENT_STATISTICS_REQ            = Value(112)
+  val QUERY_AGENT_STATISTICS_CONF           = Value(113)
+  val QUERY_SKILL_GROUP_STATISTICS_REQ      = Value(114)
+  val QUERY_SKILL_GROUP_STATISTICS_CONF     = Value(115)
+  val RTP_STARTED_EVENT                     = Value(116)
+  val RTP_STOPPED_EVENT                     = Value(117)
+  val SUPERVISOR_ASSIST_REQ                 = Value(118)
+  val SUPERVISOR_ASSIST_CONF                = Value(119)
+  val SUPERVISOR_ASSIST_EVENT               = Value(120)
+  val EMERGENCY_CALL_REQ                    = Value(121)
+  val EMERGENCY_CALL_CONF                   = Value(122)
+  val EMERGENCY_CALL_EVENT                  = Value(123)
+  val SUPERVISE_CALL_REQ                    = Value(124)
+  val SUPERVISE_CALL_CONF                   = Value(125)
+  val AGENT_TEAM_CONFIG_REQ                 = Value(126)
+  val AGENT_TEAM_CONFIG_CONF                = Value(127)
+  val AGENT_TEAM_CONFIG_EVENT               = Value(128)
+  val SET_APP_DATA_REQ                      = Value(129)
+  val SET_APP_DATA_CONF                     = Value(130)
+  val AGENT_DESK_SETTINGS_REQ               = Value(131)
+  val AGENT_DESK_SETTINGS_CONF              = Value(132)
+  val LIST_AGENT_TEAM_REQ                   = Value(133)
+  val LIST_AGENT_TEAM_CONF                  = Value(134)
+  val MONITOR_AGENT_TEAM_START_REQ          = Value(135)
+  val MONITOR_AGENT_TEAM_START_CONF         = Value(136)
+  val MONITOR_AGENT_TEAM_STOP_REQ           = Value(137)
+  val MONITOR_AGENT_TEAM_STOP_CONF          = Value(138)
+  val BAD_CALL_REQ                          = Value(139)
+  val BAD_CALL_CONF                         = Value(140)
+  val SET_DEVICE_ATTRIBUTES_REQ             = Value(141)
+  val SET_DEVICE_ATTRIBUTES_CONF            = Value(142)
+  val REGISTER_SERVICE_REQ                  = Value(143)
+  val REGISTER_SERVICE_CONF                 = Value(144)
+  val UNREGISTER_SERVICE_REQ                = Value(145)
+  val UNREGISTER_SERVICE_CONF               = Value(146)
+  val START_RECORDING_REQ                   = Value(147)
+  val START_RECORDING_CONF                  = Value(148)
+  val STOP_RECORDING_REQ                    = Value(149)
+  val STOP_RECORDING_CONF                   = Value(150)
+  val MEDIA_LOGIN_REQ                       = Value(151)
+  val MEDIA_LOGIN_RESP                      = Value(152)
+  val MEDIA_LOGOUT_IND                      = Value(153)
+  val MAKE_AGENT_ROUTABLE_IND               = Value(154)
+  val MAKE_AGENT_NOT_ROUTABLE_REQ           = Value(155)
+  val MAKE_AGENT_NOT_ROUTABLE_RESP          = Value(156)
+  val MAKE_AGENT_READY_IND                  = Value(157)
+  val MAKE_AGENT_NOT_READY_REQ              = Value(158)
+  val MAKE_AGENT_NOT_READY_RESP             = Value(159)
+  val OFFER_TASK_IND                        = Value(160)
+  val OFFER_APPLICATION_TASK_REQ            = Value(161)
+  val OFFER_APPLICATION_TASK_RESP           = Value(162)
+  val START_TASK_IND                        = Value(163)
+  val START_APPLICATION_TASK_REQ            = Value(164)
+  val START_APPLICATION_TASK_RESP           = Value(165)
+  val PAUSE_TASK_IND                        = Value(166)
+  val RESUME_TASK_IND                       = Value(167)
+  val WRAPUP_TASK_IND                       = Value(168)
+  val END_TASK_IND                          = Value(169)
+  val AGENT_MADE_NOT_ROUTABLE_EVENT         = Value(170)
+  val AGENT_INTERRUPT_ADVISORY_EVENT        = Value(171)
+  val AGENT_INTERRUPT_ACCEPTED_IND          = Value(172)
+  val AGENT_INTERRUPT_UNACCEPTED_IND        = Value(173)
+  val AGENT_INTERRUPT_DONE_ADVISORY_EVENT   = Value(174)
+  val AGENT_INTERRUPT_DONE_ACCEPTED_IND     = Value(175)
+  val CHANGE_MAX_TASK_LIMIT_REQ             = Value(176)
+  val CHANGE_MAX_TASK_LIMIT_RESP            = Value(177)
+  val OVERRIDE_LIMIT_REQ                    = Value(178)
+  val OVERRIDE_LIMIT_RESP                   = Value(179)
+  val UPDATE_TASK_CONTEXT_IND               = Value(180)
+  val BEGIN_AGENT_INIT_IND                  = Value(181)
+  val AGENT_INIT_REQ                        = Value(182)
+  val AGENT_INIT_RESP                       = Value(183)
+  val END_AGENT_INIT_IND                    = Value(184)
+  val TASK_INIT_IND                         = Value(185)
+  val AGENT_INIT_READY_EVENT                = Value(186)
+  val GET_PRECALL_MESSAGES_REQ              = Value(187)
+  val GET_PRECALL_MESSAGES_RESP             = Value(188)
+  val AGENT_LEGACY_PRE_CALL_EVENT           = Value(189)
+  val FAILURE_RESP                          = Value(190)
+  val BEGIN_TASK_EVENT                      = Value(191)
+  val QUEUED_TASK_EVENT                     = Value(192)
+  val DEQUEUED_TASK_EVENT                   = Value(193)
+  val OFFER_TASK_EVENT                      = Value(194)
+  val START_TASK_EVENT                      = Value(195)
+  val PAUSE_TASK_EVENT                      = Value(196)
+  val RESUME_TASK_EVENT                     = Value(197)
+  val WRAPUP_TASK_EVENT                     = Value(198)
+  val END_TASK_EVENT                        = Value(199)
+  val TASK_DATA_UPDATE_EVENT                = Value(200)
+  val TASK_MONITOR_START_REQ                = Value(201)
+  val TASK_MONITOR_START_CONF               = Value(202)
+  val TASK_MONITOR_STOP_REQ                 = Value(203)
+  val TASK_MONITOR_STOP_CONF                = Value(204)
+  val CHANGE_TASK_MONITOR_MASK_REQ          = Value(205)
+  val CHANGE_TASK_MONITOR_MASK_CONF         = Value(206)
+  val MAX_TASK_LIFETIME_EXCEEDED_EVENT      = Value(207)
+  val SET_APP_PATH_DATA_IND                 = Value(208)
+  val TASK_INIT_REQ                         = Value(209)
+  val TASK_INIT_RESP                        = Value(210)
+  val ROUTE_REGISTER_EVENT                  = Value(211)
+  val ROUTE_REGISTER_REPLY_EVENT            = Value(212)
+  val ROUTE_REQUEST_EVENT                   = Value(213)
+  val ROUTE_SELECT                          = Value(214)
+  val ROUTE_END                             = Value(215)
+  val RESERVED_216                          = Value(216)
+  val RESERVED_217                          = Value(217)
+  val RESERVED_218                          = Value(218)
+  val RESERVED_219                          = Value(219)
+  val RESERVED_220                          = Value(220)
+  val RESERVED_221                          = Value(221)
+  val RESERVED_222                          = Value(222)
+  val RESERVED_223                          = Value(223)
+  val RESERVED_224                          = Value(224)
+  val RESERVED_225                          = Value(225)
+  val RESERVED_226                          = Value(226)
+  val RESERVED_227                          = Value(227)
+  val RESERVED_228                          = Value(228)
+  val RESERVED_229                          = Value(229)
+  val RESERVED_230                          = Value(230)
+  val RESERVED_231                          = Value(231)
+  val RESERVED_232                          = Value(232)
+  val RESERVED_233                          = Value(233)
+  val RESERVED_234                          = Value(234)
+  val RESERVED_235                          = Value(235)
+  val TEAM_CONFIG_REQ                       = Value(236)
+  val TEAM_CONFIG_EVENT                     = Value(237)
+  val TEAM_CONFIG_CONF                      = Value(238)
+  val RESERVED_239                          = Value(239)
+  val CALL_ATTRIBUTE_CHANGE_EVENT           = Value(240)
+  val RESERVED_241                          = Value(241)
+  val RESERVED_242                          = Value(242)
+  val RESERVED_243                          = Value(243)
+  val RESERVED_244                          = Value(244)
+  val RESERVED_245                          = Value(245)
+  val RESERVED_246                          = Value(246)
+  val CALL_TERMINATION_EVENT                = Value(247)
+  val CALL_AGENT_GREETING_EVENT             = Value(248)
+  val AGENT_GREETING_CONTROL_REQ            = Value(249)
+  val AGENT_GREETING_CONTROL_CONF           = Value(250)
+
+  val MessageTypeFixedPartListTable = Array(
+  //   0: UNKNOWN_TYPE
+    List(RawBytes),
+  //   1: FAILURE_CONF
+    List(InvokeID),
+  //   2: FAILURE_EVENT
+    List(Status),
+  //   3: OPEN_REQ
+    List(None),
+  //   4: OPEN_CONF
+    List(InvokeID, ServiceGranted, MonitorID, PGStatus, ICMCentralControllerTime, PeripheralOnline, 
+      PeripheralTypeTag, AgentStateTag),
+  //   5: HEARTBEAT_REQ
+    List(None),
+  //   6: HEARTBEAT_CONF
+    List(InvokeID),
+  //   7: CLOSE_REQ
+    List(None),
+  //   8: CLOSE_CONF
+    List(InvokeID),
+  //   9: CALL_DELIVERED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+      LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+      AlertingDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType, LocalConnectionStateTag,
+      EventCauseTag, NumNamedVariables, NumNamedArrays),
+  //  10: CALL_ESTABLISHED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+      LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+      AnsweringDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType, LocalConnectionStateTag,
+      EventCauseTag),
+  //  11: CALL_HELD_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+      HoldingDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  12: CALL_RETRIEVED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+      RetrievingDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  13: CALL_CLEARED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+      LocalConnectionStateTag, EventCauseTag),
+  //  14: CALL_CONNECTION_CLEARED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+      ReleasingDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  15: CALL_ORIGINATED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+      LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+      CallingDeviceType, CalledDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  16: CALL_FAILED_EVENT
+    List(PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, FailingDeviceType,
+      CalledDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  17: CALL_CONFERENCED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, PrimaryDeviceIDType, PrimaryCallID, LineHandle,
+      LineTypeTag, SkillGroupNumber, SkillGroupID, SkillGroupPriority, NumParties, SecondaryDeviceIDType,
+      SecondaryCallID, ControllerDeviceType, AddedPartyDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  18: CALL_TRANSFERRED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, PrimaryDeviceIDType, PrimaryCallID, LineHandle,
+      LineTypeTag, SkillGroupNumber, SkillGroupID, SkillGroupPriority, NumParties, SecondaryDeviceIDType,
+      SecondaryCallID, TransferringDeviceType, TransferredDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  19: CALL_DIVERTED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+      ServiceNumber, ServiceID, DivertingDeviceType, CalledDeviceType, LocalConnectionStateTag,
+      EventCauseTag),
+  //  20: CALL_SERVICE_INITIATED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+      LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+      CallingDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  21: CALL_QUEUED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+      ServiceNumber, ServiceID, QueueDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType,
+      NumQueued, NumSkillGroups, LocalConnectionStateTag, EventCauseTag),
+  //  22: CALL_TRANSLATION_ROUTE_EVENT
+    List(NumNamedVariables, NumNamedArrays),
+  //  23: BEGIN_CALL_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, NumCTIClients, NumNamedVariables, NumNamedArrays,
+      CallTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, CalledPartyDisposition),
+  //  24: END_CALL_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID),
+  //  25: CALL_DATA_UPDATE_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, NumCTIClients, NumNamedVariables, NumNamedArrays,
+      CallTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, NewConnectionDeviceIDType, NewConnectionCallID,
+      CalledPartyDisposition, CampaignID, QueryRuleID),
+  //  26: SET_CALL_DATA_REQ
+    List(None),
+  //  27: SET_CALL_DATA_CONF
+    List(InvokeID),
+  //  28: RELEASE_CALL_REQ
+    List(None),
+  //  29: RELEASE_CALL_CONF
+    List(InvokeID),
+  //  30: AGENT_STATE_EVENT
+    List(MonitorID, PeripheralID, SessionID, PeripheralTypeTag, SkillGroupState, StateDuration,
+      SkillGroupNumber, SkillGroupID, SkillGroupPriority, AgentStateTag, EventReasonCode, MRDID,
+      NumTasks, AgentMode, MaxTaskLimit, ICMAgentID, AgentAvailabilityStatusTag, NumFltSkillGroups),
+  //  31: SYSTEM_EVENT
+    List(PGStatus, ICMCentralControllerTime, SystemEventIDTag, SystemEventArg1, SystemEventArg2,
+      SystemEventArg3, EventDeviceType),
+  //  32: CLIENT_EVENT_REPORT_REQ
+    List(None),
+  //  33: CLIENT_EVENT_REPORT_CONF
+    List(InvokeID),
+  //  34: CALL_REACHED_NETWORK_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+      LineTypeTag, TrunkUsedDeviceType, CalledDeviceType, LocalConnectionStateTag, EventCauseTag),
+  //  35: CONTROL_FAILURE_CONF
+    List(InvokeID, FailureCode, PeripheralErrorCode),
+  //  36: QUERY_AGENT_STATE_REQ
+    List(None),
+  //  37: QUERY_AGENT_STATE_CONF
+    List(InvokeID, AgentStateTag, NumSkillGroups, MRDID, NumTasks, AgentMode, MaxTaskLimit, ICMAgentID,
+      AgentAvailabilityStatusTag),
+  //  38: SET_AGENT_STATE_REQ
+    List(None),
+  //  39: SET_AGENT_STATE_CONF
+    List(InvokeID),
+  //  40: ALTERNATE_CALL_REQ
+    List(None),
+  //  41: ALTERNATE_CALL_CONF
+    List(InvokeID),
+  //  42: ANSWER_CALL_REQ
+    List(None),
+  //  43: ANSWER_CALL_CONF
+    List(InvokeID),
+  //  44: CLEAR_CALL_REQ
+    List(None),
+  //  45: CLEAR_CALL_CONF
+    List(InvokeID),
+  //  46: CLEAR_CONNECTION_REQ
+    List(None),
+  //  47: CLEAR_CONNECTION_CONF
+    List(InvokeID),
+  //  48: CONFERENCE_CALL_REQ
+    List(None),
+  //  49: CONFERENCE_CALL_CONF
+    List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, NumParties, LineHandle, LineTypeTag),
+  //  50: CONSULTATION_CALL_REQ
+    List(None),
+  //  51: CONSULTATION_CALL_CONF
+    List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
+  //  52: DEFLECT_CALL_REQ
+    List(None),
+  //  53: DEFLECT_CALL_CONF
+    List(InvokeID),
+  //  54: HOLD_CALL_REQ
+    List(None),
+  //  55: HOLD_CALL_CONF
+    List(InvokeID),
+  //  56: MAKE_CALL_REQ
+    List(None),
+  //  57: MAKE_CALL_CONF
+    List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
+  //  58: MAKE_PREDICTIVE_CALL_REQ
+    List(None),
+  //  59: MAKE_PREDICTIVE_CALL_CONF
+    List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
+  //  60: RECONNECT_CALL_REQ
+    List(None),
+  //  61: RECONNECT_CALL_CONF
+    List(InvokeID),
+  //  62: RETRIEVE_CALL_REQ
+    List(None),
+  //  63: RETRIEVE_CALL_CONF
+    List(InvokeID),
+  //  64: TRANSFER_CALL_REQ
+    List(None),
+  //  65: TRANSFER_CALL_CONF
+    List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, NumParties, LineHandle, LineTypeTag),
+  //  66: RESERVED_66
+    List(RawBytes),
+  //  67: RESERVED_67
+    List(RawBytes),
+  //  68: RESERVED_68
+    List(RawBytes),
+  //  69: RESERVED_69
+    List(RawBytes),
+  //  70: RESERVED_70
+    List(RawBytes),
+  //  71: RESERVED_71
+    List(RawBytes),
+  //  72: RESERVED_72
+    List(RawBytes),
+  //  73: RESERVED_73
+    List(RawBytes),
+  //  74: RESERVED_74
+    List(RawBytes),
+  //  75: RESERVED_75
+    List(RawBytes),
+  //  76: RESERVED_76
+    List(RawBytes),
+  //  77: RESERVED_77
+    List(RawBytes),
+  //  78: QUERY_DEVICE_INFO_REQ
+    List(None),
+  //  79: QUERY_DEVICE_INFO_CONF
+    List(InvokeID, PeripheralTypeTag, TypeOfDeviceTag, ClassOfDeviceTag, NumLines, Reserved16,
+      MaxActiveCalls, MaxHeldCalls, MaxDeviceInConference, MakeCallSetup, TransferConferenceSetup,
+      CallEventsSupported, CallControlSupported, OtherFeaturesSupported),
+  //  80: RESERVED_80
+    List(RawBytes),
+  //  81: RESERVED_81
+    List(RawBytes),
+  //  82: SNAPSHOT_CALL_REQ
+    List(None),
+  //  83: SNAPSHOT_CALL_CONF
+    List(InvokeID, CallTypeTag, NumCTIClients, NumCallDevices, NumNamedVariables, NumNamedArrays,
+      CalledPartyDisposition),
+  //  84: SNAPSHOT_DEVICE_REQ
+    List(None),
+  //  85: SNAPSHOT_DEVICE_CONF
+    List(InvokeID, NumCalls),
+  //  86: CALL_DEQUEUED_EVENT
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+      QueueDeviceType, ServiceNumber, ServiceID, NumQueued, NumSkillGroups, LocalConnectionStateTag,
+      EventCauseTag),
+  //  87: RESERVED_87
+    List(RawBytes),
+  //  88: RESERVED_88
+    List(RawBytes),
+  //  89: RESERVED_89
+    List(RawBytes),
+  //  90: RESERVED_90
+    List(RawBytes),
+  //  91: SEND_DTMF_SIGNAL_REQ
+    List(None),
+  //  92: SEND_DTMF_SIGNAL_CONF
+    List(InvokeID),
+  //  93: MONITOR_START_REQ
+    List(None),
+  //  94: MONITOR_START_CONF
+    List(InvokeID, MonitorID),
+  //  95: MONITOR_STOP_REQ
+    List(None),
+  //  96: MONITOR_STOP_CONF
+    List(InvokeID),
+  //  97: CHANGE_MONITOR_MASK_REQ
+    List(None),
+  //  98: CHANGE_MONITOR_MASK_CONF
+    List(InvokeID),
+  //  99: CLIENT_SESSION_OPENED_EVENT
+    List(SessionID, PeripheralID, ServiceGranted, CallMsgMask, AgentStateMaskTag, ClientPort)
+  )
+
+
+  def fromInt(msgType: Int): MessageType = {
+    try {
+      MessageType(msgType)
+    } catch {
+      case e: NoSuchElementException => UNKNOWN_TYPE
+    }
+  }
+
+/*
+  def getFixedPartList2(msgType: MessageType): List[Tag.Value] = {
+    type FixedPartListElement = List[Tag.Value]
+    val t = Array(List(InvokeID), List(InvokeID))
+
+  }
+*/
+
+
+    def getFixedPartList(msgType: MessageType): List[Tag.Value] = {
+    msgType match {
+      case
+        // Conf messages which contains only InvokeID
+        AGENT_GREETING_CONTROL_CONF |
+        ALTERNATE_CALL_CONF |
+        ANSWER_CALL_CONF |
+        BAD_CALL_CONF |
+        CHANGE_MONITOR_MASK_CONF |
+        CLEAR_CALL_CONF |
+        CLEAR_CONNECTION_CONF |
+        CLIENT_EVENT_REPORT_CONF |
+        CLOSE_CONF |
+        DEFLECT_CALL_CONF |
+        HEARTBEAT_CONF |
+        HOLD_CALL_CONF |
+        MONITOR_AGENT_TEAM_STOP_CONF |
+        MONITOR_STOP_CONF |
+        RECONNECT_CALL_CONF |
+        REGISTER_VARIABLES_CONF |
+        RELEASE_CALL_CONF |
+        RETRIEVE_CALL_CONF |
+        SEND_DTMF_SIGNAL_CONF |
+        SESSION_MONITOR_STOP_CONF |
+        SET_AGENT_STATE_CONF |
+        SET_APP_DATA_CONF |
+        SET_CALL_DATA_CONF |
+        SET_DEVICE_ATTRIBUTES_CONF |
+        STOP_RECORDING_CONF |
+        UNREGISTER_SERVICE_CONF |
+        USER_MESSAGE_CONF
+      => List(InvokeID)
+
+      // Conf messages which contains only InvokeID and MonitorID
+      case
+        MONITOR_AGENT_TEAM_START_CONF |
+        MONITOR_START_CONF |
+        SESSION_MONITOR_START_CONF
+      => List(InvokeID, MonitorID)
+
+      // Conf messages for TRANSFER_CALL like requests
+      case CONFERENCE_CALL_CONF | TRANSFER_CALL_CONF
+      => List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, NumParties, LineHandle, LineTypeTag)
+
+      // Conf messages for MAKE_CALL like requests
+      case
+        CONSULTATION_CALL_CONF |
+        MAKE_CALL_CONF |
+        MAKE_PREDICTIVE_CALL_CONF
+      => List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag)
+
+      // Conf messages for SUPERVISOR_ASSIST like request
+      case SUPERVISOR_ASSIST_CONF | EMERGENCY_CALL_CONF
+      => List(InvokeID, ConnectionCallID, ConnectionDeviceIDTypeTag, LineHandle, LineTypeTag)
+
+      // Conf messages
+      case AGENT_DESK_SETTINGS_CONF
+      => List(InvokeID, PeripheralID,
+        DeskSettingsMaskTag,
+        WrapupDataIncomingMode,
+        WrapupDataOutgoingMode,
+        LogoutNonActivityTime,
+        QualityRecordingRate,
+        RingNoAnswerTime,
+        SilentMonitorWarningMessage,
+        SilentMonitorAudibleIndication,
+        SupervisorAssistCallMethod,
+        EmergencyCallMethod,
+        AutoRecordOnEmergency,
+        RecordingMode,
+        WorkModeTimer,
+        RingNoAnswerDN)
+
+      case CONTROL_FAILURE_CONF => List(InvokeID, FailureCode, PeripheralErrorCode)
+      case FAILURE_CONF => List(InvokeID, Status)
+      case LIST_AGENT_TEAM_CONF => List(InvokeID, NumberOfAgentTeams, SegmentNumber, More)
+
+      case OPEN_CONF
+      => List(InvokeID, ServiceGranted, MonitorID, PGStatus, ICMCentralControllerTime, PeripheralOnline,
+          PeripheralTypeTag, AgentStateTag)
+
+      case QUERY_AGENT_STATISTICS_CONF
+      => List(InvokeID, PeripheralID,
+        // Total 84 counters
+        // 1-10
+        AvailTimeSession,
+        LoggedOnTimeSession,
+        NotReadyTimeSession,
+        ICMAvailableTimeSession,
+        RoutableTimeSession,
+        AgentOutCallsSession,
+        AgentOutCallsTalkTimeSession,
+        AgentOutCallsTimeSession,
+        AgentOutCallsHeldSession,
+        AgentOutCallsHeldTimeSession,
+        // 11-20
+        HandledCallsSession,
+        HandledCallsTalkTimeSession,
+        HandledCallsAfterCallTimeSession,
+        HandledCallsTimeSession,
+        IncomingCallsHeldSession,
+        IncomingCallsHeldTimeSession,
+        InternalCallsSession,
+        InternalCallsTimeSession,
+        InternalCallsRcvdSession,
+        InternalCallsRcvdTimeSession,
+        // 21-30
+        InternalCallsHeldSession,
+        InternalCallsHeldTimeSession,
+        AutoOutCallsSession,
+        AutoOutCallsTalkTimeSession,
+        AutoOutCallsTimeSession,
+        AutoOutCallsHeldSession,
+        AutoOutCallsHeldTimeSession,
+        PreviewCallsSession,
+        PreviewCallsTalkTimeSession,
+        PreviewCallsTimeSession,
+        // 31-40
+        PreviewCallsHeldSession,
+        PreviewCallsHeldTimeSession,
+        ReservationCallsSession,
+        ReservationCallsTalkTimeSession,
+        ReservationCallsTimeSession,
+        ReservationCallsHeldSession,
+        ReservationCallsHeldTimeSession,
+        BargeInCallsSession,
+        InterceptCallsSession,
+        MonitorCallsSession,
+        // 41-50
+        WhisperCallsSession,
+        EmergencyCallsSession,
+        AvailTimeToday,
+        LoggedOnTimeToday,
+        NotReadyTimeToday,
+        ICMAvailableTimeToday,
+        RoutableTimeToday,
+        AgentOutCallsToday,
+        AgentOutCallsTalkTimeToday,
+        AgentOutCallsTimeToday,
+        // 51-60
+        AgentOutCallsHeldToday,
+        AgentOutCallsHeldTimeToday,
+        HandledCallsToday,
+        HandledCallsTalkTimeToday,
+        HandledCallsAfterCallTimeToday,
+        HandledCallsTimeToday,
+        IncomingCallsHeldToday,
+        IncomingCallsHeldTimeToday,
+        InternalCallsToday,
+        InternalCallsTimeToday,
+        // 61-70
+        InternalCallsRcvdToday,
+        InternalCallsRcvdTimeToday,
+        InternalCallsHeldToday,
+        InternalCallsHeldTimeToday,
+        AutoOutCallsToday,
+        AutoOutCallsTalkTimeToday,
+        AutoOutCallsTimeToday,
+        AutoOutCallsHeldToday,
+        AutoOutCallsHeldTimeToday,
+        PreviewCallsToday,
+        // 71-80
+        PreviewCallsTalkTimeToday,
+        PreviewCallsTimeToday,
+        PreviewCallsHeldToday,
+        PreviewCallsHeldTimeToday,
+        ReservationCallsToday,
+        ReservationCallsTalkTimeToday,
+        ReservationCallsTimeToday,
+        ReservationCallsHeldToday,
+        ReservationCallsHeldTimeToday,
+        BargeInCallsToday,
+        // 81-84
+        InterceptCallsToday,
+        MonitorCallsToday,
+        WhisperCallsToday,
+        EmergencyCallsToday)
+
+      case QUERY_AGENT_STATE_CONF
+      => List(InvokeID, AgentStateTag, NumSkillGroups, MRDID, NumTasks, AgentMode, MaxTaskLimit, ICMAgentID,
+          AgentAvailabilityStatusTag)
+
+      case QUERY_DEVICE_INFO_CONF
+      => List(InvokeID, PeripheralTypeTag, TypeOfDeviceTag, ClassOfDeviceTag, NumLines, Reserved16,
+          MaxActiveCalls, MaxHeldCalls, MaxDeviceInConference, MakeCallSetup, TransferConferenceSetup,
+          CallEventsSupported, CallControlSupported, OtherFeaturesSupported)
+
+      case QUERY_SKILL_GROUP_STATISTICS_CONF
+      => List(InvokeID, PeripheralID, SkillGroupNumber, SkillGroupID,
+        // Total 145 counters
+        // 1-10
+        AgentsLoggedOn,
+        AgentsAvail,
+        AgentsNotReady,
+        AgentsReady,
+        AgentsTalkingIn,
+        AgentsTalkingOut,
+        AgentsTalkingOther,
+        AgentsWorkNotReady,
+        AgentsWorkReady,
+        AgentsBusyOther,
+        // 11-20
+        AgentsReserved,
+        AgentsHold,
+        AgentsICMAvailable,
+        AgentsApplicationAvailable,
+        AgentsTalkingAutoOut,
+        AgentsTalkingPreview,
+        AgentsTalkingReservation,
+        RouterCallsQNow,
+        LongestRouterCallQNow,
+        CallsQNow,
+        // 21-30
+        CallsQTimeNow,
+        LongestCallQNow,
+        AvailTimeTo5,
+        LoggedOnTimeTo5,
+        NotReadyTimeTo5,
+        AgentOutCallsTo5,
+        AgentOutCallsTalkTimeTo5,
+        AgentOutCallsTimeTo5,
+        AgentOutCallsHeldTo5,
+        AgentOutCallsHeldTimeTo5,
+        // 31-40
+        HandledCallsTo5,
+        HandledCallsTalkTimeTo5,
+        HandledCallsAfterCallTimeTo5,
+        HandledCallsTimeTo5,
+        IncomingCallsHeldTo5,
+        IncomingCallsHeldTimeTo5,
+        InternalCallsRcvdTo5,
+        InternalCallsRcvdTimeTo5,
+        InternalCallsHeldTo5,
+        InternalCallsHeldTimeTo5,
+        // 41-50
+        AutoOutCallsTo5,
+        AutoOutCallsTalkTimeTo5,
+        AutoOutCallsTimeTo5,
+        AutoOutCallsHeldTo5,
+        AutoOutCallsHeldTimeTo5,
+        PreviewCallsTo5,
+        PreviewCallsTalkTimeTo5,
+        PreviewCallsTimeTo5,
+        PreviewCallsHeldTo5,
+        PreviewCallsHeldTimeTo5,
+        // 51-60
+        ReservationCallsTo5,
+        ReservationCallsTalkTimeTo5,
+        ReservationCallsTimeTo5,
+        ReservationCallsHeldTo5,
+        ReservationCallsHeldTimeTo5,
+        BargeInCallsTo5,
+        InterceptCallsTo5,
+        MonitorCallsTo5,
+        WhisperCallsTo5,
+        EmergencyCallsTo5,
+        // 61-70
+        CallsQ5,
+        CallsQTime5,
+        LongestCallQ5,
+        AvailTimeToHalf,
+        LoggedOnTimeToHalf,
+        NotReadyTimeToHalf,
+        AgentOutCallsToHalf,
+        AgentOutCallsTalkTimeToHalf,
+        AgentOutCallsTimeToHalf,
+        AgentOutCallsHeldToHalf,
+        // 71-80
+        AgentOutCallsHeldTimeToHalf,
+        HandledCallsToHalf,
+        HandledCallsTalkTimeToHalf,
+        HandledCallsAfterCallTimeToHalf,
+        HandledCallsTimeToHalf,
+        IncomingCallsHeldToHalf,
+        IncomingCallsHeldTimeToHalf,
+        InternalCallsRcvdToHalf,
+        InternalCallsRcvdTimeToHalf,
+        InternalCallsHeldToHalf,
+        // 81-90
+        InternalCallsHeldTimeToHalf,
+        AutoOutCallsToHalf,
+        AutoOutCallsTalkTimeToHalf,
+        AutoOutCallsTimeToHalf,
+        AutoOutCallsHeldToHalf,
+        AutoOutCallsHeldTimeToHalf,
+        PreviewCallsToHalf,
+        PreviewCallsTalkTimeToHalf,
+        PreviewCallsTimeToHalf,
+        PreviewCallsHeldToHalf,
+        // 91-100
+        PreviewCallsHeldTimeToHalf,
+        ReservationCallsToHalf,
+        ReservationCallsTalkTimeToHalf,
+        ReservationCallsTimeToHalf,
+        ReservationCallsHeldToHalf,
+        ReservationCallsHeldTimeToHalf,
+        BargeInCallsToHalf,
+        InterceptCallsToHalf,
+        MonitorCallsToHalf,
+        WhisperCallsToHalf,
+        // 101-110
+        EmergencyCallsToHalf,
+        CallsQHalf,
+        CallsQTimeHalf,
+        LongestCallQHalf,
+        AvailTimeToday,
+        LoggedOnTimeToday,
+        NotReadyTimeToday,
+        AgentOutCallsToday,
+        AgentOutCallsTalkTimeToday,
+        AgentOutCallsTimeToday,
+        // 111-120
+        AgentOutCallsHeldToday,
+        AgentOutCallsHeldTimeToday,
+        HandledCallsToday,
+        HandledCallsTalkTimeToday,
+        HandledCallsAfterCallTimeToday,
+        HandledCallsTimeToday,
+        IncomingCallsHeldToday,
+        IncomingCallsHeldTimeToday,
+        InternalCallsRcvdToday,
+        InternalCallsRcvdTimeToday,
+        // 121-130
+        InternalCallsHeldToday,
+        InternalCallsHeldTimeToday,
+        AutoOutCallsToday,
+        AutoOutCallsTalkTimeToday,
+        AutoOutCallsTimeToday,
+        AutoOutCallsHeldToday,
+        AutoOutCallsHeldTimeToday,
+        PreviewCallsToday,
+        PreviewCallsTalkTimeToday,
+        PreviewCallsTimeToday,
+        // 131-140
+        PreviewCallsHeldToday,
+        PreviewCallsHeldTimeToday,
+        ReservationCallsToday,
+        ReservationCallsTalkTimeToday,
+        ReservationCallsTimeToday,
+        ReservationCallsHeldToday,
+        ReservationCallsHeldTimeToday,
+        BargeInCallsToday,
+        InterceptCallsToday,
+        MonitorCallsToday,
+        // 141-145
+        WhisperCallsToday,
+        EmergencyCallsToday,
+        CallsQToday,
+        CallsQTimeToday,
+        LongestCallQToday)
+
+      case REGISTER_SERVICE_CONF => List(InvokeID, RegisteredServiceID)
+
+      case SNAPSHOT_CALL_CONF
+      => List(InvokeID, CallTypeTag, NumCTIClients, NumCallDevices, NumNamedVariables, NumNamedArrays,
+          CalledPartyDisposition)
+
+      case SNAPSHOT_DEVICE_CONF => List(InvokeID, NumCalls)
+      case START_RECORDING_CONF => List(InvokeID, SessionID, ServerData)
+      case SUPERVISE_CALL_CONF => List(InvokeID, ConnectionCallID, ConnectionDeviceIDTypeTag)
+
+      // Event messages
+      case AGENT_PRE_CALL_ABORT_EVENT => List(MonitorID, MRDID)
+
+      case AGENT_PRE_CALL_EVENT
+      => List(MonitorID, NumNamedVariables, NumNamedArrays, ServiceNumber, ServiceID, SkillGroupNumber,
+          SkillGroupID, SkillGroupPriority, MRDID)
+
+      case AGENT_STATE_EVENT
+      => List(MonitorID, PeripheralID, SessionID, PeripheralTypeTag, SkillGroupState, StateDuration,
+          SkillGroupNumber, SkillGroupID, SkillGroupPriority, AgentStateTag, EventReasonCode, MRDID,
+          NumTasks, AgentMode, MaxTaskLimit, ICMAgentID, AgentAvailabilityStatusTag, NumFltSkillGroups)
+
+      case AGENT_TEAM_CONFIG_EVENT => List(PeripheralID, TeamID, NumberOfAgents, ConfigOperationTag)
+
+      case BEGIN_CALL_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, NumCTIClients, NumNamedVariables, NumNamedArrays,
+          CallTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, CalledPartyDisposition)
+
+      case CALL_AGENT_GREETING_EVENT
+      => List(MonitorID, PeripheralID, ConnectionDeviceIDTypeTag, ConnectionCallID, EventCodeTag,
+          PeripheralErrorCode)
+
+      case CALL_ATTRIBUTE_CHANGE_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, CallTypeID, ServiceNumber)
+
+      case CALL_CLEARED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+          LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_CONFERENCED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, PrimaryDeviceIDType, PrimaryCallID, LineHandle,
+          LineTypeTag, SkillGroupNumber, SkillGroupID, SkillGroupPriority, NumParties, SecondaryDeviceIDType,
+          SecondaryCallID, ControllerDeviceType, AddedPartyDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_CONNECTION_CLEARED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+          ReleasingDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_DATA_UPDATE_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, NumCTIClients, NumNamedVariables, NumNamedArrays,
+          CallTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, NewConnectionDeviceIDType, NewConnectionCallID,
+          CalledPartyDisposition, CampaignID, QueryRuleID)
+
+      case CALL_DELIVERED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+          LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+          AlertingDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType, LocalConnectionStateTag,
+          EventCauseTag, NumNamedVariables, NumNamedArrays)
+
+      case CALL_DEQUEUED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+          QueueDeviceType, ServiceNumber, ServiceID, NumQueued, NumSkillGroups, LocalConnectionStateTag,
+          EventCauseTag)
+
+      case CALL_DIVERTED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+          ServiceNumber, ServiceID, DivertingDeviceType, CalledDeviceType, LocalConnectionStateTag,
+          EventCauseTag)
+
+      case CALL_ESTABLISHED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+          LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+          AnsweringDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType, LocalConnectionStateTag,
+          EventCauseTag)
+
+      case CALL_FAILED_EVENT
+      => List(PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, FailingDeviceType,
+          CalledDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_HELD_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+          HoldingDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_ORIGINATED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+          LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+          CallingDeviceType, CalledDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_QUEUED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+          ServiceNumber, ServiceID, QueueDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType,
+          NumQueued, NumSkillGroups, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_REACHED_NETWORK_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+          LineTypeTag, TrunkUsedDeviceType, CalledDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_RETRIEVED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
+          RetrievingDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_SERVICE_INITIATED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
+          LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+          CallingDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_TRANSFERRED_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, PrimaryDeviceIDType, PrimaryCallID, LineHandle,
+          LineTypeTag, SkillGroupNumber, SkillGroupID, SkillGroupPriority, NumParties, SecondaryDeviceIDType,
+          SecondaryCallID, TransferringDeviceType, TransferredDeviceType, LocalConnectionStateTag, EventCauseTag)
+
+      case CALL_TRANSLATION_ROUTE_EVENT => List(NumNamedVariables, NumNamedArrays)
+      case CLIENT_SESSION_CLOSED_EVENT => List(SessionID, PeripheralID, Status, ClientPort)
+
+      case CLIENT_SESSION_OPENED_EVENT
+      => List(SessionID, PeripheralID, ServiceGranted, CallMsgMask, AgentStateMaskTag, ClientPort)
+
+      case EMERGENCY_CALL_EVENT => List(PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag, SessionID)
+
+      case END_CALL_EVENT
+      => List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID)
+
+      case FAILURE_EVENT => List(Status)
+
+      case RTP_STARTED_EVENT
+      => List(MonitorID, PeripheralID, ClientPort, RTPDirectionTag, RTPTypeTag, BitRate, EchoCancellation,
+          PacketSize, PayloadType, ConnectionDeviceIDTypeTag, ConnectionCallID)
+
+      case RTP_STOPPED_EVENT
+      => List(MonitorID, PeripheralID, ClientPort, RTPDirectionTag, ConnectionDeviceIDTypeTag, ConnectionCallID)
+
+      case SYSTEM_EVENT
+      => List(PGStatus, ICMCentralControllerTime, SystemEventIDTag, SystemEventArg1, SystemEventArg2,
+          SystemEventArg3, EventDeviceType)
+
+      case UNKNOWN_TYPE => List(RawBytes)
+      case USER_MESSAGE_EVENT => List(ICMCentralControllerTime, Distribution)
+    }
+  }
+}

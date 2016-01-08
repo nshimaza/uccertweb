@@ -635,6 +635,7 @@ object Tag extends Enumeration {
   WhisperCallsToday,
   WorkModeTimer,
   WrapupDataIncomingMode,
-  WrapupDataOutgoingMode
+  WrapupDataOutgoingMode,
+  ZZZZInternalUseOnly
   = Value
 }

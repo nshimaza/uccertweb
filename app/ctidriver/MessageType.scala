@@ -266,271 +266,271 @@ object MessageType extends Enumeration {
 
 
   val messageTypeFixedPartListTable: Array[List[Tag.Value]] = Array(
-  //   0: UNKNOWN_TYPE
+    //   0: UNKNOWN_TYPE
     List(RawBytes),
-  //   1: FAILURE_CONF
+    //   1: FAILURE_CONF
     List(InvokeID, Status),
-  //   2: FAILURE_EVENT
+    //   2: FAILURE_EVENT
     List(Status),
-  //   3: OPEN_REQ
+    //   3: OPEN_REQ
     List(ZZZZInternalUseOnly),
-  //   4: OPEN_CONF
+    //   4: OPEN_CONF
     List(InvokeID, ServiceGranted, MonitorID, PGStatus, ICMCentralControllerTime, PeripheralOnline,
       PeripheralTypeTag, AgentStateTag),
-  //   5: HEARTBEAT_REQ
+    //   5: HEARTBEAT_REQ
     List(ZZZZInternalUseOnly),
-  //   6: HEARTBEAT_CONF
+    //   6: HEARTBEAT_CONF
     List(InvokeID),
-  //   7: CLOSE_REQ
+    //   7: CLOSE_REQ
     List(ZZZZInternalUseOnly),
-  //   8: CLOSE_CONF
+    //   8: CLOSE_CONF
     List(InvokeID),
-  //   9: CALL_DELIVERED_EVENT
+    //   9: CALL_DELIVERED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
       LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
       AlertingDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType, LocalConnectionStateTag,
       EventCauseTag, NumNamedVariables, NumNamedArrays),
-  //  10: CALL_ESTABLISHED_EVENT
+    //  10: CALL_ESTABLISHED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
       LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
       AnsweringDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType, LocalConnectionStateTag,
       EventCauseTag),
-  //  11: CALL_HELD_EVENT
+    //  11: CALL_HELD_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
       HoldingDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  12: CALL_RETRIEVED_EVENT
+    //  12: CALL_RETRIEVED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
       RetrievingDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  13: CALL_CLEARED_EVENT
+    //  13: CALL_CLEARED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
       LocalConnectionStateTag, EventCauseTag),
-  //  14: CALL_CONNECTION_CLEARED_EVENT
+    //  14: CALL_CONNECTION_CLEARED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
       ReleasingDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  15: CALL_ORIGINATED_EVENT
+    //  15: CALL_ORIGINATED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
       LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
       CallingDeviceType, CalledDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  16: CALL_FAILED_EVENT
+    //  16: CALL_FAILED_EVENT
     List(PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, FailingDeviceType,
       CalledDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  17: CALL_CONFERENCED_EVENT
+    //  17: CALL_CONFERENCED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, PrimaryDeviceIDType, PrimaryCallID, LineHandle,
       LineTypeTag, SkillGroupNumber, SkillGroupID, SkillGroupPriority, NumParties, SecondaryDeviceIDType,
       SecondaryCallID, ControllerDeviceType, AddedPartyDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  18: CALL_TRANSFERRED_EVENT
+    //  18: CALL_TRANSFERRED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, PrimaryDeviceIDType, PrimaryCallID, LineHandle,
       LineTypeTag, SkillGroupNumber, SkillGroupID, SkillGroupPriority, NumParties, SecondaryDeviceIDType,
       SecondaryCallID, TransferringDeviceType, TransferredDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  19: CALL_DIVERTED_EVENT
+    //  19: CALL_DIVERTED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
       ServiceNumber, ServiceID, DivertingDeviceType, CalledDeviceType, LocalConnectionStateTag,
       EventCauseTag),
-  //  20: CALL_SERVICE_INITIATED_EVENT
+    //  20: CALL_SERVICE_INITIATED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
       LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
       CallingDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  21: CALL_QUEUED_EVENT
+    //  21: CALL_QUEUED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
       ServiceNumber, ServiceID, QueueDeviceType, CallingDeviceType, CalledDeviceType, LastRedirectDeviceType,
       NumQueued, NumSkillGroups, LocalConnectionStateTag, EventCauseTag),
-  //  22: CALL_TRANSLATION_ROUTE_EVENT
+    //  22: CALL_TRANSLATION_ROUTE_EVENT
     List(NumNamedVariables, NumNamedArrays),
-  //  23: BEGIN_CALL_EVENT
+    //  23: BEGIN_CALL_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, NumCTIClients, NumNamedVariables, NumNamedArrays,
       CallTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, CalledPartyDisposition),
-  //  24: END_CALL_EVENT
+    //  24: END_CALL_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID),
-  //  25: CALL_DATA_UPDATE_EVENT
+    //  25: CALL_DATA_UPDATE_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, NumCTIClients, NumNamedVariables, NumNamedArrays,
       CallTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, NewConnectionDeviceIDType, NewConnectionCallID,
       CalledPartyDisposition, CampaignID, QueryRuleID),
-  //  26: SET_CALL_DATA_REQ
+    //  26: SET_CALL_DATA_REQ
     List(ZZZZInternalUseOnly),
-  //  27: SET_CALL_DATA_CONF
+    //  27: SET_CALL_DATA_CONF
     List(InvokeID),
-  //  28: RELEASE_CALL_REQ
+    //  28: RELEASE_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  29: RELEASE_CALL_CONF
+    //  29: RELEASE_CALL_CONF
     List(InvokeID),
-  //  30: AGENT_STATE_EVENT
+    //  30: AGENT_STATE_EVENT
     List(MonitorID, PeripheralID, SessionID, PeripheralTypeTag, SkillGroupState, StateDuration,
       SkillGroupNumber, SkillGroupID, SkillGroupPriority, AgentStateTag, EventReasonCode, MRDID,
       NumTasks, AgentMode, MaxTaskLimit, ICMAgentID, AgentAvailabilityStatusTag, NumFltSkillGroups),
-  //  31: SYSTEM_EVENT
+    //  31: SYSTEM_EVENT
     List(PGStatus, ICMCentralControllerTime, SystemEventIDTag, SystemEventArg1, SystemEventArg2,
       SystemEventArg3, EventDeviceType),
-  //  32: CLIENT_EVENT_REPORT_REQ
+    //  32: CLIENT_EVENT_REPORT_REQ
     List(ZZZZInternalUseOnly),
-  //  33: CLIENT_EVENT_REPORT_CONF
+    //  33: CLIENT_EVENT_REPORT_CONF
     List(InvokeID),
-  //  34: CALL_REACHED_NETWORK_EVENT
+    //  34: CALL_REACHED_NETWORK_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, LineHandle,
       LineTypeTag, TrunkUsedDeviceType, CalledDeviceType, LocalConnectionStateTag, EventCauseTag),
-  //  35: CONTROL_FAILURE_CONF
+    //  35: CONTROL_FAILURE_CONF
     List(InvokeID, FailureCode, PeripheralErrorCode),
-  //  36: QUERY_AGENT_STATE_REQ
+    //  36: QUERY_AGENT_STATE_REQ
     List(ZZZZInternalUseOnly),
-  //  37: QUERY_AGENT_STATE_CONF
+    //  37: QUERY_AGENT_STATE_CONF
     List(InvokeID, AgentStateTag, NumSkillGroups, MRDID, NumTasks, AgentMode, MaxTaskLimit, ICMAgentID,
       AgentAvailabilityStatusTag),
-  //  38: SET_AGENT_STATE_REQ
+    //  38: SET_AGENT_STATE_REQ
     List(ZZZZInternalUseOnly),
-  //  39: SET_AGENT_STATE_CONF
+    //  39: SET_AGENT_STATE_CONF
     List(InvokeID),
-  //  40: ALTERNATE_CALL_REQ
+    //  40: ALTERNATE_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  41: ALTERNATE_CALL_CONF
+    //  41: ALTERNATE_CALL_CONF
     List(InvokeID),
-  //  42: ANSWER_CALL_REQ
+    //  42: ANSWER_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  43: ANSWER_CALL_CONF
+    //  43: ANSWER_CALL_CONF
     List(InvokeID),
-  //  44: CLEAR_CALL_REQ
+    //  44: CLEAR_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  45: CLEAR_CALL_CONF
+    //  45: CLEAR_CALL_CONF
     List(InvokeID),
-  //  46: CLEAR_CONNECTION_REQ
+    //  46: CLEAR_CONNECTION_REQ
     List(ZZZZInternalUseOnly),
-  //  47: CLEAR_CONNECTION_CONF
+    //  47: CLEAR_CONNECTION_CONF
     List(InvokeID),
-  //  48: CONFERENCE_CALL_REQ
+    //  48: CONFERENCE_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  49: CONFERENCE_CALL_CONF
+    //  49: CONFERENCE_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, NumParties, LineHandle, LineTypeTag),
-  //  50: CONSULTATION_CALL_REQ
+    //  50: CONSULTATION_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  51: CONSULTATION_CALL_CONF
+    //  51: CONSULTATION_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
-  //  52: DEFLECT_CALL_REQ
+    //  52: DEFLECT_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  53: DEFLECT_CALL_CONF
+    //  53: DEFLECT_CALL_CONF
     List(InvokeID),
-  //  54: HOLD_CALL_REQ
+    //  54: HOLD_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  55: HOLD_CALL_CONF
+    //  55: HOLD_CALL_CONF
     List(InvokeID),
-  //  56: MAKE_CALL_REQ
+    //  56: MAKE_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  57: MAKE_CALL_CONF
+    //  57: MAKE_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
-  //  58: MAKE_PREDICTIVE_CALL_REQ
+    //  58: MAKE_PREDICTIVE_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  59: MAKE_PREDICTIVE_CALL_CONF
+    //  59: MAKE_PREDICTIVE_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
-  //  60: RECONNECT_CALL_REQ
+    //  60: RECONNECT_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  61: RECONNECT_CALL_CONF
+    //  61: RECONNECT_CALL_CONF
     List(InvokeID),
-  //  62: RETRIEVE_CALL_REQ
+    //  62: RETRIEVE_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  63: RETRIEVE_CALL_CONF
+    //  63: RETRIEVE_CALL_CONF
     List(InvokeID),
-  //  64: TRANSFER_CALL_REQ
+    //  64: TRANSFER_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  65: TRANSFER_CALL_CONF
+    //  65: TRANSFER_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, NumParties, LineHandle, LineTypeTag),
-  //  66: RESERVED_66
+    //  66: RESERVED_66
     List(RawBytes),
-  //  67: RESERVED_67
+    //  67: RESERVED_67
     List(RawBytes),
-  //  68: RESERVED_68
+    //  68: RESERVED_68
     List(RawBytes),
-  //  69: RESERVED_69
+    //  69: RESERVED_69
     List(RawBytes),
-  //  70: RESERVED_70
+    //  70: RESERVED_70
     List(RawBytes),
-  //  71: RESERVED_71
+    //  71: RESERVED_71
     List(RawBytes),
-  //  72: RESERVED_72
+    //  72: RESERVED_72
     List(RawBytes),
-  //  73: RESERVED_73
+    //  73: RESERVED_73
     List(RawBytes),
-  //  74: RESERVED_74
+    //  74: RESERVED_74
     List(RawBytes),
-  //  75: RESERVED_75
+    //  75: RESERVED_75
     List(RawBytes),
-  //  76: RESERVED_76
+    //  76: RESERVED_76
     List(RawBytes),
-  //  77: RESERVED_77
+    //  77: RESERVED_77
     List(RawBytes),
-  //  78: QUERY_DEVICE_INFO_REQ
+    //  78: QUERY_DEVICE_INFO_REQ
     List(ZZZZInternalUseOnly),
-  //  79: QUERY_DEVICE_INFO_CONF
+    //  79: QUERY_DEVICE_INFO_CONF
     List(InvokeID, PeripheralTypeTag, TypeOfDeviceTag, ClassOfDeviceTag, NumLines, Reserved16,
       MaxActiveCalls, MaxHeldCalls, MaxDeviceInConference, MakeCallSetup, TransferConferenceSetup,
       CallEventsSupported, CallControlSupported, OtherFeaturesSupported),
-  //  80: RESERVED_80
+    //  80: RESERVED_80
     List(RawBytes),
-  //  81: RESERVED_81
+    //  81: RESERVED_81
     List(RawBytes),
-  //  82: SNAPSHOT_CALL_REQ
+    //  82: SNAPSHOT_CALL_REQ
     List(ZZZZInternalUseOnly),
-  //  83: SNAPSHOT_CALL_CONF
+    //  83: SNAPSHOT_CALL_CONF
     List(InvokeID, CallTypeTag, NumCTIClients, NumCallDevices, NumNamedVariables, NumNamedArrays,
       CalledPartyDisposition),
-  //  84: SNAPSHOT_DEVICE_REQ
+    //  84: SNAPSHOT_DEVICE_REQ
     List(ZZZZInternalUseOnly),
-  //  85: SNAPSHOT_DEVICE_CONF
+    //  85: SNAPSHOT_DEVICE_CONF
     List(InvokeID, NumCalls),
-  //  86: CALL_DEQUEUED_EVENT
+    //  86: CALL_DEQUEUED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID,
       QueueDeviceType, ServiceNumber, ServiceID, NumQueued, NumSkillGroups, LocalConnectionStateTag,
       EventCauseTag),
-  //  87: RESERVED_87
+    //  87: RESERVED_87
     List(RawBytes),
-  //  88: RESERVED_88
+    //  88: RESERVED_88
     List(RawBytes),
-  //  89: RESERVED_89
+    //  89: RESERVED_89
     List(RawBytes),
-  //  90: RESERVED_90
+    //  90: RESERVED_90
     List(RawBytes),
-  //  91: SEND_DTMF_SIGNAL_REQ
+    //  91: SEND_DTMF_SIGNAL_REQ
     List(ZZZZInternalUseOnly),
-  //  92: SEND_DTMF_SIGNAL_CONF
+    //  92: SEND_DTMF_SIGNAL_CONF
     List(InvokeID),
-  //  93: MONITOR_START_REQ
+    //  93: MONITOR_START_REQ
     List(ZZZZInternalUseOnly),
-  //  94: MONITOR_START_CONF
+    //  94: MONITOR_START_CONF
     List(InvokeID, MonitorID),
-  //  95: MONITOR_STOP_REQ
+    //  95: MONITOR_STOP_REQ
     List(ZZZZInternalUseOnly),
-  //  96: MONITOR_STOP_CONF
+    //  96: MONITOR_STOP_CONF
     List(InvokeID),
-  //  97: CHANGE_MONITOR_MASK_REQ
+    //  97: CHANGE_MONITOR_MASK_REQ
     List(ZZZZInternalUseOnly),
-  //  98: CHANGE_MONITOR_MASK_CONF
+    //  98: CHANGE_MONITOR_MASK_CONF
     List(InvokeID),
-  //  99: CLIENT_SESSION_OPENED_EVENT
+    //  99: CLIENT_SESSION_OPENED_EVENT
     List(SessionID, PeripheralID, ServiceGranted, CallMsgMask, AgentStateMaskTag, ClientPort),
-  // 100: CLIENT_SESSION_CLOSED_EVENT
+    // 100: CLIENT_SESSION_CLOSED_EVENT
     List(SessionID, PeripheralID, Status, ClientPort),
-  // 101: SESSION_MONITOR_START_REQ
+    // 101: SESSION_MONITOR_START_REQ
     List(ZZZZInternalUseOnly),
-  // 102: SESSION_MONITOR_START_CONF
+    // 102: SESSION_MONITOR_START_CONF
     List(InvokeID, MonitorID),
-  // 103: SESSION_MONITOR_STOP_REQ
+    // 103: SESSION_MONITOR_STOP_REQ
     List(ZZZZInternalUseOnly),
-  // 104: SESSION_MONITOR_STOP_CONF
+    // 104: SESSION_MONITOR_STOP_CONF
     List(InvokeID),
-  // 105: AGENT_PRE_CALL_EVENT
+    // 105: AGENT_PRE_CALL_EVENT
     List(MonitorID, NumNamedVariables, NumNamedArrays, ServiceNumber, ServiceID, SkillGroupNumber,
       SkillGroupID, SkillGroupPriority, MRDID),
-  // 106: AGENT_PRE_CALL_ABORT_EVENT
+    // 106: AGENT_PRE_CALL_ABORT_EVENT
     List(MonitorID, MRDID),
-  // 107: USER_MESSAGE_REQ
+    // 107: USER_MESSAGE_REQ
     List(ZZZZInternalUseOnly),
-  // 108: USER_MESSAGE_CONF
+    // 108: USER_MESSAGE_CONF
     List(InvokeID),
-  // 109: USER_MESSAGE_EVENT
+    // 109: USER_MESSAGE_EVENT
     List(ICMCentralControllerTime, Distribution),
-  // 110: REGISTER_VARIABLES_REQ
+    // 110: REGISTER_VARIABLES_REQ
     List(ZZZZInternalUseOnly),
-  // 111: REGISTER_VARIABLES_CONF
+    // 111: REGISTER_VARIABLES_CONF
     List(InvokeID),
-  // 112: QUERY_AGENT_STATISTICS_REQ
+    // 112: QUERY_AGENT_STATISTICS_REQ
     List(ZZZZInternalUseOnly),
-  // 113: QUERY_AGENT_STATISTICS_CONF
+    // 113: QUERY_AGENT_STATISTICS_CONF
     List(InvokeID, PeripheralID,
       // Total 84 counters
       // 1-10
@@ -626,9 +626,9 @@ object MessageType extends Enumeration {
       MonitorCallsToday,
       WhisperCallsToday,
       EmergencyCallsToday),
-  // 114: QUERY_SKILL_GROUP_STATISTICS_REQ
+    // 114: QUERY_SKILL_GROUP_STATISTICS_REQ
     List(ZZZZInternalUseOnly),
-  // 115: QUERY_SKILL_GROUP_STATISTICS_CONF
+    // 115: QUERY_SKILL_GROUP_STATISTICS_CONF
     List(InvokeID, PeripheralID, SkillGroupNumber, SkillGroupID,
       // Total 145 counters
       // 1-10
@@ -791,40 +791,40 @@ object MessageType extends Enumeration {
       CallsQToday,
       CallsQTimeToday,
       LongestCallQToday),
-  // 116: RTP_STARTED_EVENT
+    // 116: RTP_STARTED_EVENT
     List(MonitorID, PeripheralID, ClientPort, RTPDirectionTag, RTPTypeTag, BitRate, EchoCancellation,
       PacketSize, PayloadType, ConnectionDeviceIDTypeTag, ConnectionCallID),
-  // 117: RTP_STOPPED_EVENT
+    // 117: RTP_STOPPED_EVENT
     List(MonitorID, PeripheralID, ClientPort, RTPDirectionTag, ConnectionDeviceIDTypeTag, ConnectionCallID),
-  // 118: SUPERVISOR_ASSIST_REQ
+    // 118: SUPERVISOR_ASSIST_REQ
     List(ZZZZInternalUseOnly),
-  // 119: SUPERVISOR_ASSIST_CONF
+    // 119: SUPERVISOR_ASSIST_CONF
     List(InvokeID, ConnectionCallID, ConnectionDeviceIDTypeTag, LineHandle, LineTypeTag),
-  // 120: SUPERVISOR_ASSIST_EVENT
+    // 120: SUPERVISOR_ASSIST_EVENT
     List(ZZZZInternalUseOnly),
-  // 121: EMERGENCY_CALL_REQ
+    // 121: EMERGENCY_CALL_REQ
     List(ZZZZInternalUseOnly),
-  // 122: EMERGENCY_CALL_CONF
+    // 122: EMERGENCY_CALL_CONF
     List(InvokeID, ConnectionCallID, ConnectionDeviceIDTypeTag, LineHandle, LineTypeTag),
-  // 123: EMERGENCY_CALL_EVENT
+    // 123: EMERGENCY_CALL_EVENT
     List(PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag, SessionID),
-  // 124: SUPERVISE_CALL_REQ
+    // 124: SUPERVISE_CALL_REQ
     List(ZZZZInternalUseOnly),
-  // 125: SUPERVISE_CALL_CONF
+    // 125: SUPERVISE_CALL_CONF
     List(InvokeID, ConnectionCallID, ConnectionDeviceIDTypeTag),
-  // 126: AGENT_TEAM_CONFIG_REQ
+    // 126: AGENT_TEAM_CONFIG_REQ
     List(ZZZZInternalUseOnly),
-  // 127: AGENT_TEAM_CONFIG_CONF
+    // 127: AGENT_TEAM_CONFIG_CONF
     List(RawBytes),
-  // 128: AGENT_TEAM_CONFIG_EVENT
+    // 128: AGENT_TEAM_CONFIG_EVENT
     List(PeripheralID, TeamID, NumberOfAgents, ConfigOperationTag),
-  // 129: SET_APP_DATA_REQ
+    // 129: SET_APP_DATA_REQ
     List(ZZZZInternalUseOnly),
-  // 130: SET_APP_DATA_CONF
+    // 130: SET_APP_DATA_CONF
     List(InvokeID),
-  // 131: AGENT_DESK_SETTINGS_REQ
+    // 131: AGENT_DESK_SETTINGS_REQ
     List(ZZZZInternalUseOnly),
-  // 132: AGENT_DESK_SETTINGS_CONF
+    // 132: AGENT_DESK_SETTINGS_CONF
     List(InvokeID, PeripheralID,
       DeskSettingsMaskTag,
       WrapupDataIncomingMode,
@@ -840,242 +840,242 @@ object MessageType extends Enumeration {
       RecordingMode,
       WorkModeTimer,
       RingNoAnswerDN),
-  // 133: LIST_AGENT_TEAM_REQ
+    // 133: LIST_AGENT_TEAM_REQ
     List(ZZZZInternalUseOnly),
-  // 134: LIST_AGENT_TEAM_CONF
+    // 134: LIST_AGENT_TEAM_CONF
     List(InvokeID, NumberOfAgentTeams, SegmentNumber, More),
-  // 135: MONITOR_AGENT_TEAM_START_REQ
+    // 135: MONITOR_AGENT_TEAM_START_REQ
     List(ZZZZInternalUseOnly),
-  // 136: MONITOR_AGENT_TEAM_START_CONF
+    // 136: MONITOR_AGENT_TEAM_START_CONF
     List(InvokeID, MonitorID),
-  // 137: MONITOR_AGENT_TEAM_STOP_REQ
+    // 137: MONITOR_AGENT_TEAM_STOP_REQ
     List(ZZZZInternalUseOnly),
-  // 138: MONITOR_AGENT_TEAM_STOP_CONF
+    // 138: MONITOR_AGENT_TEAM_STOP_CONF
     List(InvokeID),
-  // 139: BAD_CALL_REQ
+    // 139: BAD_CALL_REQ
     List(ZZZZInternalUseOnly),
-  // 140: BAD_CALL_CONF
+    // 140: BAD_CALL_CONF
     List(InvokeID),
-  // 141: SET_DEVICE_ATTRIBUTES_REQ
+    // 141: SET_DEVICE_ATTRIBUTES_REQ
     List(ZZZZInternalUseOnly),
-  // 142: SET_DEVICE_ATTRIBUTES_CONF
+    // 142: SET_DEVICE_ATTRIBUTES_CONF
     List(InvokeID),
-  // 143: REGISTER_SERVICE_REQ
+    // 143: REGISTER_SERVICE_REQ
     List(ZZZZInternalUseOnly),
-  // 144: REGISTER_SERVICE_CONF
+    // 144: REGISTER_SERVICE_CONF
     List(InvokeID, RegisteredServiceID),
-  // 145: UNREGISTER_SERVICE_REQ
+    // 145: UNREGISTER_SERVICE_REQ
     List(ZZZZInternalUseOnly),
-  // 146: UNREGISTER_SERVICE_CONF
+    // 146: UNREGISTER_SERVICE_CONF
     List(InvokeID),
-  // 147: START_RECORDING_REQ
+    // 147: START_RECORDING_REQ
     List(ZZZZInternalUseOnly),
-  // 148: START_RECORDING_CONF
+    // 148: START_RECORDING_CONF
     List(InvokeID, SessionID, ServerData),
-  // 149: STOP_RECORDING_REQ
+    // 149: STOP_RECORDING_REQ
     List(ZZZZInternalUseOnly),
-  // 150: STOP_RECORDING_CONF
+    // 150: STOP_RECORDING_CONF
     List(InvokeID),
-  // 151: MEDIA_LOGIN_REQ
+    // 151: MEDIA_LOGIN_REQ
     List(ZZZZInternalUseOnly),
-  // 152: MEDIA_LOGIN_RESP
+    // 152: MEDIA_LOGIN_RESP
     List(RawBytes),
-  // 153: MEDIA_LOGOUT_IND
+    // 153: MEDIA_LOGOUT_IND
     List(RawBytes),
-  // 154: MAKE_AGENT_ROUTABLE_IND
+    // 154: MAKE_AGENT_ROUTABLE_IND
     List(RawBytes),
-  // 155: MAKE_AGENT_NOT_ROUTABLE_REQ
+    // 155: MAKE_AGENT_NOT_ROUTABLE_REQ
     List(ZZZZInternalUseOnly),
-  // 156: MAKE_AGENT_NOT_ROUTABLE_RESP
+    // 156: MAKE_AGENT_NOT_ROUTABLE_RESP
     List(RawBytes),
-  // 157: MAKE_AGENT_READY_IND
+    // 157: MAKE_AGENT_READY_IND
     List(RawBytes),
-  // 158: MAKE_AGENT_NOT_READY_REQ
+    // 158: MAKE_AGENT_NOT_READY_REQ
     List(ZZZZInternalUseOnly),
-  // 159: MAKE_AGENT_NOT_READY_RESP
+    // 159: MAKE_AGENT_NOT_READY_RESP
     List(RawBytes),
-  // 160: OFFER_TASK_IND
+    // 160: OFFER_TASK_IND
     List(RawBytes),
-  // 161: OFFER_APPLICATION_TASK_REQ
+    // 161: OFFER_APPLICATION_TASK_REQ
     List(ZZZZInternalUseOnly),
-  // 162: OFFER_APPLICATION_TASK_RESP
+    // 162: OFFER_APPLICATION_TASK_RESP
     List(RawBytes),
-  // 163: START_TASK_IND
+    // 163: START_TASK_IND
     List(RawBytes),
-  // 164: START_APPLICATION_TASK_REQ
+    // 164: START_APPLICATION_TASK_REQ
     List(ZZZZInternalUseOnly),
-  // 165: START_APPLICATION_TASK_RESP
+    // 165: START_APPLICATION_TASK_RESP
     List(RawBytes),
-  // 166: PAUSE_TASK_IND
+    // 166: PAUSE_TASK_IND
     List(RawBytes),
-  // 167: RESUME_TASK_IND
+    // 167: RESUME_TASK_IND
     List(RawBytes),
-  // 168: WRAPUP_TASK_IND
+    // 168: WRAPUP_TASK_IND
     List(RawBytes),
-  // 169: END_TASK_IND
+    // 169: END_TASK_IND
     List(RawBytes),
-  // 170: AGENT_MADE_NOT_ROUTABLE_EVENT
+    // 170: AGENT_MADE_NOT_ROUTABLE_EVENT
     List(RawBytes),
-  // 171: AGENT_INTERRUPT_ADVISORY_EVENT
+    // 171: AGENT_INTERRUPT_ADVISORY_EVENT
     List(RawBytes),
-  // 172: AGENT_INTERRUPT_ACCEPTED_IND
+    // 172: AGENT_INTERRUPT_ACCEPTED_IND
     List(RawBytes),
-  // 173: AGENT_INTERRUPT_UNACCEPTED_IND
+    // 173: AGENT_INTERRUPT_UNACCEPTED_IND
     List(RawBytes),
-  // 174: AGENT_INTERRUPT_DONE_ADVISORY_EVENT
+    // 174: AGENT_INTERRUPT_DONE_ADVISORY_EVENT
     List(RawBytes),
-  // 175: AGENT_INTERRUPT_DONE_ACCEPTED_IND
+    // 175: AGENT_INTERRUPT_DONE_ACCEPTED_IND
     List(RawBytes),
-  // 176: CHANGE_MAX_TASK_LIMIT_REQ
+    // 176: CHANGE_MAX_TASK_LIMIT_REQ
     List(ZZZZInternalUseOnly),
-  // 177: CHANGE_MAX_TASK_LIMIT_RESP
+    // 177: CHANGE_MAX_TASK_LIMIT_RESP
     List(RawBytes),
-  // 178: OVERRIDE_LIMIT_REQ
+    // 178: OVERRIDE_LIMIT_REQ
     List(ZZZZInternalUseOnly),
-  // 179: OVERRIDE_LIMIT_RESP
+    // 179: OVERRIDE_LIMIT_RESP
     List(RawBytes),
-  // 180: UPDATE_TASK_CONTEXT_IND
+    // 180: UPDATE_TASK_CONTEXT_IND
     List(RawBytes),
-  // 181: BEGIN_AGENT_INIT_IND
+    // 181: BEGIN_AGENT_INIT_IND
     List(RawBytes),
-  // 182: AGENT_INIT_REQ
+    // 182: AGENT_INIT_REQ
     List(ZZZZInternalUseOnly),
-  // 183: AGENT_INIT_RESP
+    // 183: AGENT_INIT_RESP
     List(RawBytes),
-  // 184: END_AGENT_INIT_IND
+    // 184: END_AGENT_INIT_IND
     List(RawBytes),
-  // 185: TASK_INIT_IND
+    // 185: TASK_INIT_IND
     List(RawBytes),
-  // 186: AGENT_INIT_READY_EVENT
+    // 186: AGENT_INIT_READY_EVENT
     List(RawBytes),
-  // 187: GET_PRECALL_MESSAGES_REQ
+    // 187: GET_PRECALL_MESSAGES_REQ
     List(ZZZZInternalUseOnly),
-  // 188: GET_PRECALL_MESSAGES_RESP
+    // 188: GET_PRECALL_MESSAGES_RESP
     List(RawBytes),
-  // 189: AGENT_LEGACY_PRE_CALL_EVENT
+    // 189: AGENT_LEGACY_PRE_CALL_EVENT
     List(RawBytes),
-  // 190: FAILURE_RESP
+    // 190: FAILURE_RESP
     List(RawBytes),
-  // 191: BEGIN_TASK_EVENT
+    // 191: BEGIN_TASK_EVENT
     List(RawBytes),
-  // 192: QUEUED_TASK_EVENT
+    // 192: QUEUED_TASK_EVENT
     List(RawBytes),
-  // 193: DEQUEUED_TASK_EVENT
+    // 193: DEQUEUED_TASK_EVENT
     List(RawBytes),
-  // 194: OFFER_TASK_EVENT
+    // 194: OFFER_TASK_EVENT
     List(RawBytes),
-  // 195: START_TASK_EVENT
+    // 195: START_TASK_EVENT
     List(RawBytes),
-  // 196: PAUSE_TASK_EVENT
+    // 196: PAUSE_TASK_EVENT
     List(RawBytes),
-  // 197: RESUME_TASK_EVENT
+    // 197: RESUME_TASK_EVENT
     List(RawBytes),
-  // 198: WRAPUP_TASK_EVENT
+    // 198: WRAPUP_TASK_EVENT
     List(RawBytes),
-  // 199: END_TASK_EVENT
+    // 199: END_TASK_EVENT
     List(RawBytes),
-  // 200: TASK_DATA_UPDATE_EVENT
+    // 200: TASK_DATA_UPDATE_EVENT
     List(RawBytes),
-  // 201: TASK_MONITOR_START_REQ
+    // 201: TASK_MONITOR_START_REQ
     List(ZZZZInternalUseOnly),
-  // 202: TASK_MONITOR_START_CONF
+    // 202: TASK_MONITOR_START_CONF
     List(RawBytes),
-  // 203: TASK_MONITOR_STOP_REQ
+    // 203: TASK_MONITOR_STOP_REQ
     List(ZZZZInternalUseOnly),
-  // 204: TASK_MONITOR_STOP_CONF
+    // 204: TASK_MONITOR_STOP_CONF
     List(RawBytes),
-  // 205: CHANGE_TASK_MONITOR_MASK_REQ
+    // 205: CHANGE_TASK_MONITOR_MASK_REQ
     List(ZZZZInternalUseOnly),
-  // 206: CHANGE_TASK_MONITOR_MASK_CONF
+    // 206: CHANGE_TASK_MONITOR_MASK_CONF
     List(RawBytes),
-  // 207: MAX_TASK_LIFETIME_EXCEEDED_EVENT
+    // 207: MAX_TASK_LIFETIME_EXCEEDED_EVENT
     List(RawBytes),
-  // 208: SET_APP_PATH_DATA_IND
+    // 208: SET_APP_PATH_DATA_IND
     List(RawBytes),
-  // 209: TASK_INIT_REQ
+    // 209: TASK_INIT_REQ
     List(ZZZZInternalUseOnly),
-  // 210: TASK_INIT_RESP
+    // 210: TASK_INIT_RESP
     List(RawBytes),
-  // 211: ROUTE_REGISTER_EVENT
+    // 211: ROUTE_REGISTER_EVENT
     List(RawBytes),
-  // 212: ROUTE_REGISTER_REPLY_EVENT
+    // 212: ROUTE_REGISTER_REPLY_EVENT
     List(RawBytes),
-  // 213: ROUTE_REQUEST_EVENT
+    // 213: ROUTE_REQUEST_EVENT
     List(RawBytes),
-  // 214: ROUTE_SELECT
+    // 214: ROUTE_SELECT
     List(RawBytes),
-  // 215: ROUTE_END
+    // 215: ROUTE_END
     List(RawBytes),
-  // 216: RESERVED_216
+    // 216: RESERVED_216
     List(RawBytes),
-  // 217: RESERVED_217
+    // 217: RESERVED_217
     List(RawBytes),
-  // 218: RESERVED_218
+    // 218: RESERVED_218
     List(RawBytes),
-  // 219: RESERVED_219
+    // 219: RESERVED_219
     List(RawBytes),
-  // 220: RESERVED_220
+    // 220: RESERVED_220
     List(RawBytes),
-  // 221: RESERVED_221
+    // 221: RESERVED_221
     List(RawBytes),
-  // 222: RESERVED_222
+    // 222: RESERVED_222
     List(RawBytes),
-  // 223: RESERVED_223
+    // 223: RESERVED_223
     List(RawBytes),
-  // 224: RESERVED_224
+    // 224: RESERVED_224
     List(RawBytes),
-  // 225: RESERVED_225
+    // 225: RESERVED_225
     List(RawBytes),
-  // 226: RESERVED_226
+    // 226: RESERVED_226
     List(RawBytes),
-  // 227: RESERVED_227
+    // 227: RESERVED_227
     List(RawBytes),
-  // 228: RESERVED_228
+    // 228: RESERVED_228
     List(RawBytes),
-  // 229: RESERVED_229
+    // 229: RESERVED_229
     List(RawBytes),
-  // 230: RESERVED_230
+    // 230: RESERVED_230
     List(RawBytes),
-  // 231: RESERVED_231
+    // 231: RESERVED_231
     List(RawBytes),
-  // 232: RESERVED_232
+    // 232: RESERVED_232
     List(RawBytes),
-  // 233: RESERVED_233
+    // 233: RESERVED_233
     List(RawBytes),
-  // 234: RESERVED_234
+    // 234: RESERVED_234
     List(RawBytes),
-  // 235: RESERVED_235
+    // 235: RESERVED_235
     List(RawBytes),
-  // 236: TEAM_CONFIG_REQ
+    // 236: TEAM_CONFIG_REQ
     List(ZZZZInternalUseOnly),
-  // 237: TEAM_CONFIG_EVENT
+    // 237: TEAM_CONFIG_EVENT
     List(RawBytes),
-  // 238: TEAM_CONFIG_CONF
+    // 238: TEAM_CONFIG_CONF
     List(RawBytes),
-  // 239: RESERVED_239
+    // 239: RESERVED_239
     List(RawBytes),
-  // 240: CALL_ATTRIBUTE_CHANGE_EVENT
+    // 240: CALL_ATTRIBUTE_CHANGE_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, CallTypeID, ServiceNumber),
-  // 241: RESERVED_241
+    // 241: RESERVED_241
     List(RawBytes),
-  // 242: RESERVED_242
+    // 242: RESERVED_242
     List(RawBytes),
-  // 243: RESERVED_243
+    // 243: RESERVED_243
     List(RawBytes),
-  // 244: RESERVED_244
+    // 244: RESERVED_244
     List(RawBytes),
-  // 245: RESERVED_245
+    // 245: RESERVED_245
     List(RawBytes),
-  // 246: RESERVED_246
+    // 246: RESERVED_246
     List(RawBytes),
-  // 247: CALL_TERMINATION_EVENT
+    // 247: CALL_TERMINATION_EVENT
     List(RawBytes),
-  // 248: CALL_AGENT_GREETING_EVENT
+    // 248: CALL_AGENT_GREETING_EVENT
     List(MonitorID, PeripheralID, ConnectionDeviceIDTypeTag, ConnectionCallID, EventCodeTag,
       PeripheralErrorCode),
-  // 249: AGENT_GREETING_CONTROL_REQ
+    // 249: AGENT_GREETING_CONTROL_REQ
     List(ZZZZInternalUseOnly),
-  // 250: AGENT_GREETING_CONTROL_CONF
+    // 250: AGENT_GREETING_CONTROL_CONF
     List(InvokeID)
   )
 

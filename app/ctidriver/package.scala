@@ -6,9 +6,10 @@ package object ctidriver {
   //
   // Type alias of container for extracted CTI Server Protocol message
   //
-  type Message = List[(Tag.Value, Any)]
-  type CtiMessage = List[(Tag.Value, Any)]
-  type RevCtiMessage = List[(Tag.Value, Any)]
+  type Tag = Tag.Value
+  type Message = List[(Tag, Any)]
+  type CtiMessage = List[(Tag, Any)]
+  type RevCtiMessage = List[(Tag, Any)]
 
   //
   // General constants for CTI Server Protocol messages

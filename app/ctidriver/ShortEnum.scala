@@ -6,7 +6,7 @@ import akka.util.ByteString
  * Enumeration with factory func which returns Value in wrapping Option.
  */
 class ShortEnum extends Enumeration {
-  def decode(tag: Tag.Value, buf: ByteString): (Tag.Value, Option[Value]) = {
+  def decode(tag: Tag, buf: ByteString): (Tag, Option[Value]) = {
     try {
       (tag, Some(super.apply(buf.toShort.toInt & 0xffff)))
     } catch {
@@ -14,5 +14,5 @@ class ShortEnum extends Enumeration {
     }
   }
 
-  def decodeWithLen(tag: Tag.Value, buf: ByteString) = (decode(tag, buf), 2)
+  def decodeWithLen(tag: Tag, buf: ByteString) = (decode(tag, buf), 2)
 }

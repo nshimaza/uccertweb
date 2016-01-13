@@ -265,7 +265,7 @@ object MessageType extends Enumeration {
   val AGENT_GREETING_CONTROL_CONF           = Value(250)
 
 
-  val messageTypeFixedPartListTable: Array[List[Tag.Value]] = Array(
+  val fixedPartListTable: Array[List[Tag]] = Array(
     //   0: UNKNOWN_TYPE
     List(RawBytes),
     //   1: FAILURE_CONF
@@ -1088,12 +1088,10 @@ object MessageType extends Enumeration {
     }
   }
 
-  def getFixedPartList(msgType: MessageType): List[Tag.Value] = {
-    messageTypeFixedPartListTable(msgType.id)
-  }
+  def getFixedPartList(msgType: MessageType): List[Tag] = fixedPartListTable(msgType.id)
 
 
-  def getFixedPartList_obsolete_do_not_use(msgType: MessageType): List[Tag.Value] = {
+  def getFixedPartList_obsolete_do_not_use(msgType: MessageType): List[Tag] = {
     msgType match {
       case
         // Conf messages which contains only InvokeID

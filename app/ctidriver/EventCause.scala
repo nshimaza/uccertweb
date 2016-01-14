@@ -1,8 +1,9 @@
-package ctidriver
+// package ctidriver
 
 /**
  * Constants for event cause
  */
+/*
 object EventCause extends ShortEnum {
   type EventCause = Value
   val NONE                            = Value(0xffff)
@@ -116,3 +117,4 @@ object EventCause extends ShortEnum {
   val NETWORK_CONFERENCE              = Value(1056)
   val ABAND_NETWORK_CONSULT           = Value(1057)
 }
+*/

@@ -1,8 +1,9 @@
-package ctidriver
+// package ctidriver
 
 /**
  * Constants for control failure codes
  */
+/*
 object ControlFailureCode extends ShortEnum {
   type ControlFailureCode = Value
   val GENERIC_UNSPECIFIED                               = Value(   0)
@@ -140,3 +141,4 @@ object ControlFailureCode extends ShortEnum {
   val RC_SERVICE_INACTIVATE_PIM                         = Value(1015)
   val AGENT_GREETING_CONTROL_OPERATION_FAILURE          = Value(1016)
 }
+*/

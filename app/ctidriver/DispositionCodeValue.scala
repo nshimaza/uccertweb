@@ -1,8 +1,9 @@
-package ctidriver
+// package ctidriver
 
 /**
  * Constants for disposition code
  */
+/*
 object DispositionCodeValue extends ShortEnum {
   type DispositionCodeValue = Value
   val Abandoned_in_Network                      = Value( 1)
@@ -58,3 +59,4 @@ object DispositionCodeValue extends ShortEnum {
   val Task_Ended_During_Application_Init        = Value(51)
   val Called_Party_Disconnected                 = Value(52)
 }
+*/

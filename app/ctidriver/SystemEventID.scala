@@ -1,8 +1,9 @@
-package ctidriver
+// package ctidriver
 
 /**
  * System event ID used in SYSTEM_EVENT message.
  */
+/*
 object SystemEventID extends IntEnum {
   type SystemEventID = Value
   val CENTRAL_CONTROLLER_ONLINE       = Value( 1)
@@ -17,3 +18,4 @@ object SystemEventID extends IntEnum {
   val INSTRUMENT_OUT_OF_SERVICE       = Value(10)
   val INSTRUMENT_BACK_IN_SERVICE      = Value(11)
 }
+*/

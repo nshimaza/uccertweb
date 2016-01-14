@@ -1,10 +1,10 @@
-package ctidriver
+//package ctidriver
 
 /**
  * Status codes sent from CTI server via FAILURE_CONF and FAILURE_EVENT
  *
  */
-
+/*
 object StatusCode extends IntEnum {
   type StatusCode = Value
   val NO_ERROR                                  = Value( 0)
@@ -107,3 +107,4 @@ object StatusCode extends IntEnum {
   val INVALID_MONITOR_STATUS                    = Value(97)
   val INVALID_REQUEST_TYPE                      = Value(98)
 }
+*/

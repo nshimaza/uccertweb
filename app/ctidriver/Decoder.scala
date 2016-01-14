@@ -29,12 +29,14 @@ object Decoder {
     val body = buf.drop(4)
     val (fixed: Message, next_offset)
     = decodeFixedPart(List((MessageTypeTag, msgType)), MessageType.getFixedPartList(msgType), body)
+
 /*
     println(fixed)
     print("next_offset:"); println(next_offset)
     print("body.size:"); println(body.size)
     print("pass to floating decoder:") ; println(body.drop(next_offset).to[List])
 */
+
     decodeFloatingPart(fixed, body.drop(next_offset)).reverse
   }
 
@@ -399,269 +401,6 @@ object Decoder {
     }
   }
 
-  def decFlStr(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toString(len))
-  def decFlInt(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toInt)
-  def decFlShort(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toShort)
-  def decFlRaw(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body take len)
-
-  val flTagToDecodeFunc: Array[(Tag, Int, ByteString) => (Tag, Any)] = Array(
-    decFlRaw,       //   0: Invalid
-    decFlStr,       //   1: CLIENT_ID
-    decFlRaw,       //   2: CLIENT_PASSWORD
-    decFlStr,       //   3: CLIENT_SIGNATURE
-    decFlStr,       //   4: AGENT_EXTENSION
-    decFlStr,       //   5: AGENT_ID
-    decFlStr,       //   6: AGENT_INSTRUMENT
-    decFlStr,       //   7: TEXT
-    decFlStr,       //   8: ANI
-    decFlRaw,       //   9: UUI
-    decFlStr,       //  10: DNIS
-    decFlStr,       //  11: DIALED_NUMBER
-    decFlStr,       //  12: CED
-    decFlStr,       //  13: CALL_VAR_1
-    decFlStr,       //  14: CALL_VAR_2
-    decFlStr,       //  15: CALL_VAR_3
-    decFlStr,       //  16: CALL_VAR_4
-    decFlStr,       //  17: CALL_VAR_5
-    decFlStr,       //  18: CALL_VAR_6
-    decFlStr,       //  19: CALL_VAR_7
-    decFlStr,       //  20: CALL_VAR_8
-    decFlStr,       //  21: CALL_VAR_9
-    decFlStr,       //  22: CALL_VAR_10
-    decFlStr,       //  23: CTI_CLIENT_SIGNATURE
-    decFlInt,       //  24: CTI_CLIENT_TIMESTAMP
-    decFlStr,       //  25: CONNECTION_DEVID
-    decFlStr,       //  26: ALERTING_DEVID
-    decFlStr,       //  27: CALLING_DEVID
-    decFlStr,       //  28: CALLED_DEVID
-    decFlStr,       //  29: LAST_REDIRECT_DEVID
-    decFlStr,       //  30: ANSWERING_DEVID
-    decFlStr,       //  31: HOLDING_DEVID
-    decFlStr,       //  32: RETRIEVING_DEVID
-    decFlStr,       //  33: RELEASING_DEVID
-    decFlStr,       //  34: FAILING_DEVID
-    decFlStr,       //  35: PRIMARY_DEVID
-    decFlStr,       //  36: SECONDARY_DEVID
-    decFlStr,       //  37: CONTROLLER_DEVID
-    decFlStr,       //  38: ADDED_PARTY_DEVID
-    decFlInt,       //  39: PARTY_CALLID
-    (tag, len, body) => DeviceIDType.decode(tag, body),             //  40: PARTY_DEVID_TYPE
-    decFlStr,       //  41: PARTY_DEVID
-    decFlStr,       //  42: TRANSFERRING_DEVID
-    decFlStr,       //  43: TRANSFERRED_DEVID
-    decFlStr,       //  44: DIVERTING_DEVID
-    decFlStr,       //  45: QUEUE_DEVID
-    decFlStr,       //  46: CALL_WRAPUP_DATA
-    decFlStr,       //  47: NEW_CONNECTION_DEVID
-    decFlStr,       //  48: TRUNK_USED_DEVID
-    decFlStr,       //  49: AGENT_PASSWORD
-    decFlStr,       //  50: ACTIVE_CONN_DEVID
-    decFlStr,       //  51: FACILITY_CODE
-    decFlStr,       //  52: OTHER_CONN_DEVID
-    decFlStr,       //  53: HELD_CONN_DEVID
-    decFlRaw,       //  54: RESERVED_54
-    decFlRaw,       //  55: RESERVED_55
-    decFlInt,       //  56: CALL_CONN_CALLID
-    (tag, len, body) => ConnectionDeviceIDType.decode(tag, body),   //  57: CALL_CONN_DEVID_TYPE
-    decFlStr,       //  58: CALL_CONN_DEVID
-    decFlShort,     //  59: CALL_DEVID_TYPE
-    decFlStr,       //  60: CALL_DEVID
-    decFlShort,     //  61: CALL_DEV_CONN_STATE
-    decFlInt,       //  62: SKILL_GROUP_NUMBER
-    decFlInt,       //  63: SKILL_GROUP_ID
-    decFlShort,     //  64: SKILL_GROUP_PRIORITY
-    (tag, len, body) => AgentState.decode(tag, body),               //  65: SKILL_GROUP_STATE
-    decFlStr,       //  66: OBJECT_NAME
-    decFlStr,       //  67: DTMF_STRING
-    decFlStr,       //  68: POSITION_ID
-    decFlStr,       //  69: SUPERVISOR_ID
-    decFlShort,     //  70: LINE_HANDLE
-    (tag, len, body) => LineType.decode(tag, body), //  71: LINE_TYPE
-    decFlInt,       //  72: ROUTER_CALL_KEY_DAY
-    decFlInt,       //  73: ROUTER_CALL_KEY_CALLID
-    decFlRaw,       //  74: RESERVED_74
-    (tag, len, body) => LocalConnectionState.decode(tag, body),     //  75: CALL_STATE
-    decFlStr,       //  76: MONITORED_DEVID
-    decFlStr,       //  77: AUTHORIZATION_CODE
-    decFlStr,       //  78: ACCOUNT_CODE
-    decFlStr,       //  79: ORIGINATING_DEVID
-    decFlStr,       //  80: ORIGINATING_LINE_ID
-    decFlStr,       //  81: CLIENT_ADDRESS
-    (tag, len, body) => (tag, body.toNamedVar(len)),                //  82: NAMED_VARIABLE
-    (tag, len, body) => (tag, body.toNamedArray(len)),              //  83: NAMED_ARRAY
-    decFlStr,       //  84: CALL_CONTROL_TABLE
-    decFlStr,       //  85: SUPERVISOR_INSTRUMENT
-    decFlStr,       //  86: ATC_AGENT_ID
-    (tag, len, body) => (tag, BitSet fromBitMask Array(body.toShort.toLong)),       //  87: AGENT_FLAGS
-    (tag, len, body) => AgentState.decode(tag, body),               //  88: ATC_AGENT_STATE
-    decFlInt,       //  89: ATC_STATE_DURATION
-    decFlStr,       //  90: AGENT_CONNECTION_DEVID
-    decFlStr,       //  91: SUPERVISOR_CONNECTION_DEVID
-    decFlInt,       //  92: LIST_TEAM_ID
-    decFlStr,       //  93: DEFAULT_DEVICE_PORT_ADDRESS
-    decFlStr,       //  94: SERVICE_NAME
-    decFlStr,       //  95: CUSTOMER_PHONE_NUMBER
-    decFlStr,       //  96: CUSTOMER_ACCOUNT_NUMBER
-    decFlRaw,       //  97: APP_PATH_ID
-    decFlRaw,       //  98: RESERVED_98
-    decFlRaw,       //  99: RESERVED_99
-    decFlRaw,       // 100: RESERVED_100
-    decFlRaw,       // 101: RESERVED_101
-    decFlRaw,       // 102: RESERVED_102
-    decFlRaw,       // 103: RESERVED_103
-    decFlRaw,       // 104: RESERVED_104
-    decFlRaw,       // 105: RESERVED_105
-    decFlRaw,       // 106: RESERVED_106
-    decFlRaw,       // 107: RESERVED_107
-    decFlRaw,       // 108: RESERVED_108
-    decFlRaw,       // 109: RESERVED_109
-    decFlInt,       // 110: ROUTER_CALL_KEY_SEQUENCE_NUM
-    decFlRaw,       // 111: RESERVED_111
-    decFlRaw,       // 112: RESERVED_112
-    decFlRaw,       // 113: RESERVED_113
-    decFlRaw,       // 114: RESERVED_114
-    decFlRaw,       // 115: RESERVED_115
-    decFlRaw,       // 116: RESERVED_116
-    decFlRaw,       // 117: RESERVED_117
-    decFlRaw,       // 118: RESERVED_118
-    decFlRaw,       // 119: RESERVED_119
-    decFlRaw,       // 120: RESERVED_120
-    decFlInt,       // 121: TRUNK_NUMBER
-    decFlInt,       // 122: TRUNK_GROUP_NUMBER
-    (tag, len, body) => AgentState.decode(tag, body),               // 123: NEXT_AGENT_STATE
-    decFlRaw,       // 124: DEQUEUE_TYPE
-    decFlStr,       // 125: SENDING_ADDRESS
-    decFlStr,       // 126: SENDING_PORT
-    decFlRaw,       // 127: RESERVED_127
-    decFlRaw,       // 128: RESERVED_128
-    decFlRaw,       // 129: MAX_QUEUED
-    decFlRaw,       // 130: QUEUE_ID
-    decFlRaw,       // 131: CUSTOMER_ID
-    decFlRaw,       // 132: SERVICE_SKILL_TARGET_ID
-    decFlRaw,       // 133: PERIPHERAL_NAME
-    decFlRaw,       // 134: DESCRIPTION
-    decFlRaw,       // 135: SERVICE_MEMBER_ID
-    decFlRaw,       // 136: SERVICE_MEMBER_PRIORITY
-    decFlRaw,       // 137: FIRST_NAME
-    decFlRaw,       // 138: LAST_NAME
-    decFlRaw,       // 139: SKILL_GROUP
-    decFlRaw,       // 140: RESERVED_140
-    decFlRaw,       // 141: AGENT_SKILL_TARGET_ID
-    decFlRaw,       // 142: SERVICE
-    decFlRaw,       // 143: RESERVED_143
-    decFlRaw,       // 144: RESERVED_144
-    decFlRaw,       // 145: RESERVED_145
-    decFlRaw,       // 146: RESERVED_146
-    decFlRaw,       // 147: RESERVED_147
-    decFlRaw,       // 148: RESERVED_148
-    decFlRaw,       // 149: RESERVED_149
-    decFlInt,       // 150: DURATION
-    decFlRaw,       // 151: RESERVED_151
-    decFlRaw,       // 152: RESERVED_152
-    decFlRaw,       // 153: RESERVED_153
-    decFlRaw,       // 154: RESERVED_154
-    decFlRaw,       // 155: RESERVED_155
-    decFlRaw,       // 156: RESERVED_156
-    decFlRaw,       // 157: RESERVED_157
-    decFlRaw,       // 158: RESERVED_158
-    decFlRaw,       // 159: RESERVED_159
-    decFlRaw,       // 160: RESERVED_160
-    decFlRaw,       // 161: RESERVED_161
-    decFlRaw,       // 162: RESERVED_162
-    decFlRaw,       // 163: RESERVED_163
-    decFlRaw,       // 164: RESERVED_164
-    decFlRaw,       // 165: RESERVED_165
-    decFlRaw,       // 166: RESERVED_166
-    decFlRaw,       // 167: RESERVED_167
-    decFlRaw,       // 168: RESERVED_168
-    decFlRaw,       // 169: RESERVED_169
-    decFlRaw,       // 170: RESERVED_170
-    decFlRaw,       // 171: RESERVED_171
-    decFlRaw,       // 172: RESERVED_172
-    decFlRaw,       // 173: EXTENSION
-    decFlRaw,       // 174: SERVICE_LEVEL_THRESHOLD
-    decFlRaw,       // 175: SERVICE_LEVEL_TYPE
-    decFlRaw,       // 176: CONFIG_PARAM
-    decFlRaw,       // 177: SERVICE_CONFIG_KEY
-    decFlRaw,       // 178: SKILL_GROUP_CONFIG_KEY
-    decFlRaw,       // 179: AGENT_CONFIG_KEY
-    decFlRaw,       // 180: DEVICE_CONFIG_KEY
-    decFlRaw,       // 181: RESERVED_181
-    decFlRaw,       // 182: RESERVED_182
-    decFlRaw,       // 183: RECORD_TYPE
-    decFlRaw,       // 184: PERIPHERAL_NUMBER
-    decFlRaw,       // 185: CONFIG_AGENT_SKILL_TARGET_ID
-    decFlRaw,       // 186: NUM_SERVICE_MEMBERS
-    decFlStr,       // 187: SERVICE_MEMBER
-    decFlRaw,       // 188: SERVICE_PRIORITY
-    decFlRaw,       // 189: AGENT_TYPE
-    decFlRaw,       // 190: LOGIN_ID
-    decFlRaw,       // 191: NUM_SKILLS
-    decFlRaw,       // 192: SKILL_GROUP_SKILL_TARGET_ID
-    decFlInt,       // 193: SERVICE_ID
-    decFlRaw,       // 194: AGENT_ID_LONG
-    decFlRaw,       // 195: DEVICE_TYPE
-    decFlRaw,       // 196: RESERVED_196
-    decFlRaw,       // 197: RESERVED_197
-    decFlRaw,       // 198: ENABLE
-    decFlRaw,       // 199: DEVICEID
-    decFlRaw,       // 200: TIMEOUT
-    decFlRaw,       // 201: CURRENT_ROUTE
-    decFlInt,       // 202: SECONDARY_CONNECTION_CALL_ID
-    decFlRaw,       // 203: PRIORITY_QUEUE_NUMBER
-    decFlRaw,       // 204: TEAM_NAME
-    decFlRaw,       // 205: MEMBER_TYPE
-    decFlStr,       // 206: EVENT_DEVICE_ID
-    decFlRaw,       // 207: LOGIN_NAME_V11
-    decFlRaw,       // 208: PERIPHERAL_ID_V11
-    decFlRaw,       // 209: CALL_TYPE_KEY_CONFIG_V11
-    decFlRaw,       // 210: CALL_TYPE_ID_V11
-    decFlRaw,       // 211: CUSTOMER_DEFINITION_ID_V11
-    decFlRaw,       // 212: ENTERPRISE_NAME_V11
-    decFlRaw,       // 213: CUR_PERIPHERAL_NUMBER
-    decFlRaw,       // 214: CUR_LOGIN_ID
-    decFlStr,       // 215: ANI_II
-    decFlRaw,       // 216: MR_DOMAIN_ID
-    decFlStr,       // 217: CTIOS_CIL_CLIENT_ID
-    (tag, len, body) => SilentMonitorStatus.decode(tag, body),      // 218: SILENT_MONITOR_STATUS
-    decFlStr,       // 219: REQUESTING_DEVICE_ID
-    decFlRaw,       // 220: REQUESTING_DEVICE_ID_TYPE
-    decFlInt,       // 221: PRE_CALL_INVOKE_ID
-    decFlRaw,       // 222: ENTERPRISE_QUEUE_TIME
-    decFlRaw,       // 223: CALL_REFERENCE_ID
-    (tag, len, body) => (tag, body.toShort != 0),   // 224: MULTI_LINE_AGENT_CONTROL
-    decFlRaw,       // 225: NETWORK_CONTROLLED
-    decFlStr,       // 226: CLIENT_ADDRESS_IPV6
-    decFlStr,       // 227: SENDING_ADDRESS_IPV6
-    decFlShort,     // 228: NUM_PERIPHERALS
-    decFlInt,       // 229: COC_CONNECTION_CALL_ID
-    decFlShort,     // 230: COC_CONNECTION_DEVICE_ID_TYPE
-    decFlStr,       // 231: COC_CONNECTION_DEVICE_ID
-    (tag, len, body) => (tag, body(0)),             // 232: CALL_ORIGINATED_FROM
-    decFlRaw,       // 233: SET_APPDATA_CALLID
-    decFlRaw,       // 234: CLIENT_SHARE_KEY
-    decFlRaw,       // 235: RESERVED_235
-    decFlRaw,       // 236: RESERVED_236
-    decFlRaw,       // 237: RESERVED_237
-    decFlRaw,       // 238: RESERVED_238
-    decFlRaw,       // 239: RESERVED_239
-    decFlRaw,       // 240: RESERVED_240
-    decFlRaw,       // 241: RESERVED_241
-    decFlRaw,       // 242: RESERVED_242
-    decFlStr,       // 243: AGENT_TEAM_NAME
-    (tag, len, body) => CallDirection.decode(tag, body),            // 244: DIRECTION
-    decFlRaw,       // 245: RESERVED_245
-    decFlRaw,       // 246: RESERVED_246
-    decFlRaw,       // 247: RESERVED_247
-    decFlRaw,       // 248: RESERVED_248
-    decFlRaw,       // 249: RESERVED_249
-    decFlRaw,       // 250: RESERVED_250
-    decFlRaw,       // 251: RESERVED_251
-    decFlRaw,       // 252: RESERVED_252
-    decFlRaw,       // 253: RESERVED_253
-    decFlRaw,       // 254: RESERVED_254
-    decFlRaw        // 255: RESERVED_255
-  )
 
   @tailrec
   def decodeFloatingPart(decoded: Message, buf: ByteString): Message = {
@@ -673,19 +412,18 @@ object Decoder {
       val body = buf.drop(2)
       val rest = body.drop(len)
 
-      val result = flTagToDecodeFunc(tag.id)(tag, len, body)
-
-      decodeFloatingPart(result +: decoded, rest)
+      decodeFloatingPart(decodeFloatingField(tag, len, body) +: decoded, rest)
     }
   }
 
+  /*
   @tailrec
   def decodeFloatingPart_old_do_not_use(decoded: Message, buf: ByteString): Message = {
-/*
-        println("+++++++++++++++")
-        println(decoded)
-        println(buf.to[List].map(n => n.toInt.toHexString))
-*/
+
+//        println("+++++++++++++++")
+//        println(decoded)
+//        println(buf.to[List].map(n => n.toInt.toHexString))
+
     if (buf.size <= 0)
       decoded
     else {
@@ -854,4 +592,5 @@ object Decoder {
       decodeFloatingPart_old_do_not_use(result +: decoded, rest)
     }
   }
+  */
 }

@@ -21,8 +21,12 @@ class TagSpec extends FunSuite {
     assert(RESERVED_255.id == 255)
   }
 
-  test("ActiveConnectionCallID must be 256") {
-    assert(ActiveConnectionCallID.id == 256)
+  test("MessageType must be 256") {
+    assert(MessageTypeTag.id == 256)
+  }
+
+  test("ActiveConnectionCallID must be 257") {
+    assert(ActiveConnectionCallID.id == 257)
   }
 
   test("WrapupDataOutgoingMode must be 614") {

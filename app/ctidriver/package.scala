@@ -16,7 +16,7 @@ package object ctidriver {
   //
 
   val DefaultPeripheralID: Int  = 5000
-  val ProtocolVersion: Int      = 16
+  val ProtocolVersion: Int      = 19
   val MessageHeaderSize: Int    = 8
   val MaxECCNameLen: Int        = 32
   val MaxECCValueLen: Int       = 210

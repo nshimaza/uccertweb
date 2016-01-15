@@ -660,19 +660,19 @@ object Tag extends Enumeration {
   //
   // Decoder functions of fixed part for simple types
   //
-  def decFxRaw(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), body.size)
-  def decFxInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toInt), 4)
-  def decFxShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toShort), 2)
-  def decFxByte(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body(0)), 1)
-  def decFxIntBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toInt != 0), 4)
-  def decFxShortBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toShort != 0), 2)
-  def decFxIntBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
+  private def decFxRaw(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), body.size)
+  private def decFxInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toInt), 4)
+  private def decFxShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toShort), 2)
+  private def decFxByte(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body(0)), 1)
+  private def decFxIntBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toInt != 0), 4)
+  private def decFxShortBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toShort != 0), 2)
+  private def decFxIntBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
     ((tag, BitSet fromBitMask Array(body.toInt.toLong)), 4)
-  def decFxShortBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
+  private def decFxShortBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
     ((tag, BitSet fromBitMask Array(body.toShort.toLong)), 2)
-  def decFxMsgType(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, MessageType fromInt body.toInt), 4)
-  def decFxNotYetImplementedInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 4)
-  def decFxNotYetImplementedShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 2)
+  private def decFxMsgType(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, MessageType fromInt body.toInt), 4)
+  private def decFxNotYetImplementedInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 4)
+  private def decFxNotYetImplementedShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 2)
 
   //
   // DON'T EDIT THIS TABLE!!
@@ -680,7 +680,7 @@ object Tag extends Enumeration {
   //
   // Jump table from Tag to decoding function for floating part
   //
-  val fxTagToDecodeFunc: Array[(Tag, ByteString) => ((Tag, Any), Int)] = Array(
+  private val fxTagToDecodeFunc: Array[(Tag, ByteString) => ((Tag, Any), Int)] = Array(
   // script generated code starts here
     decFxInt, 	// ActiveConnectionCallID
     ConnectionDeviceIDType.decodeWithLen, 	// ActiveConnectionDeviceIDType
@@ -1055,15 +1055,15 @@ object Tag extends Enumeration {
   //
   // Decoder functions of floating part for simple types
   //
-  def decFlRaw(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body take len)
-  def decFlStr(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toString(len))
-  def decFlInt(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toInt)
-  def decFlShort(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toShort)
+  private def decFlRaw(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body take len)
+  private def decFlStr(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toString(len))
+  private def decFlInt(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toInt)
+  private def decFlShort(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toShort)
 
   //
   // Jump table from Tag to decoding function for floating part
   //
-  val flTagToDecodeFunc: Array[(Tag, Int, ByteString) => (Tag, Any)] = Array(
+  private val flTagToDecodeFunc: Array[(Tag, Int, ByteString) => (Tag, Any)] = Array(
     decFlRaw,       //   0: Invalid
     decFlStr,       //   1: CLIENT_ID
     decFlRaw,       //   2: CLIENT_PASSWORD

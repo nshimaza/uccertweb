@@ -265,7 +265,7 @@ object MessageType extends Enumeration {
   val AGENT_GREETING_CONTROL_CONF           = Value(250)
 
 
-  val fixedPartListTable: Array[List[Tag]] = Array(
+  private val fixedPartListTable: Array[List[Tag]] = Array(
     //   0: UNKNOWN_TYPE
     List(RawBytes),
     //   1: FAILURE_CONF

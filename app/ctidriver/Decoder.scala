@@ -1,9 +1,7 @@
 package ctidriver
 
 import akka.util.ByteString
-import ctidriver.Tag._
-import scala.annotation.{switch, tailrec}
-import scala.collection.immutable.BitSet
+import scala.annotation.tailrec
 
 /**
  * Message extractor functions
@@ -28,7 +26,7 @@ object Decoder {
     val msgType = MessageType fromInt buf.toInt
     val body = buf.drop(4)
     val (fixed: Message, next_offset)
-    = decodeFixedPart(List((MessageTypeTag, msgType)), MessageType.getFixedPartList(msgType), body)
+    = decodeFixedPart(List((Tag.MessageTypeTag, msgType)), MessageType.getFixedPartList(msgType), body)
 
 /*
     println(fixed)
@@ -42,12 +40,22 @@ object Decoder {
 
   @tailrec
   def decodeFixedPart(decoded: Message, seq: List[Tag], buf: ByteString, done: Int = 0): (Message, Int) = {
+    if (seq.isEmpty)
+      (decoded, done)
+    else {
+      val tag = seq.head
+      val (result, next_offset) = Tag.decodeFixedField(tag, buf)
 
+      decodeFixedPart(result +: decoded, seq.tail, buf.drop(next_offset), done + next_offset)
+    }
+  }
 /*
-    println("===================")
-    println(decoded)
-    println(seq)
-*/
+  @tailrec
+  def decodeFixedPart_obsolete_do_not_use(decoded: Message, seq: List[Tag], buf: ByteString, done: Int = 0): (Message, Int) = {
+
+//    println("===================")
+//    println(decoded)
+//    println(seq)
 
     if (seq.isEmpty)
       (decoded, done)
@@ -397,10 +405,10 @@ object Decoder {
         => DeviceIDType.decodeWithLen(tag, buf)
       }
 
-      decodeFixedPart(result +: decoded, seq.tail, buf.drop(next_offset), done + next_offset)
+      decodeFixedPart_obsolete_do_not_use(result +: decoded, seq.tail, buf.drop(next_offset), done + next_offset)
     }
   }
-
+*/
 
   @tailrec
   def decodeFloatingPart(decoded: Message, buf: ByteString): Message = {
@@ -412,7 +420,7 @@ object Decoder {
       val body = buf.drop(2)
       val rest = body.drop(len)
 
-      decodeFloatingPart(decodeFloatingField(tag, len, body) +: decoded, rest)
+      decodeFloatingPart(Tag.decodeFloatingField(tag, len, body) +: decoded, rest)
     }
   }
 

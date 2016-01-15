@@ -30,10 +30,10 @@ class TagSpec extends FunSuite {
   }
 
   test("WrapupDataOutgoingMode must be 614") {
-    assert(WrapupDataOutgoingMode.id == 614)
+    assert(WrapupDataOutgoingMode.id == 611)
   }
 
   test("ZZZZInternalUseOnly must be 615") {
-    assert(ZZZZInternalUseOnly.id == 615)
+    assert(ZZZZInternalUseOnly.id == 612)
   }
 }

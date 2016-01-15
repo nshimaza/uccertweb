@@ -7,50 +7,20 @@ package ctidriver
  * Special constants of CTI Server Protocol
  * 
  */
-object SpecialValue {
-  val MAX_NUM_CTI_CLIENTS: Int    = 16
-  val MAX_NUM_PARTIES: Int        = 16
-  val MAX_NUM_DEVICES: Int        = 16
-  val MAX_NUM_CALLS: Int          = 16
-  val MAX_NUM_SKILL_GROUPS: Int   = 20
-  val MAX_NUM_LINES: Int          = 10
-  val NULL_CALL_ID: Int           = 0xffffffff
-  val NULL_PERIPHERAL_ID: Int     = 0xffffffff
-  val NULL_SERVICE: Int           = 0xffffffff
-  val NULL_SKILL_GROUP: Int       = 0xffffffff
-  val NULL_CALLTYPE: Int          = 0xffff
+object AgentAvailabilityStatus extends IntEnum {
+  val NOT_AVAILABLE           = Value(0)
+  val ICM_AVAILABLE           = Value(1)
+  val APPLICATION_AVAILABLE   = Value(2)
 }
 
-object PeripheralType extends ShortEnum {
-  type PeripheralType = Value
-  val NONE                    = Value(0xffff)
-  val ASPECT                  = Value( 1)
-  val MERIDIAN                = Value( 2)
-  val G2                      = Value( 3)
-  val DEFINITY_ECS_NON_EAS    = Value( 4)
-  val DEFINITY_ECS_EAS        = Value( 5)
-  val GALAXY                  = Value( 6)
-  val SPECTRUM                = Value( 7)
-  val VRU                     = Value( 8)
-  val VRU_POLLED              = Value( 9)
-  val DMS100                  = Value(10)
-  val SIEMENS_9006            = Value(11)
-  val SIEMENS_9005            = Value(12)
-  val ALCATEL                 = Value(13)
-  val NEC_NEAX_2x00           = Value(14)
-  val ACP_1000                = Value(15)
-  val SYMPOSIUM               = Value(16)
-  val ENTERPRISE_AGENT        = Value(17)
-  val MD110                   = Value(18)
-  val MEDIA_ROUTING           = Value(19)
-  val GENERIC                 = Value(20)
-  val ACMI_CRS                = Value(21)
-  val ACMI_IPCC               = Value(22)
-  val SIMPLIFIED_IPCC         = Value(23)
-  val ARS                     = Value(24)
-  val ACMI_ERS                = Value(25)
-  val ACMI_EXPERT_ADVISOR     = Value(26)
-  val RESERVED                = Value(27)
+object AgentGreetingAction extends ShortEnum {
+  val StopGreeting    = Value(0)
+  val Disable         = Value(1)
+  val Enable          = Value(2)
+}
+
+object AgentServiceRequestMask {
+  val OUTBOUND_SUPPORT: Int     = 0x00000001
 }
 
 object AgentState extends ShortEnum {
@@ -70,6 +40,83 @@ object AgentState extends ShortEnum {
   val PAUSED          = Value(12)
   val INTERRUPTED     = Value(13)
   val NOT_ACTIVE      = Value(14)
+}
+
+object AgentWorkMode extends ShortEnum {
+  type AgentWorkMode = Value
+  val UNSPECIFIED          = Value(0)
+  val AUTO_IN              = Value(1)
+  val MANUAL_IN            = Value(2)
+  val RA_CALL_BY_CALL      = Value(3)
+  val RA_NAILED_CONNECTION = Value(4)
+}
+
+object AllocationState extends ShortEnum {
+  type AllocationState = Value
+  val CALL_DELIVERED    = Value(0)
+  val CALL_ESTABLISHED  = Value(1)
+}
+
+object AnswerDetectMode extends ShortEnum {
+  type AnswerDetectMode = Value
+  val UNSPECIFIED       = Value(0)
+  val MOICE_THRESHOLD   = Value(1)
+  val VOICE_END         = Value(2)
+  val VOICE_END_DELAY   = Value(3)
+  val VOICE_AND_BEEP    = Value(4)
+  val BEEP              = Value(5)
+}
+
+object AnsweringMachine extends ShortEnum {
+  type AnsweringMachine = Value
+  val UNSPECIFIED       = Value(0)
+  val CONNECT           = Value(1)
+  val DISCONNECT        = Value(2)
+  val NONE              = Value(3)
+  val NONE_NO_MODEM     = Value(4)
+  val CONNECT_NO_MODEM  = Value(5)
+}
+
+object CallDirection extends IntEnum {
+  val None                = Value(0)
+  val In                  = Value(1)
+  val Out                 = Value(2)
+  val OtherIn             = Value(3)
+  val OtherOut            = Value(4)
+  val OutboundReserve     = Value(5)
+  val OutboundPreview     = Value(6)
+  val OutboundPredictive  = Value(7)
+}
+
+object CallMannerType extends ShortEnum {
+  type CallMannerType = Value
+  val UNSPECIFIED   = Value(0)
+  val POLITE        = Value(1)
+  val BELLIGERENT   = Value(2)
+  val SEMI_POLITE   = Value(3)
+  val RESERVED      = Value(4)
+}
+
+object CallOption extends ShortEnum {
+  type CallOption = Value
+  val UNSPECIFIED                   = Value(0)
+  val CALLING_AGENT_ONLINE          = Value(1)
+  val CALLING_AGENT_RESERVED        = Value(2)
+  val CALLING_AGENT_NOT_RESERVED    = Value(3)
+  val CALLING_AGENT_BUZZ_BASE       = Value(4)
+  val CALLING_AGENT_BEEP_HSET       = Value(5)
+  val SERVIE_CIRCUIT_ON             = Value(6)
+}
+
+object CallPlacementType extends ShortEnum {
+  type CallPlacementType = Value
+  val UNSPECIFIED               = Value(0)
+  val LINE_CALL                 = Value(1)
+  val OUTBOUND                  = Value(2)
+  val OUTBOUND_NO_ACCESS_CODE   = Value(3)
+  val DIRECT_POSITION           = Value(4)
+  val DIRECT_AGENT              = Value(5)
+  val SUPERVISOR_ASSIST         = Value(6)
 }
 
 object CallType extends ShortEnum {
@@ -117,92 +164,10 @@ object CallType extends ShortEnum {
   val VOICE_CALL_BACK               = Value(41)
 }
 
-object ConnectionDeviceIDType extends ShortEnum {
-  type ConnectionDeviceIDType = Value
-  val NONE        = Value(0xffff)
-  val STATIC      = Value(0)
-  val DYNAMIC     = Value(1)
-}
-
-object LineType extends ShortEnum {
-  type LineType = Value
-  val INBOUND_ACD     = Value( 0)
-  val OUTBOUND_ACD    = Value( 1)
-  val INSIDE          = Value( 2)
-  val UNKNOWN         = Value( 3)
-  val SUPERVISOR      = Value( 4)
-  val MESSAGE         = Value( 5)
-  val HELP            = Value( 6)
-  val OUTBOUND        = Value( 7)
-  val DID             = Value( 8)
-  val SILENT_MONITOR  = Value( 9)
-  val NON_ACD_IN      = Value(10)
-  val NON_ACD_OUT     = Value(11)
-}
-
-object DeviceIDType extends ShortEnum {
-  type DeviceIDType = Value
-  val NONE                        = Value(0xffff)
-  val DEVICE_IDENTIFIER           = Value( 0)
-  val TRUNK_IDENTIFIER            = Value(70)
-  val TRUNK_GROUP_IDENTIFIER      = Value(71)
-  val IP_PHONE_MAC_IDENTIFIER     = Value(72)
-  val CTI_PORT                    = Value(73)
-  val ROUTE_POINT                 = Value(74)
-  val EXTERNAL                    = Value(75)
-  val AGENT_DEVICE                = Value(76)
-  val QUEUE                       = Value(77)
-  val NON_ACD_DEVICE_IDENTIFIER   = Value(78)
-  val SHARED_DEVICE_IDENTIFIER    = Value(79)
-}
-
-object LocalConnectionState extends ShortEnum {
-  type LocalConnectionState = Value
-  val NONE        = Value(0xffff)
-  val NULL        = Value(0)
-  val INITIATE    = Value(1)
-  val ALERTING    = Value(2)
-  val CONNECT     = Value(3)
-  val HOLD        = Value(4)
-  val QUEUED      = Value(5)
-  val FAIL        = Value(6)
-}
-
-
-object AgentAvailabilityStatus extends IntEnum {
-  val NOT_AVAILABLE           = Value(0)
-  val ICM_AVAILABLE           = Value(1)
-  val APPLICATION_AVAILABLE   = Value(2)
-}
-
-object CallDirection extends IntEnum {
-  val None                = Value(0)
-  val In                  = Value(1)
-  val Out                 = Value(2)
-  val OtherIn             = Value(3)
-  val OtherOut            = Value(4)
-  val OutboundReserve     = Value(5)
-  val OutboundPreview     = Value(6)
-  val OutboundPredictive  = Value(7)
-}
-object RTPDirection extends ShortEnum {
-  val Input           = Value(0)
-  val Output          = Value(1)
-  val BiDirectional   = Value(2)
-}
-
-object RTPType extends ShortEnum {
-  val Audio   = Value(0)
-  val Video   = Value(1)
-  val Data    = Value(2)
-}
-
-object SupervisoryAction extends ShortEnum {
-  val CLEAR		= Value(0)
-  val MONITOR     = Value(1)
-  val WHISPER     = Value(2)
-  val BARGE_IN    = Value(3)
-  val INTERCEPT   = Value(4)
+object ClientEventReportState extends ShortEnum {
+  val Normal      = Value(0)
+  val Warning     = Value(1)
+  val Error       = Value(2)
 }
 
 object ConfigOperation extends ShortEnum {
@@ -211,90 +176,11 @@ object ConfigOperation extends ShortEnum {
   val RemoveAgent             = Value(2)
 }
 
-object ClientEventReportState extends ShortEnum {
-  val Normal      = Value(0)
-  val Warning     = Value(1)
-  val Error       = Value(2)
-}
-
-object DistributionValue extends ShortEnum {
-  val CLIENT      = Value(0)
-  val SUPERVISOR  = Value(1)
-  val TEAM        = Value(2)
-  val ALL         = Value(3)
-}
-
-object WrapupDataMode extends IntEnum {
-  type WrapupDataMode = WrapupDataMode.Value
-  val Required                = Value(0)
-  val Optional                = Value(1)
-  val NotAllowed              = Value(2)
-  val RequiredWithWrapupData  = Value(3)
-}
-
-object AgentWorkMode extends ShortEnum {
-  type AgentWorkMode = Value
-  val UNSPECIFIED   = Value(0)
-  val AUTO_IN       = Value(1)
-  val MANUAL_IN     = Value(2)
-}
-
-object ForcedFlag extends ByteEnum {
-  val FALSE	                  = Value(0)
-  val TRUE                    = Value(1)
-  val AgentAuthenticationOnly	= Value(2)
-}
-
-object AgentServiceRequestMask {
-  val OUTBOUND_SUPPORT: Int     = 0x00000001
-}
-
-object CallPlacementType extends ShortEnum {
-  type CallPlacementType = Value
-  val UNSPECIFIED               = Value(0)
-  val LINE_CALL                 = Value(1)
-  val OUTBOUND                  = Value(2)
-  val OUTBOUND_NO_ACCESS_CODE   = Value(3)
-  val DIRECT_POSITION           = Value(4)
-  val DIRECT_AGENT              = Value(5)
-  val SUPERVISOR_ASSIST         = Value(6)
-}
-
-object CallMannerType extends ShortEnum {
-  type CallMannerType = Value
-  val UNSPECIFIED   = Value(0)
-  val POLITE        = Value(1)
-  val BELLIGERENT   = Value(2)
-  val SEMI_POLITE   = Value(3)
-  val RESERVED      = Value(4)
-}
-
-object CallOption extends ShortEnum {
-  type CallOption = Value
-  val UNSPECIFIED                   = Value(0)
-  val CALLING_AGENT_ONLINE          = Value(1)
-  val CALLING_AGENT_RESERVED        = Value(2)
-  val CALLING_AGENT_NOT_RESERVED    = Value(3)
-  val CALLING_AGENT_BUZZ_BASE       = Value(4)
-  val CALLING_AGENT_BEEP_HSET       = Value(5)
-  val SERVIE_CIRCUIT_ON             = Value(6)
-}
-
-object FacilityType extends ShortEnum {
-  type FacilityType = Value
-  val UNSPECIFIED   = Value(0)
-  val TRUNK_GROUP   = Value(1)
-  val SKILL_GROUP   = Value(2)
-}
-
-object AnsweringMachine extends ShortEnum {
-  type AnsweringMachine = Value
-  val UNSPECIFIED       = Value(0)
-  val CONNECT           = Value(1)
-  val DISCONNECT        = Value(2)
-  val NONE              = Value(3)
-  val NONE_NO_MODEM     = Value(4)
-  val CONNECT_NO_MODEM  = Value(5)
+object ConnectionDeviceIDType extends ShortEnum {
+  type ConnectionDeviceIDType = Value
+  val NONE        = Value(0xffff)
+  val STATIC      = Value(0)
+  val DYNAMIC     = Value(1)
 }
 
 object ConsultType extends ShortEnum {
@@ -302,190 +188,6 @@ object ConsultType extends ShortEnum {
   val UNSPECIFIED   = Value(0)
   val TRANSFER      = Value(1)
   val CONFERENCE    = Value(2)
-}
-
-object AllocationState extends ShortEnum {
-  type AllocationState = Value
-  val CALL_DELIVERED    = Value(0)
-  val CALL_ESTABLISHED  = Value(1)
-}
-
-object DestinationCountry extends ShortEnum {
-  type DestinationCountry = Value
-  val UNSPECIFIED       = Value(0)
-  val US_AND_CANADA     = Value(1)
-}
-
-object AnswerDetectMode extends ShortEnum {
-  type AnswerDetectMode = Value
-  val UNSPECIFIED       = Value(0)
-  val MOICE_THRESHOLD   = Value(1)
-  val VOICE_END         = Value(2)
-  val VOICE_END_DELAY   = Value(3)
-  val VOICE_AND_BEEP    = Value(4)
-  val BEEP              = Value(5)
-}
-
-object TypeOfDevice extends ShortEnum {
-  type TypeOfDevice     = Value
-  val STATION           = Value( 0)
-  val LINE              = Value( 1)
-  val BUTTON            = Value( 2)
-  val ACD               = Value( 3)
-  val TRUNK             = Value( 4)
-  val OPERATOR          = Value( 5)
-  val RESERVED_6        = Value( 6)
-  val RESERVED_7        = Value( 7)
-  val RESERVED_8        = Value( 8)
-  val RESERVED_9        = Value( 9)
-  val RESERVED_10       = Value(10)
-  val RESERVED_11       = Value(11)
-  val RESERVED_12       = Value(12)
-  val RESERVED_13       = Value(13)
-  val RESERVED_14       = Value(14)
-  val RESERVED_15       = Value(15)
-  val STATION_GROUP     = Value(16)
-  val LINE_GROUP        = Value(17)
-  val BUTTON_GROUP      = Value(18)
-  val ACD_GROUP         = Value(19)
-  val TRUNK_GROUP       = Value(20)
-  val OPERATOR_GROUP    = Value(21)
-  val CTI_PORT_SCCP     = Value(22)
-  val CTI_PORT_SIP      = Value(23)
-  val OTHER             = Value(255)
-}
-
-object AgentGreetingAction extends ShortEnum {
-  val StopGreeting    = Value(0)
-  val Disable         = Value(1)
-  val Enable          = Value(2)
-}
-
-object ServerMode extends ShortEnum {
-  val Exclusive   = Value(0)
-  val RoundRobin  = Value(1)
-  val Parallel    = Value(2)
-}
-
-object ForwardType extends Enumeration {
-  type ForwardType = Value
-  val IMMEDIATE     = Value(0)
-  val BUSY          = Value(1)
-  val NO_ANS        = Value(2)
-  val BUSY_INT      = Value(3)
-  val BUSY_EXT      = Value(4)
-  val NO_ANS_INT    = Value(5)
-  val NO_ANS_EXT    = Value(6)
-}
-
-object SilentMonitorStatus extends ShortEnum {
-  type SilentMonitorStatus = Value
-  val NONE          = Value(0)
-  val INITIATOR     = Value(1)
-  val TARGET        = Value(2)
-}
-
-object StatusCode extends IntEnum {
-  type StatusCode = Value
-  val NO_ERROR                                  = Value( 0)
-  val INVALID_VERSION                           = Value( 1)
-  val INVALID_MESSAGE_TYPE                      = Value( 2)
-  val INVALID_FIELD_TAG                         = Value( 3)
-  val SESSION_NOT_OPEN                          = Value( 4)
-  val SESSION_ALREADY_OPEN                      = Value( 5)
-  val REQUIRED_DATA_MISSING                     = Value( 6)
-  val INVALID_PERIPHERAL_ID                     = Value( 7)
-  val INVALID_AGENT_DATA                        = Value( 8)
-  val AGENT_NOT_LOGGED_ON                       = Value( 9)
-  val DEVICE_IN_USE                             = Value(10)
-  val NEW_SESSION_OPENED                        = Value(11)
-  val FUNCTION_NOT_AVAILABLE                    = Value(12)
-  val INVALID_CALLID                            = Value(13)
-  val PROTECTED_VARIABLE                        = Value(14)
-  val CTI_SERVER_OFFLINE                        = Value(15)
-  val TIMEOUT                                   = Value(16)
-  val UNSPECIFIED_FAILURE                       = Value(17)
-  val INVALID_TIMEOUT                           = Value(18)
-  val INVALID_SERVICE_MASK                      = Value(19)
-  val INVALID_CALL_MSG_MASK                     = Value(20)
-  val INVALID_AGENT_STATE_MASK                  = Value(21)
-  val INVALID_RESERVED_FIELD                    = Value(22)
-  val INVALID_FIELD_LENGTH                      = Value(23)
-  val INVALID_DIGITS                            = Value(24)
-  val BAD_MESSAGE_FORMAT                        = Value(25)
-  val INVALID_TAG_FOR_MSG_TYPE                  = Value(26)
-  val INVALID_DEVICE_ID_TYPE                    = Value(27)
-  val INVALID_LCL_CONN_STATE                    = Value(28)
-  val INVALID_EVENT_CAUSE                       = Value(29)
-  val INVALID_NUM_PARTIES                       = Value(30)
-  val INVALID_SYS_EVENT_ID                      = Value(31)
-  val INCONSISTENT_AGENT_DATA                   = Value(32)
-  val INVALID_CONNECTION_ID_TYPE                = Value(33)
-  val INVALID_CALL_TYPE                         = Value(34)
-  val NOT_CALL_PARTY                            = Value(35)
-  val INVALID_PASSWORD                          = Value(36)
-  val CLIENT_DISCONNECTED                       = Value(37)
-  val INVALID_OBJECT_STATE                      = Value(38)
-  val INVALID_NUM_SKILL_GROUPS                  = Value(39)
-  val INVALID_NUM_LINES                         = Value(40)
-  val INVALID_LINE_TYPE                         = Value(41)
-  val INVALID_ALLOCATION_STATE                  = Value(42)
-  val INVALID_ANSWERING_MACHINE                 = Value(43)
-  val INVALID_CALL_MANNER_TYPE                  = Value(44)
-  val INVALID_CALL_PLACEMENT_TYPE               = Value(45)
-  val INVALID_CONSULT_TYPE                      = Value(46)
-  val INVALID_FACILITY_TYPE                     = Value(47)
-  val INVALID_MSG_TYPE_FOR_VERSION              = Value(48)
-  val INVALID_TAG_FOR_VERSION                   = Value(49)
-  val INVALID_AGENT_WORK_MODE                   = Value(50)
-  val INVALID_CALL_OPTION                       = Value(51)
-  val INVALID_DESTINATION_COUNTRY               = Value(52)
-  val INVALID_ANSWER_DETECT_MODE                = Value(53)
-  val MUTUALLY_EXCLUS_DEVICEID_TYPES            = Value(54)
-  val INVALID_MONITORID                         = Value(55)
-  val SESSION_MONITOR_ALREADY_EXISTS            = Value(56)
-  val SESSION_MONITOR_IS_CLIENTS                = Value(57)
-  val INVALID_CALL_CONTROL_MASK                 = Value(58)
-  val INVALID_FEATURE_MASK                      = Value(59)
-  val INVALID_TRANSFER_CONFERENCE_SETUP_MASK    = Value(60)
-  val INVALID_ARRAY_INDEX                       = Value(61)
-  val INVALID_CHARACTER                         = Value(62)
-  val CLIENT_NOT_FOUND                          = Value(63)
-  val SUPERVISOR_NOT_FOUND                      = Value(64)
-  val TEAM_NOT_FOUND                            = Value(65)
-  val NO_CALL_ACTIVE                            = Value(66)
-  val NAMED_VARIABLE_NOT_CONFIGURED             = Value(67)
-  val NAMED_ARRAY_NOT_CONFIGURED                = Value(68)
-  val INVALID_CALL_VARIABLE_MASK                = Value(69)
-  val ELEMENT_NOT_FOUND                         = Value(70)
-  val INVALID_DISTRIBUTION_TYPE                 = Value(71)
-  val INVALID_SKILL_GROUP                       = Value(72)
-  val TOO_MUCH_DATA                             = Value(73)
-  val VALUE_TOO_LONG                            = Value(74)
-  val SCALAR_FUNCTION_ON_ARRAY                  = Value(75)
-  val ARRAY_FUNCTION_ON_SCALAR                  = Value(76)
-  val INVALID_NUM_NAMED_VARIABLES               = Value(77)
-  val INVALID_NUM_NAMED_ARRAYS                  = Value(78)
-  val INVALID_RTP_DIRECTION                     = Value(79)
-  val INVALID_RTP_TYPE                          = Value(80)
-  val CALLED_PARTY_DISPOSITION                  = Value(81)
-  val INVALID_SUPERVISORY_ACTION                = Value(82)
-  val AGENT_TEAM_MONITOR_ALREADY_EXISTS         = Value(83)
-  val INVALID_SERVICE                           = Value(84)
-  val SERVICE_CONFLICT                          = Value(85)
-  val SKILL_GROUP_CONFLICT                      = Value(86)
-  val INVALID_DEVICE                            = Value(87)
-  val INVALID_MR_DOMAIN                         = Value(88)
-  val MONITOR_ALREADY_EXISTS                    = Value(89)
-  val MONITOR_TERMINATED                        = Value(90)
-  val INVALID_TASK_MSG_MASK                     = Value(91)
-  val SERVER_NOT_MASTER                         = Value(92)
-  val INVALID_CSD                               = Value(93)
-  val JTAPI_CCM_PROBLEM                         = Value(94)
-  val INVALID_CONFIG_MSG_MASK                   = Value(95)
-  val AUTO_CONFIG_RESET                         = Value(96)
-  val INVALID_MONITOR_STATUS                    = Value(97)
-  val INVALID_REQUEST_TYPE                      = Value(98)
 }
 
 object ControlFailureCode extends ShortEnum {
@@ -626,6 +328,28 @@ object ControlFailureCode extends ShortEnum {
   val AGENT_GREETING_CONTROL_OPERATION_FAILURE          = Value(1016)
 }
 
+object DestinationCountry extends ShortEnum {
+  type DestinationCountry = Value
+  val UNSPECIFIED       = Value(0)
+  val US_AND_CANADA     = Value(1)
+}
+
+object DeviceIDType extends ShortEnum {
+  type DeviceIDType = Value
+  val NONE                        = Value(0xffff)
+  val DEVICE_IDENTIFIER           = Value( 0)
+  val TRUNK_IDENTIFIER            = Value(70)
+  val TRUNK_GROUP_IDENTIFIER      = Value(71)
+  val IP_PHONE_MAC_IDENTIFIER     = Value(72)
+  val CTI_PORT                    = Value(73)
+  val ROUTE_POINT                 = Value(74)
+  val EXTERNAL                    = Value(75)
+  val AGENT_DEVICE                = Value(76)
+  val QUEUE                       = Value(77)
+  val NON_ACD_DEVICE_IDENTIFIER   = Value(78)
+  val SHARED_DEVICE_IDENTIFIER    = Value(79)
+}
+
 object DispositionCodeValue extends ShortEnum {
   type DispositionCodeValue = Value
   val Abandoned_in_Network                      = Value( 1)
@@ -680,6 +404,13 @@ object DispositionCodeValue extends ShortEnum {
   val Application_Terminate_Dialogue            = Value(50)
   val Task_Ended_During_Application_Init        = Value(51)
   val Called_Party_Disconnected                 = Value(52)
+}
+
+object DistributionValue extends ShortEnum {
+  val CLIENT      = Value(0)
+  val SUPERVISOR  = Value(1)
+  val TEAM        = Value(2)
+  val ALL         = Value(3)
 }
 
 object EventCause extends ShortEnum {
@@ -802,6 +533,240 @@ object EventCode extends ShortEnum {
   val FailedToPlayGreeting            = Value(2)
 }
 
+object FacilityType extends ShortEnum {
+  type FacilityType = Value
+  val UNSPECIFIED   = Value(0)
+  val TRUNK_GROUP   = Value(1)
+  val SKILL_GROUP   = Value(2)
+}
+
+object ForcedFlag extends ByteEnum {
+  val FALSE	                  = Value(0)
+  val TRUE                    = Value(1)
+  val AgentAuthenticationOnly	= Value(2)
+}
+
+object ForwardType extends Enumeration {
+  type ForwardType = Value
+  val IMMEDIATE     = Value(0)
+  val BUSY          = Value(1)
+  val NO_ANS        = Value(2)
+  val BUSY_INT      = Value(3)
+  val BUSY_EXT      = Value(4)
+  val NO_ANS_INT    = Value(5)
+  val NO_ANS_EXT    = Value(6)
+}
+
+object LineType extends ShortEnum {
+  type LineType = Value
+  val INBOUND_ACD     = Value( 0)
+  val OUTBOUND_ACD    = Value( 1)
+  val INSIDE          = Value( 2)
+  val UNKNOWN         = Value( 3)
+  val SUPERVISOR      = Value( 4)
+  val MESSAGE         = Value( 5)
+  val HELP            = Value( 6)
+  val OUTBOUND        = Value( 7)
+  val DID             = Value( 8)
+  val SILENT_MONITOR  = Value( 9)
+  val NON_ACD_IN      = Value(10)
+  val NON_ACD_OUT     = Value(11)
+}
+
+object LocalConnectionState extends ShortEnum {
+  type LocalConnectionState = Value
+  val NONE        = Value(0xffff)
+  val NULL        = Value(0)
+  val INITIATE    = Value(1)
+  val ALERTING    = Value(2)
+  val CONNECT     = Value(3)
+  val HOLD        = Value(4)
+  val QUEUED      = Value(5)
+  val FAIL        = Value(6)
+}
+
+object PeripheralType extends ShortEnum {
+  type PeripheralType = Value
+  val NONE                    = Value(0xffff)
+  val ASPECT                  = Value( 1)
+  val MERIDIAN                = Value( 2)
+  val G2                      = Value( 3)
+  val DEFINITY_ECS_NON_EAS    = Value( 4)
+  val DEFINITY_ECS_EAS        = Value( 5)
+  val GALAXY                  = Value( 6)
+  val SPECTRUM                = Value( 7)
+  val VRU                     = Value( 8)
+  val VRU_POLLED              = Value( 9)
+  val DMS100                  = Value(10)
+  val SIEMENS_9006            = Value(11)
+  val SIEMENS_9005            = Value(12)
+  val ALCATEL                 = Value(13)
+  val NEC_NEAX_2x00           = Value(14)
+  val ACP_1000                = Value(15)
+  val SYMPOSIUM               = Value(16)
+  val ENTERPRISE_AGENT        = Value(17)
+  val MD110                   = Value(18)
+  val MEDIA_ROUTING           = Value(19)
+  val GENERIC                 = Value(20)
+  val ACMI_CRS                = Value(21)
+  val ACMI_IPCC               = Value(22)
+  val SIMPLIFIED_IPCC         = Value(23)
+  val ARS                     = Value(24)
+  val ACMI_ERS                = Value(25)
+  val ACMI_EXPERT_ADVISOR     = Value(26)
+  val RESERVED                = Value(27)
+}
+
+object RTPDirection extends ShortEnum {
+  val Input           = Value(0)
+  val Output          = Value(1)
+  val BiDirectional   = Value(2)
+}
+
+object RTPType extends ShortEnum {
+  val Audio   = Value(0)
+  val Video   = Value(1)
+  val Data    = Value(2)
+}
+
+object ServerMode extends ShortEnum {
+  val Exclusive   = Value(0)
+  val RoundRobin  = Value(1)
+  val Parallel    = Value(2)
+}
+
+object SilentMonitorStatus extends ShortEnum {
+  type SilentMonitorStatus = Value
+  val NONE          = Value(0)
+  val INITIATOR     = Value(1)
+  val TARGET        = Value(2)
+}
+
+object SpecialValue {
+  val MAX_NUM_CTI_CLIENTS: Int    = 16
+  val MAX_NUM_PARTIES: Int        = 16
+  val MAX_NUM_DEVICES: Int        = 16
+  val MAX_NUM_CALLS: Int          = 16
+  val MAX_NUM_SKILL_GROUPS: Int   = 20
+  val MAX_NUM_LINES: Int          = 10
+  val NULL_CALL_ID: Int           = 0xffffffff
+  val NULL_PERIPHERAL_ID: Int     = 0xffffffff
+  val NULL_SERVICE: Int           = 0xffffffff
+  val NULL_SKILL_GROUP: Int       = 0xffffffff
+  val NULL_CALLTYPE: Int          = 0xffff
+}
+
+object StatusCode extends IntEnum {
+  type StatusCode = Value
+  val NO_ERROR                                  = Value( 0)
+  val INVALID_VERSION                           = Value( 1)
+  val INVALID_MESSAGE_TYPE                      = Value( 2)
+  val INVALID_FIELD_TAG                         = Value( 3)
+  val SESSION_NOT_OPEN                          = Value( 4)
+  val SESSION_ALREADY_OPEN                      = Value( 5)
+  val REQUIRED_DATA_MISSING                     = Value( 6)
+  val INVALID_PERIPHERAL_ID                     = Value( 7)
+  val INVALID_AGENT_DATA                        = Value( 8)
+  val AGENT_NOT_LOGGED_ON                       = Value( 9)
+  val DEVICE_IN_USE                             = Value(10)
+  val NEW_SESSION_OPENED                        = Value(11)
+  val FUNCTION_NOT_AVAILABLE                    = Value(12)
+  val INVALID_CALLID                            = Value(13)
+  val PROTECTED_VARIABLE                        = Value(14)
+  val CTI_SERVER_OFFLINE                        = Value(15)
+  val TIMEOUT                                   = Value(16)
+  val UNSPECIFIED_FAILURE                       = Value(17)
+  val INVALID_TIMEOUT                           = Value(18)
+  val INVALID_SERVICE_MASK                      = Value(19)
+  val INVALID_CALL_MSG_MASK                     = Value(20)
+  val INVALID_AGENT_STATE_MASK                  = Value(21)
+  val INVALID_RESERVED_FIELD                    = Value(22)
+  val INVALID_FIELD_LENGTH                      = Value(23)
+  val INVALID_DIGITS                            = Value(24)
+  val BAD_MESSAGE_FORMAT                        = Value(25)
+  val INVALID_TAG_FOR_MSG_TYPE                  = Value(26)
+  val INVALID_DEVICE_ID_TYPE                    = Value(27)
+  val INVALID_LCL_CONN_STATE                    = Value(28)
+  val INVALID_EVENT_CAUSE                       = Value(29)
+  val INVALID_NUM_PARTIES                       = Value(30)
+  val INVALID_SYS_EVENT_ID                      = Value(31)
+  val INCONSISTENT_AGENT_DATA                   = Value(32)
+  val INVALID_CONNECTION_ID_TYPE                = Value(33)
+  val INVALID_CALL_TYPE                         = Value(34)
+  val NOT_CALL_PARTY                            = Value(35)
+  val INVALID_PASSWORD                          = Value(36)
+  val CLIENT_DISCONNECTED                       = Value(37)
+  val INVALID_OBJECT_STATE                      = Value(38)
+  val INVALID_NUM_SKILL_GROUPS                  = Value(39)
+  val INVALID_NUM_LINES                         = Value(40)
+  val INVALID_LINE_TYPE                         = Value(41)
+  val INVALID_ALLOCATION_STATE                  = Value(42)
+  val INVALID_ANSWERING_MACHINE                 = Value(43)
+  val INVALID_CALL_MANNER_TYPE                  = Value(44)
+  val INVALID_CALL_PLACEMENT_TYPE               = Value(45)
+  val INVALID_CONSULT_TYPE                      = Value(46)
+  val INVALID_FACILITY_TYPE                     = Value(47)
+  val INVALID_MSG_TYPE_FOR_VERSION              = Value(48)
+  val INVALID_TAG_FOR_VERSION                   = Value(49)
+  val INVALID_AGENT_WORK_MODE                   = Value(50)
+  val INVALID_CALL_OPTION                       = Value(51)
+  val INVALID_DESTINATION_COUNTRY               = Value(52)
+  val INVALID_ANSWER_DETECT_MODE                = Value(53)
+  val MUTUALLY_EXCLUS_DEVICEID_TYPES            = Value(54)
+  val INVALID_MONITORID                         = Value(55)
+  val SESSION_MONITOR_ALREADY_EXISTS            = Value(56)
+  val SESSION_MONITOR_IS_CLIENTS                = Value(57)
+  val INVALID_CALL_CONTROL_MASK                 = Value(58)
+  val INVALID_FEATURE_MASK                      = Value(59)
+  val INVALID_TRANSFER_CONFERENCE_SETUP_MASK    = Value(60)
+  val INVALID_ARRAY_INDEX                       = Value(61)
+  val INVALID_CHARACTER                         = Value(62)
+  val CLIENT_NOT_FOUND                          = Value(63)
+  val SUPERVISOR_NOT_FOUND                      = Value(64)
+  val TEAM_NOT_FOUND                            = Value(65)
+  val NO_CALL_ACTIVE                            = Value(66)
+  val NAMED_VARIABLE_NOT_CONFIGURED             = Value(67)
+  val NAMED_ARRAY_NOT_CONFIGURED                = Value(68)
+  val INVALID_CALL_VARIABLE_MASK                = Value(69)
+  val ELEMENT_NOT_FOUND                         = Value(70)
+  val INVALID_DISTRIBUTION_TYPE                 = Value(71)
+  val INVALID_SKILL_GROUP                       = Value(72)
+  val TOO_MUCH_DATA                             = Value(73)
+  val VALUE_TOO_LONG                            = Value(74)
+  val SCALAR_FUNCTION_ON_ARRAY                  = Value(75)
+  val ARRAY_FUNCTION_ON_SCALAR                  = Value(76)
+  val INVALID_NUM_NAMED_VARIABLES               = Value(77)
+  val INVALID_NUM_NAMED_ARRAYS                  = Value(78)
+  val INVALID_RTP_DIRECTION                     = Value(79)
+  val INVALID_RTP_TYPE                          = Value(80)
+  val CALLED_PARTY_DISPOSITION                  = Value(81)
+  val INVALID_SUPERVISORY_ACTION                = Value(82)
+  val AGENT_TEAM_MONITOR_ALREADY_EXISTS         = Value(83)
+  val INVALID_SERVICE                           = Value(84)
+  val SERVICE_CONFLICT                          = Value(85)
+  val SKILL_GROUP_CONFLICT                      = Value(86)
+  val INVALID_DEVICE                            = Value(87)
+  val INVALID_MR_DOMAIN                         = Value(88)
+  val MONITOR_ALREADY_EXISTS                    = Value(89)
+  val MONITOR_TERMINATED                        = Value(90)
+  val INVALID_TASK_MSG_MASK                     = Value(91)
+  val SERVER_NOT_MASTER                         = Value(92)
+  val INVALID_CSD                               = Value(93)
+  val JTAPI_CCM_PROBLEM                         = Value(94)
+  val INVALID_CONFIG_MSG_MASK                   = Value(95)
+  val AUTO_CONFIG_RESET                         = Value(96)
+  val INVALID_MONITOR_STATUS                    = Value(97)
+  val INVALID_REQUEST_TYPE                      = Value(98)
+}
+
+object SupervisoryAction extends ShortEnum {
+  val CLEAR		= Value(0)
+  val MONITOR     = Value(1)
+  val WHISPER     = Value(2)
+  val BARGE_IN    = Value(3)
+  val INTERCEPT   = Value(4)
+}
+
 object SystemEventID extends IntEnum {
   type SystemEventID = Value
   val CENTRAL_CONTROLLER_ONLINE       = Value( 1)
@@ -815,4 +780,41 @@ object SystemEventID extends IntEnum {
   val HALF_HOUR_CHANGE                = Value( 9)
   val INSTRUMENT_OUT_OF_SERVICE       = Value(10)
   val INSTRUMENT_BACK_IN_SERVICE      = Value(11)
+}
+
+object TypeOfDevice extends ShortEnum {
+  type TypeOfDevice     = Value
+  val STATION           = Value( 0)
+  val LINE              = Value( 1)
+  val BUTTON            = Value( 2)
+  val ACD               = Value( 3)
+  val TRUNK             = Value( 4)
+  val OPERATOR          = Value( 5)
+  val RESERVED_6        = Value( 6)
+  val RESERVED_7        = Value( 7)
+  val RESERVED_8        = Value( 8)
+  val RESERVED_9        = Value( 9)
+  val RESERVED_10       = Value(10)
+  val RESERVED_11       = Value(11)
+  val RESERVED_12       = Value(12)
+  val RESERVED_13       = Value(13)
+  val RESERVED_14       = Value(14)
+  val RESERVED_15       = Value(15)
+  val STATION_GROUP     = Value(16)
+  val LINE_GROUP        = Value(17)
+  val BUTTON_GROUP      = Value(18)
+  val ACD_GROUP         = Value(19)
+  val TRUNK_GROUP       = Value(20)
+  val OPERATOR_GROUP    = Value(21)
+  val CTI_PORT_SCCP     = Value(22)
+  val CTI_PORT_SIP      = Value(23)
+  val OTHER             = Value(255)
+}
+
+object WrapupDataMode extends IntEnum {
+  type WrapupDataMode = WrapupDataMode.Value
+  val Required                = Value(0)
+  val Optional                = Value(1)
+  val NotAllowed              = Value(2)
+  val RequiredWithWrapupData  = Value(3)
 }

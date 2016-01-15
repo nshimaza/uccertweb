@@ -285,13 +285,12 @@ object Tag extends Enumeration {
   // DON'T EDIT THIS LIST!!
   // This list is generated from TagDecoderFuncTbl.txt using gen-tag-list.sh
   //
-
-  // script generated code starts here
   val
+  // script generated code starts here
   ActiveConnectionCallID,
   ActiveConnectionDeviceIDType,
   AddedPartyDeviceType,
-  AgentAction,
+  AgentActionTag,
   AgentAvailabilityStatusTag,
   AgentConnectionCallID,
   AgentConnectionDeviceIDType,
@@ -384,7 +383,7 @@ object Tag extends Enumeration {
   CallPlacementTypeTag,
   CallTypeID,
   CallTypeTag,
-  CallVariableMask,
+  CallVariableMaskTag,
   CalledDeviceType,
   CalledPartyDisposition,
   CallingDeviceType,
@@ -422,7 +421,7 @@ object Tag extends Enumeration {
   FacilityTypeTag,
   FailingDeviceType,
   FailureCode,
-  ForcedFlag,
+  ForcedFlagTag,
   HandledCallsAfterCallTimeSession,
   HandledCallsAfterCallTimeTo5,
   HandledCallsAfterCallTimeToHalf,
@@ -591,6 +590,9 @@ object Tag extends Enumeration {
   ReservationCallsTo5,
   ReservationCallsToHalf,
   ReservationCallsToday,
+  Reserved1,
+  Reserved2,
+  Reserved3,
   Reserved16,
   RetrievingDeviceType,
   RingNoAnswerDN,
@@ -679,10 +681,11 @@ object Tag extends Enumeration {
   // Jump table from Tag to decoding function for floating part
   //
   val fxTagToDecodeFunc: Array[(Tag, ByteString) => ((Tag, Any), Int)] = Array(
+  // script generated code starts here
     decFxInt, 	// ActiveConnectionCallID
     ConnectionDeviceIDType.decodeWithLen, 	// ActiveConnectionDeviceIDType
     DeviceIDType.decodeWithLen, 	// AddedPartyDeviceType
-    decFxNotYetImplementedShort, 	// AgentAction
+    decFxNotYetImplementedShort, 	// AgentActionTag
     AgentAvailabilityStatus.decodeWithLen, 	// AgentAvailabilityStatusTag
     decFxInt, 	// AgentConnectionCallID
     ConnectionDeviceIDType.decodeWithLen, 	// AgentConnectionDeviceIDType
@@ -775,7 +778,7 @@ object Tag extends Enumeration {
     CallPlacementType.decodeWithLen, 	// CallPlacementTypeTag
     decFxInt, 	// CallTypeID
     CallType.decodeWithLen, 	// CallTypeTag
-    decFxShortBitSet, 	// CallVariableMask
+    decFxShortBitSet, 	// CallVariableMaskTag
     DeviceIDType.decodeWithLen, 	// CalledDeviceType
     DispositionCodeValue.decodeWithLen, 	// CalledPartyDisposition
     DeviceIDType.decodeWithLen, 	// CallingDeviceType
@@ -813,7 +816,7 @@ object Tag extends Enumeration {
     FacilityType.decodeWithLen, 	// FacilityTypeTag
     DeviceIDType.decodeWithLen, 	// FailingDeviceType
     ControlFailureCode.decodeWithLen, 	// FailureCode
-    decFxByte, 	// ForcedFlag
+    decFxByte, 	// ForcedFlagTag
     decFxInt, 	// HandledCallsAfterCallTimeSession
     decFxInt, 	// HandledCallsAfterCallTimeTo5
     decFxInt, 	// HandledCallsAfterCallTimeToHalf
@@ -982,6 +985,9 @@ object Tag extends Enumeration {
     decFxInt, 	// ReservationCallsTo5
     decFxInt, 	// ReservationCallsToHalf
     decFxInt, 	// ReservationCallsToday
+    decFxInt, 	// Reserved1
+    decFxInt, 	// Reserved2
+    decFxInt, 	// Reserved3
     decFxShort, 	// Reserved16
     DeviceIDType.decodeWithLen, 	// RetrievingDeviceType
     decFxInt, 	// RingNoAnswerDN
@@ -1033,8 +1039,11 @@ object Tag extends Enumeration {
     decFxInt, 	// WhisperCallsToday
     decFxInt, 	// WorkModeTimer
     WrapupDataMode.decodeWithLen, 	// WrapupDataIncomingMode
-    WrapupDataMode.decodeWithLen 	// WrapupDataOutgoingMode
-  )
+    WrapupDataMode.decodeWithLen, 	// WrapupDataOutgoingMode
+    // script generated code ends here
+
+    decFxRaw // ZZZZInternalUseOnly
+ )
 
 
   //

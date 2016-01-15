@@ -273,16 +273,17 @@ object MessageType extends Enumeration {
     //   2: FAILURE_EVENT
     List(Status),
     //   3: OPEN_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, VersionNumber, IdleTimeout, PeripheralID, ServiceRequested, CallMsgMask, AgentStateMaskTag,
+      ConfigMsgMask, Reserved1, Reserved2, Reserved3),
     //   4: OPEN_CONF
     List(InvokeID, ServiceGranted, MonitorID, PGStatus, ICMCentralControllerTime, PeripheralOnline,
       PeripheralTypeTag, AgentStateTag),
     //   5: HEARTBEAT_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID),
     //   6: HEARTBEAT_CONF
     List(InvokeID),
     //   7: CLOSE_REQ
-    List(ZZZZInternalUseOnly),
+    List(Status),
     //   8: CLOSE_CONF
     List(InvokeID),
     //   9: CALL_DELIVERED_EVENT
@@ -346,11 +347,12 @@ object MessageType extends Enumeration {
       CallTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, NewConnectionDeviceIDType, NewConnectionCallID,
       CalledPartyDisposition, CampaignID, QueryRuleID),
     //  26: SET_CALL_DATA_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionDeviceIDTypeTag, ConnectionCallID, NumNamedVariables, NumNamedArrays,
+      CallTypeTag, CalledPartyDisposition, CampaignID, QueryRuleID),
     //  27: SET_CALL_DATA_CONF
     List(InvokeID),
     //  28: RELEASE_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionDeviceIDTypeTag, ConnectionCallID),
     //  29: RELEASE_CALL_CONF
     List(InvokeID),
     //  30: AGENT_STATE_EVENT
@@ -361,7 +363,7 @@ object MessageType extends Enumeration {
     List(PGStatus, ICMCentralControllerTime, SystemEventIDTag, SystemEventArg1, SystemEventArg2,
       SystemEventArg3, EventDeviceType),
     //  32: CLIENT_EVENT_REPORT_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, ClientEventStateTag),
     //  33: CLIENT_EVENT_REPORT_CONF
     List(InvokeID),
     //  34: CALL_REACHED_NETWORK_EVENT
@@ -370,64 +372,76 @@ object MessageType extends Enumeration {
     //  35: CONTROL_FAILURE_CONF
     List(InvokeID, FailureCode, PeripheralErrorCode),
     //  36: QUERY_AGENT_STATE_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, MRDID, ICMAgentID),
     //  37: QUERY_AGENT_STATE_CONF
     List(InvokeID, AgentStateTag, NumSkillGroups, MRDID, NumTasks, AgentMode, MaxTaskLimit, ICMAgentID,
       AgentAvailabilityStatusTag),
     //  38: SET_AGENT_STATE_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, AgentStateTag, AgentWorkModeTag, NumSkillGroups, EventReasonCode, ForcedFlagTag,
+      AgentServiceReq),
     //  39: SET_AGENT_STATE_CONF
     List(InvokeID),
     //  40: ALTERNATE_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ActiveConnectionCallID, OtherConnectionCallID, ActiveConnectionDeviceIDType,
+      OtherConnectionDeviceIDType),
     //  41: ALTERNATE_CALL_CONF
     List(InvokeID),
     //  42: ANSWER_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag),
     //  43: ANSWER_CALL_CONF
     List(InvokeID),
     //  44: CLEAR_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag),
     //  45: CLEAR_CALL_CONF
     List(InvokeID),
     //  46: CLEAR_CONNECTION_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag),
     //  47: CLEAR_CONNECTION_CONF
     List(InvokeID),
     //  48: CONFERENCE_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, HeldConnectionCallID, ActiveConnectionCallID, HeldConnectionDeviceIDType,
+      ActiveConnectionDeviceIDType, CallPlacementTypeTag, CallMannerTypeTag, AlertRings, CallOptionTag,
+      FacilityTypeTag, AnsweringMachineTag, Priority, PostRoute, NumNamedVariables, NumNamedArrays),
     //  49: CONFERENCE_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, NumParties, LineHandle, LineTypeTag),
     //  50: CONSULTATION_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ActiveConnectionCallID, ActiveConnectionDeviceIDType, CallPlacementTypeTag,
+      CallMannerTypeTag, ConsultTypeTag, AlertRings, CallOptionTag, FacilityTypeTag, AnsweringMachineTag,
+      Priority, PostRoute, NumNamedVariables, NumNamedArrays),
     //  51: CONSULTATION_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
     //  52: DEFLECT_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag, CalledDeviceType),
     //  53: DEFLECT_CALL_CONF
     List(InvokeID),
     //  54: HOLD_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag, Reservation),
     //  55: HOLD_CALL_CONF
     List(InvokeID),
     //  56: MAKE_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, CallPlacementTypeTag, CallMannerTypeTag, AlertRings, CallOptionTag, FacilityTypeTag,
+      AnsweringMachineTag, Priority, PostRoute, NumNamedVariables, NumNamedArrays, SkillGroupNumber),
     //  57: MAKE_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
     //  58: MAKE_PREDICTIVE_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, CallPlacementTypeTag, CallMannerTypeTag, AlertRings, CallOptionTag, FacilityTypeTag,
+      AnsweringMachineTag, Priority, AllocationStateTag, DestinationCountryTag, AnswerDetectModeTag, AnswerDetectTime,
+      AnswerDetectControl1, AnswerDetectControl2, NumNamedVariables, NumNamedArrays),
     //  59: MAKE_PREDICTIVE_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, LineHandle, LineTypeTag),
     //  60: RECONNECT_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ActiveConnectionCallID, HeldConnectionCallID, ActiveConnectionDeviceIDType,
+      HeldConnectionDeviceIDType),
     //  61: RECONNECT_CALL_CONF
     List(InvokeID),
     //  62: RETRIEVE_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, HeldConnectionCallID, HeldConnectionDeviceIDType),
     //  63: RETRIEVE_CALL_CONF
     List(InvokeID),
     //  64: TRANSFER_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ActiveConnectionCallID, HeldConnectionCallID, ActiveConnectionDeviceIDType,
+      HeldConnectionDeviceIDType, CallPlacementTypeTag, CallMannerTypeTag, AlertRings, CallOptionTag, FacilityTypeTag,
+      AnsweringMachineTag, Priority, PostRoute, NumNamedVariables, NumNamedArrays),
     //  65: TRANSFER_CALL_CONF
     List(InvokeID, NewConnectionCallID, NewConnectionDeviceIDType, NumParties, LineHandle, LineTypeTag),
     //  66: RESERVED_66
@@ -455,7 +469,7 @@ object MessageType extends Enumeration {
     //  77: RESERVED_77
     List(RawBytes),
     //  78: QUERY_DEVICE_INFO_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, Reserved1),
     //  79: QUERY_DEVICE_INFO_CONF
     List(InvokeID, PeripheralTypeTag, TypeOfDeviceTag, ClassOfDeviceTag, NumLines, Reserved16,
       MaxActiveCalls, MaxHeldCalls, MaxDeviceInConference, MakeCallSetup, TransferConferenceSetup,
@@ -465,12 +479,12 @@ object MessageType extends Enumeration {
     //  81: RESERVED_81
     List(RawBytes),
     //  82: SNAPSHOT_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag),
     //  83: SNAPSHOT_CALL_CONF
     List(InvokeID, CallTypeTag, NumCTIClients, NumCallDevices, NumNamedVariables, NumNamedArrays,
       CalledPartyDisposition),
     //  84: SNAPSHOT_DEVICE_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, SnapshotDeviceType),
     //  85: SNAPSHOT_DEVICE_CONF
     List(InvokeID, NumCalls),
     //  86: CALL_DEQUEUED_EVENT
@@ -486,19 +500,20 @@ object MessageType extends Enumeration {
     //  90: RESERVED_90
     List(RawBytes),
     //  91: SEND_DTMF_SIGNAL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag, ToneDuration, PauseDuration),
     //  92: SEND_DTMF_SIGNAL_CONF
     List(InvokeID),
     //  93: MONITOR_START_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, CallMsgMask, AgentStateMaskTag, ConnectionDeviceIDTypeTag,
+      MonitoredDeviceType),
     //  94: MONITOR_START_CONF
     List(InvokeID, MonitorID),
     //  95: MONITOR_STOP_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, MonitorID),
     //  96: MONITOR_STOP_CONF
     List(InvokeID),
     //  97: CHANGE_MONITOR_MASK_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, MonitorID, CallMsgMask, AgentStateMaskTag),
     //  98: CHANGE_MONITOR_MASK_CONF
     List(InvokeID),
     //  99: CLIENT_SESSION_OPENED_EVENT
@@ -506,11 +521,11 @@ object MessageType extends Enumeration {
     // 100: CLIENT_SESSION_CLOSED_EVENT
     List(SessionID, PeripheralID, Status, ClientPort),
     // 101: SESSION_MONITOR_START_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, SessionID),
     // 102: SESSION_MONITOR_START_CONF
     List(InvokeID, MonitorID),
     // 103: SESSION_MONITOR_STOP_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, SessionID),
     // 104: SESSION_MONITOR_STOP_CONF
     List(InvokeID),
     // 105: AGENT_PRE_CALL_EVENT
@@ -519,17 +534,17 @@ object MessageType extends Enumeration {
     // 106: AGENT_PRE_CALL_ABORT_EVENT
     List(MonitorID, MRDID),
     // 107: USER_MESSAGE_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, Distribution),
     // 108: USER_MESSAGE_CONF
     List(InvokeID),
     // 109: USER_MESSAGE_EVENT
     List(ICMCentralControllerTime, Distribution),
     // 110: REGISTER_VARIABLES_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, CallVariableMaskTag, NumNamedVariables, NumNamedArrays),
     // 111: REGISTER_VARIABLES_CONF
     List(InvokeID),
     // 112: QUERY_AGENT_STATISTICS_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID),
     // 113: QUERY_AGENT_STATISTICS_CONF
     List(InvokeID, PeripheralID,
       // Total 84 counters
@@ -627,7 +642,7 @@ object MessageType extends Enumeration {
       WhisperCallsToday,
       EmergencyCallsToday),
     // 114: QUERY_SKILL_GROUP_STATISTICS_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, SkillGroupNumber, SkillGroupID),
     // 115: QUERY_SKILL_GROUP_STATISTICS_CONF
     List(InvokeID, PeripheralID, SkillGroupNumber, SkillGroupID,
       // Total 145 counters
@@ -797,19 +812,20 @@ object MessageType extends Enumeration {
     // 117: RTP_STOPPED_EVENT
     List(MonitorID, PeripheralID, ClientPort, RTPDirectionTag, ConnectionDeviceIDTypeTag, ConnectionCallID),
     // 118: SUPERVISOR_ASSIST_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag),
     // 119: SUPERVISOR_ASSIST_CONF
     List(InvokeID, ConnectionCallID, ConnectionDeviceIDTypeTag, LineHandle, LineTypeTag),
     // 120: SUPERVISOR_ASSIST_EVENT
     List(ZZZZInternalUseOnly),
     // 121: EMERGENCY_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag),
     // 122: EMERGENCY_CALL_CONF
     List(InvokeID, ConnectionCallID, ConnectionDeviceIDTypeTag, LineHandle, LineTypeTag),
     // 123: EMERGENCY_CALL_EVENT
     List(PeripheralID, ConnectionCallID, ConnectionDeviceIDTypeTag, SessionID),
     // 124: SUPERVISE_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, AgentConnectionCallID, SupervisorConnectionCallID, AgentConnectionDeviceIDType,
+      SupervisorConnectionDeviceIDType, SupervisoryActionTag),
     // 125: SUPERVISE_CALL_CONF
     List(InvokeID, ConnectionCallID, ConnectionDeviceIDTypeTag),
     // 126: AGENT_TEAM_CONFIG_REQ
@@ -819,11 +835,11 @@ object MessageType extends Enumeration {
     // 128: AGENT_TEAM_CONFIG_EVENT
     List(PeripheralID, TeamID, NumberOfAgents, ConfigOperationTag),
     // 129: SET_APP_DATA_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID),
     // 130: SET_APP_DATA_CONF
     List(InvokeID),
     // 131: AGENT_DESK_SETTINGS_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID),
     // 132: AGENT_DESK_SETTINGS_CONF
     List(InvokeID, PeripheralID,
       DeskSettingsMaskTag,
@@ -841,39 +857,42 @@ object MessageType extends Enumeration {
       WorkModeTimer,
       RingNoAnswerDN),
     // 133: LIST_AGENT_TEAM_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, SupervisorID),
     // 134: LIST_AGENT_TEAM_CONF
     List(InvokeID, NumberOfAgentTeams, SegmentNumber, More),
     // 135: MONITOR_AGENT_TEAM_START_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, TeamID),
     // 136: MONITOR_AGENT_TEAM_START_CONF
     List(InvokeID, MonitorID),
     // 137: MONITOR_AGENT_TEAM_STOP_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, MonitorID),
     // 138: MONITOR_AGENT_TEAM_STOP_CONF
     List(InvokeID),
     // 139: BAD_CALL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionDeviceIDTypeTag, ConnectionCallID),
     // 140: BAD_CALL_CONF
     List(InvokeID),
     // 141: SET_DEVICE_ATTRIBUTES_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
+      CallTypeTag, CallingDeviceType),
     // 142: SET_DEVICE_ATTRIBUTES_CONF
     List(InvokeID),
     // 143: REGISTER_SERVICE_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, ServerModeTag),
     // 144: REGISTER_SERVICE_CONF
     List(InvokeID, RegisteredServiceID),
     // 145: UNREGISTER_SERVICE_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, RegisteredServiceID),
     // 146: UNREGISTER_SERVICE_CONF
     List(InvokeID),
     // 147: START_RECORDING_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ClientPort, BitRate, PacketSize, ConnectionDeviceIDTypeTag,
+      RTPDirectionTag, RTPTypeTag, EchoCancellation, PayloadType),
     // 148: START_RECORDING_CONF
     List(InvokeID, SessionID, ServerData),
     // 149: STOP_RECORDING_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, ConnectionCallID, ClientPort, SessionID, ServerData, ConnectionDeviceIDTypeTag,
+      RTPDirectionTag),
     // 150: STOP_RECORDING_CONF
     List(InvokeID),
     // 151: MEDIA_LOGIN_REQ
@@ -1074,7 +1093,7 @@ object MessageType extends Enumeration {
     List(MonitorID, PeripheralID, ConnectionDeviceIDTypeTag, ConnectionCallID, EventCodeTag,
       PeripheralErrorCode),
     // 249: AGENT_GREETING_CONTROL_REQ
-    List(ZZZZInternalUseOnly),
+    List(InvokeID, PeripheralID, AgentActionTag),
     // 250: AGENT_GREETING_CONTROL_CONF
     List(InvokeID)
   )
@@ -1090,7 +1109,7 @@ object MessageType extends Enumeration {
 
   def getFixedPartList(msgType: MessageType): List[Tag] = fixedPartListTable(msgType.id)
 
-
+/*
   def getFixedPartList_obsolete_do_not_use(msgType: MessageType): List[Tag] = {
     msgType match {
       case
@@ -1581,4 +1600,5 @@ object MessageType extends Enumeration {
       case USER_MESSAGE_EVENT => List(ICMCentralControllerTime, Distribution)
     }
   }
+*/
 }

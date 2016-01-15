@@ -1,7 +1,7 @@
 decFxInt	ActiveConnectionCallID
 ConnectionDeviceIDType.decodeWithLen	ActiveConnectionDeviceIDType
 DeviceIDType.decodeWithLen	AddedPartyDeviceType
-decFxNotYetImplementedShort	AgentAction
+decFxNotYetImplementedShort	AgentActionTag
 AgentAvailabilityStatus.decodeWithLen	AgentAvailabilityStatusTag
 decFxInt	AgentConnectionCallID
 ConnectionDeviceIDType.decodeWithLen	AgentConnectionDeviceIDType
@@ -94,7 +94,7 @@ CallOption.decodeWithLen	CallOptionTag
 CallPlacementType.decodeWithLen	CallPlacementTypeTag
 decFxInt	CallTypeID
 CallType.decodeWithLen	CallTypeTag
-decFxShortBitSet	CallVariableMask
+decFxShortBitSet	CallVariableMaskTag
 DeviceIDType.decodeWithLen	CalledDeviceType
 DispositionCodeValue.decodeWithLen	CalledPartyDisposition
 DeviceIDType.decodeWithLen	CallingDeviceType
@@ -132,7 +132,7 @@ decFxShort	EventReasonCode
 FacilityType.decodeWithLen	FacilityTypeTag
 DeviceIDType.decodeWithLen	FailingDeviceType
 ControlFailureCode.decodeWithLen	FailureCode
-decFxByte	ForcedFlag
+decFxByte	ForcedFlagTag
 decFxInt	HandledCallsAfterCallTimeSession
 decFxInt	HandledCallsAfterCallTimeTo5
 decFxInt	HandledCallsAfterCallTimeToHalf
@@ -301,6 +301,9 @@ decFxInt	ReservationCallsTimeToday
 decFxInt	ReservationCallsTo5
 decFxInt	ReservationCallsToHalf
 decFxInt	ReservationCallsToday
+decFxInt	Reserved1
+decFxInt	Reserved2
+decFxInt	Reserved3
 decFxShort	Reserved16
 DeviceIDType.decodeWithLen	RetrievingDeviceType
 decFxInt	RingNoAnswerDN

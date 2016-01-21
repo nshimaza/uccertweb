@@ -816,7 +816,7 @@ object Tag extends Enumeration {
     FacilityType.decodeWithLen, 	// FacilityTypeTag
     DeviceIDType.decodeWithLen, 	// FailingDeviceType
     ControlFailureCode.decodeWithLen, 	// FailureCode
-    decFxByte, 	// ForcedFlagTag
+    ForcedFlag.decodeWithLen, 	// ForcedFlagTag
     decFxInt, 	// HandledCallsAfterCallTimeSession
     decFxInt, 	// HandledCallsAfterCallTimeTo5
     decFxInt, 	// HandledCallsAfterCallTimeToHalf

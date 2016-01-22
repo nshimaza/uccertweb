@@ -41,11 +41,17 @@ object Decoder {
       decoded
     else {
       val tag = Tag(buf(0).toInt & 0xff)
-      val len = buf(1).toInt & 0xff
-      val body = buf.drop(2)
-      val rest = body.drop(len)
+      val body = buf.drop(1)
+      val (result, next_offset) = Tag.decodeFloatingField(tag, body)
 
-      decodeFloatingPart(Tag.decodeFloatingField(tag, len, body) +: decoded, rest)
+      decodeFloatingPart(result +: decoded, body.drop(next_offset))
+
+//      val tag = Tag(buf(0).toInt & 0xff)
+//      val len = buf(1).toInt & 0xff
+//      val body = buf.drop(2)
+//      val rest = body.drop(len)
+//
+//      decodeFloatingPart(Tag.decodeFloatingField(tag, len, body) +: decoded, rest)
     }
   }
 }

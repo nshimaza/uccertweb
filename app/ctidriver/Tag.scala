@@ -671,24 +671,24 @@ object Tag extends Enumeration {
   private def decFxShortBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
     ((tag, BitSet fromBitMask Array(body.toShort.toLong)), 2)
   private def decFxMsgType(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, MessageType fromInt body.toInt), 4)
-  private def decFxNotYetImplementedInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 4)
-  private def decFxNotYetImplementedShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 2)
+//  private def decFxNotYetImplementedInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 4)
+//  private def decFxNotYetImplementedShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 2)
 
   //
   // DON'T EDIT THIS TABLE!!
-  // This table is generated from TagDecoderFuncTbl.txt using gen-func-table.sh
+  // This table is generated from TagFuncTbl.txt using gen-dec-table.sh
   //
   // Jump table from Tag to decoding function for floating part
   //
   private val fxTagToDecodeFunc: Array[(Tag, ByteString) => ((Tag, Any), Int)] = Array(
   // script generated code starts here
     decFxInt, 	// ActiveConnectionCallID
-    ConnectionDeviceIDType.decodeWithLen, 	// ActiveConnectionDeviceIDType
-    DeviceIDType.decodeWithLen, 	// AddedPartyDeviceType
-    decFxNotYetImplementedShort, 	// AgentActionTag
-    AgentAvailabilityStatus.decodeWithLen, 	// AgentAvailabilityStatusTag
+    ConnectionDeviceIDType.decode, 	// ActiveConnectionDeviceIDType
+    DeviceIDType.decode, 	// AddedPartyDeviceType
+    AgentGreetingAction.decode, 	// AgentActionTag
+    AgentAvailabilityStatus.decode, 	// AgentAvailabilityStatusTag
     decFxInt, 	// AgentConnectionCallID
-    ConnectionDeviceIDType.decodeWithLen, 	// AgentConnectionDeviceIDType
+    ConnectionDeviceIDType.decode, 	// AgentConnectionDeviceIDType
     decFxShortBool, 	// AgentMode
     decFxInt, 	// AgentOutCallsHeldSession
     decFxInt, 	// AgentOutCallsHeldTimeSession
@@ -712,8 +712,8 @@ object Tag extends Enumeration {
     decFxInt, 	// AgentOutCallsToday
     decFxIntBitSet, 	// AgentServiceReq
     decFxIntBitSet, 	// AgentStateMaskTag
-    AgentState.decodeWithLen, 	// AgentStateTag
-    AgentWorkMode.decodeWithLen, 	// AgentWorkModeTag
+    AgentState.decode, 	// AgentStateTag
+    AgentWorkMode.decode, 	// AgentWorkModeTag
     decFxInt, 	// AgentsApplicationAvailable
     decFxInt, 	// AgentsAvail
     decFxInt, 	// AgentsBusyOther
@@ -732,14 +732,14 @@ object Tag extends Enumeration {
     decFxInt, 	// AgentsWorkNotReady
     decFxInt, 	// AgentsWorkReady
     decFxShort, 	// AlertRings
-    DeviceIDType.decodeWithLen, 	// AlertingDeviceType
-    AllocationState.decodeWithLen, 	// AllocationStateTag
+    DeviceIDType.decode, 	// AlertingDeviceType
+    AllocationState.decode, 	// AllocationStateTag
     decFxInt, 	// AnswerDetectControl1
     decFxInt, 	// AnswerDetectControl2
-    AnswerDetectMode.decodeWithLen, 	// AnswerDetectModeTag
+    AnswerDetectMode.decode, 	// AnswerDetectModeTag
     decFxShort, 	// AnswerDetectTime
-    DeviceIDType.decodeWithLen, 	// AnsweringDeviceType
-    AnsweringMachine.decodeWithLen, 	// AnsweringMachineTag
+    DeviceIDType.decode, 	// AnsweringDeviceType
+    AnsweringMachine.decode, 	// AnsweringMachineTag
     decFxInt, 	// AutoOutCallsHeldSession
     decFxInt, 	// AutoOutCallsHeldTimeSession
     decFxInt, 	// AutoOutCallsHeldTimeTo5
@@ -772,16 +772,16 @@ object Tag extends Enumeration {
     decFxInt, 	// BitRate
     decFxIntBitSet, 	// CallControlSupported
     decFxIntBitSet, 	// CallEventsSupported
-    CallMannerType.decodeWithLen, 	// CallMannerTypeTag
+    CallMannerType.decode, 	// CallMannerTypeTag
     decFxIntBitSet, 	// CallMsgMask
-    CallOption.decodeWithLen, 	// CallOptionTag
-    CallPlacementType.decodeWithLen, 	// CallPlacementTypeTag
+    CallOption.decode, 	// CallOptionTag
+    CallPlacementType.decode, 	// CallPlacementTypeTag
     decFxInt, 	// CallTypeID
-    CallType.decodeWithLen, 	// CallTypeTag
+    CallType.decode, 	// CallTypeTag
     decFxShortBitSet, 	// CallVariableMaskTag
-    DeviceIDType.decodeWithLen, 	// CalledDeviceType
-    DispositionCodeValue.decodeWithLen, 	// CalledPartyDisposition
-    DeviceIDType.decodeWithLen, 	// CallingDeviceType
+    DeviceIDType.decode, 	// CalledDeviceType
+    DispositionCodeValue.decode, 	// CalledPartyDisposition
+    DeviceIDType.decode, 	// CallingDeviceType
     decFxInt, 	// CallsQ5
     decFxInt, 	// CallsQHalf
     decFxInt, 	// CallsQNow
@@ -794,29 +794,29 @@ object Tag extends Enumeration {
     decFxShortBitSet, 	// ClassOfDeviceTag
     decFxInt, 	// ClientPort
     decFxIntBitSet, 	// ConfigMsgMask
-    ConfigOperation.decodeWithLen, 	// ConfigOperationTag
+    ConfigOperation.decode, 	// ConfigOperationTag
     decFxInt, 	// ConnectionCallID
-    ConnectionDeviceIDType.decodeWithLen, 	// ConnectionDeviceIDTypeTag
-    ConsultType.decodeWithLen, 	// ConsultTypeTag
-    DeviceIDType.decodeWithLen, 	// ControllerDeviceType
+    ConnectionDeviceIDType.decode, 	// ConnectionDeviceIDTypeTag
+    ConsultType.decode, 	// ConsultTypeTag
+    DeviceIDType.decode, 	// ControllerDeviceType
     decFxIntBitSet, 	// DeskSettingsMaskTag
-    DestinationCountry.decodeWithLen, 	// DestinationCountryTag
-    DistributionValue.decodeWithLen, 	// Distribution
-    DeviceIDType.decodeWithLen, 	// DivertingDeviceType
+    DestinationCountry.decode, 	// DestinationCountryTag
+    DistributionValue.decode, 	// Distribution
+    DeviceIDType.decode, 	// DivertingDeviceType
     decFxShortBool, 	// EchoCancellation
     decFxIntBool, 	// EmergencyCallMethod
     decFxInt, 	// EmergencyCallsSession
     decFxInt, 	// EmergencyCallsTo5
     decFxInt, 	// EmergencyCallsToHalf
     decFxInt, 	// EmergencyCallsToday
-    EventCause.decodeWithLen, 	// EventCauseTag
-    EventCode.decodeWithLen, 	// EventCodeTag
-    DeviceIDType.decodeWithLen, 	// EventDeviceType
+    EventCause.decode, 	// EventCauseTag
+    EventCode.decode, 	// EventCodeTag
+    DeviceIDType.decode, 	// EventDeviceType
     decFxShort, 	// EventReasonCode
-    FacilityType.decodeWithLen, 	// FacilityTypeTag
-    DeviceIDType.decodeWithLen, 	// FailingDeviceType
-    ControlFailureCode.decodeWithLen, 	// FailureCode
-    ForcedFlag.decodeWithLen, 	// ForcedFlagTag
+    FacilityType.decode, 	// FacilityTypeTag
+    DeviceIDType.decode, 	// FailingDeviceType
+    ControlFailureCode.decode, 	// FailureCode
+    ForcedFlag.decode, 	// ForcedFlagTag
     decFxInt, 	// HandledCallsAfterCallTimeSession
     decFxInt, 	// HandledCallsAfterCallTimeTo5
     decFxInt, 	// HandledCallsAfterCallTimeToHalf
@@ -834,8 +834,8 @@ object Tag extends Enumeration {
     decFxInt, 	// HandledCallsToHalf
     decFxInt, 	// HandledCallsToday
     decFxInt, 	// HeldConnectionCallID
-    ConnectionDeviceIDType.decodeWithLen, 	// HeldConnectionDeviceIDType
-    DeviceIDType.decodeWithLen, 	// HoldingDeviceType
+    ConnectionDeviceIDType.decode, 	// HeldConnectionDeviceIDType
+    DeviceIDType.decode, 	// HoldingDeviceType
     decFxInt, 	// ICMAgentID
     decFxInt, 	// ICMAvailableTimeSession
     decFxInt, 	// ICMAvailableTimeToday
@@ -874,10 +874,10 @@ object Tag extends Enumeration {
     decFxInt, 	// InternalCallsTimeToday
     decFxInt, 	// InternalCallsToday
     decFxInt, 	// InvokeID
-    DeviceIDType.decodeWithLen, 	// LastRedirectDeviceType
+    DeviceIDType.decode, 	// LastRedirectDeviceType
     decFxShort, 	// LineHandle
-    LineType.decodeWithLen, 	// LineTypeTag
-    LocalConnectionState.decodeWithLen, 	// LocalConnectionStateTag
+    LineType.decode, 	// LineTypeTag
+    LocalConnectionState.decode, 	// LocalConnectionStateTag
     decFxInt, 	// LoggedOnTimeSession
     decFxInt, 	// LoggedOnTimeTo5
     decFxInt, 	// LoggedOnTimeToHalf
@@ -899,10 +899,10 @@ object Tag extends Enumeration {
     decFxInt, 	// MonitorCallsToHalf
     decFxInt, 	// MonitorCallsToday
     decFxInt, 	// MonitorID
-    DeviceIDType.decodeWithLen, 	// MonitoredDeviceType
+    DeviceIDType.decode, 	// MonitoredDeviceType
     decFxShortBool, 	// More
     decFxInt, 	// NewConnectionCallID
-    ConnectionDeviceIDType.decodeWithLen, 	// NewConnectionDeviceIDType
+    ConnectionDeviceIDType.decode, 	// NewConnectionDeviceIDType
     decFxInt, 	// NotReadyTimeSession
     decFxInt, 	// NotReadyTimeTo5
     decFxInt, 	// NotReadyTimeToHalf
@@ -921,7 +921,7 @@ object Tag extends Enumeration {
     decFxShort, 	// NumberOfAgentTeams
     decFxShort, 	// NumberOfAgents
     decFxInt, 	// OtherConnectionCallID
-    ConnectionDeviceIDType.decodeWithLen, 	// OtherConnectionDeviceIDType
+    ConnectionDeviceIDType.decode, 	// OtherConnectionDeviceIDType
     decFxIntBitSet, 	// OtherFeaturesSupported
     decFxIntBitSet, 	// PGStatus
     decFxInt, 	// PacketSize
@@ -930,7 +930,7 @@ object Tag extends Enumeration {
     decFxInt, 	// PeripheralErrorCode
     decFxInt, 	// PeripheralID
     decFxShortBool, 	// PeripheralOnline
-    PeripheralType.decodeWithLen, 	// PeripheralTypeTag
+    PeripheralType.decode, 	// PeripheralTypeTag
     decFxShortBool, 	// PostRoute
     decFxInt, 	// PreviewCallsHeldSession
     decFxInt, 	// PreviewCallsHeldTimeSession
@@ -953,17 +953,17 @@ object Tag extends Enumeration {
     decFxInt, 	// PreviewCallsToHalf
     decFxInt, 	// PreviewCallsToday
     decFxInt, 	// PrimaryCallID
-    DeviceIDType.decodeWithLen, 	// PrimaryDeviceIDType
+    DeviceIDType.decode, 	// PrimaryDeviceIDType
     decFxShortBool, 	// Priority
     decFxInt, 	// QualityRecordingRate
     decFxInt, 	// QueryRuleID
-    DeviceIDType.decodeWithLen, 	// QueueDeviceType
-    RTPDirection.decodeWithLen, 	// RTPDirectionTag
-    RTPType.decodeWithLen, 	// RTPTypeTag
+    DeviceIDType.decode, 	// QueueDeviceType
+    RTPDirection.decode, 	// RTPDirectionTag
+    RTPType.decode, 	// RTPTypeTag
     decFxRaw, 	// RawBytes
     decFxIntBool, 	// RecordingMode
     decFxInt, 	// RegisteredServiceID
-    DeviceIDType.decodeWithLen, 	// ReleasingDeviceType
+    DeviceIDType.decode, 	// ReleasingDeviceType
     decFxShortBool, 	// Reservation
     decFxInt, 	// ReservationCallsHeldSession
     decFxInt, 	// ReservationCallsHeldTimeSession
@@ -989,7 +989,7 @@ object Tag extends Enumeration {
     decFxInt, 	// Reserved2
     decFxInt, 	// Reserved3
     decFxShort, 	// Reserved16
-    DeviceIDType.decodeWithLen, 	// RetrievingDeviceType
+    DeviceIDType.decode, 	// RetrievingDeviceType
     decFxInt, 	// RingNoAnswerDN
     decFxInt, 	// RingNoAnswerTime
     decFxInt, 	// RoutableTimeSession
@@ -997,10 +997,10 @@ object Tag extends Enumeration {
     decFxInt, 	// RouterCallsQNow
     decFxInt, 	// SecondaryCallID
     decFxInt, 	// SecondaryConnectionCallID
-    DeviceIDType.decodeWithLen, 	// SecondaryDeviceIDType
+    DeviceIDType.decode, 	// SecondaryDeviceIDType
     decFxShort, 	// SegmentNumber
     decFxInt, 	// ServerData
-    ServerMode.decodeWithLen, 	// ServerModeTag
+    ServerMode.decode, 	// ServerModeTag
     decFxIntBitSet, 	// ServiceGranted
     decFxInt, 	// ServiceID
     decFxInt, 	// ServiceNumber
@@ -1011,35 +1011,35 @@ object Tag extends Enumeration {
     decFxInt, 	// SkillGroupID
     decFxInt, 	// SkillGroupNumber
     decFxShort, 	// SkillGroupPriority
-    AgentState.decodeWithLen, 	// SkillGroupState
-    DeviceIDType.decodeWithLen, 	// SnapshotDeviceType
-    ClientEventReportState.decodeWithLen, 	// ClientEventStateTag
+    AgentState.decode, 	// SkillGroupState
+    DeviceIDType.decode, 	// SnapshotDeviceType
+    ClientEventReportState.decode, 	// ClientEventStateTag
     decFxInt, 	// StateDuration
-    StatusCode.decodeWithLen, 	// Status
+    StatusCode.decode, 	// Status
     decFxIntBool, 	// SupervisorAssistCallMethod
     decFxInt, 	// SupervisorConnectionCallID
-    ConnectionDeviceIDType.decodeWithLen, 	// SupervisorConnectionDeviceIDType
+    ConnectionDeviceIDType.decode, 	// SupervisorConnectionDeviceIDType
     decFxInt, 	// SupervisorID
-    SupervisoryAction.decodeWithLen, 	// SupervisoryActionTag
+    SupervisoryAction.decode, 	// SupervisoryActionTag
     decFxInt, 	// SystemEventArg1
     decFxInt, 	// SystemEventArg2
     decFxInt, 	// SystemEventArg3
-    SystemEventID.decodeWithLen, 	// SystemEventIDTag
+    SystemEventID.decode, 	// SystemEventIDTag
     decFxInt, 	// TeamID
     decFxShort, 	// ToneDuration
     decFxIntBitSet, 	// TransferConferenceSetup
-    DeviceIDType.decodeWithLen, 	// TransferredDeviceType
-    DeviceIDType.decodeWithLen, 	// TransferringDeviceType
-    DeviceIDType.decodeWithLen, 	// TrunkUsedDeviceType
-    TypeOfDevice.decodeWithLen, 	// TypeOfDeviceTag
+    DeviceIDType.decode, 	// TransferredDeviceType
+    DeviceIDType.decode, 	// TransferringDeviceType
+    DeviceIDType.decode, 	// TrunkUsedDeviceType
+    TypeOfDevice.decode, 	// TypeOfDeviceTag
     decFxInt, 	// VersionNumber
     decFxInt, 	// WhisperCallsSession
     decFxInt, 	// WhisperCallsTo5
     decFxInt, 	// WhisperCallsToHalf
     decFxInt, 	// WhisperCallsToday
     decFxInt, 	// WorkModeTimer
-    WrapupDataMode.decodeWithLen, 	// WrapupDataIncomingMode
-    WrapupDataMode.decodeWithLen, 	// WrapupDataOutgoingMode
+    WrapupDataMode.decode, 	// WrapupDataIncomingMode
+    WrapupDataMode.decode, 	// WrapupDataOutgoingMode
     // script generated code ends here
 
     decFxRaw // ZZZZInternalUseOnly
@@ -1049,21 +1049,44 @@ object Tag extends Enumeration {
   //
   // Decode a floating part field
   //
-  def decodeFloatingField(tag: Tag, len: Int, body: ByteString): (Tag, Any) =
-    flTagToDecodeFunc(tag.id)(tag, len, body)
+  def decodeFloatingField(tag: Tag, body: ByteString): ((Tag, Any), Int) = flTagToDecodeFunc(tag.id)(tag, body)
 
   //
   // Decoder functions of floating part for simple types
   //
-  private def decFlRaw(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body take len)
-  private def decFlStr(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toString(len))
-  private def decFlInt(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toInt)
-  private def decFlShort(tag: Tag, len: Int, body: ByteString): (Tag, Any) = (tag, body.toShort)
+  private def decFlRaw(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
+    val len = body(0)
+    ((tag, body.drop(1).take(len)), len + 1)
+  }
+
+  private def decFlStr(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
+    val len = body(0)
+    ((tag, body.drop(1).toString(len)), len + 1)
+  }
+
+  private def decFlInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.drop(1).toInt), 5)
+  private def decFlShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.drop(1).toShort), 3)
+  private def decFlByte(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body(1)), 2)
+  private def decFlShortBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.drop(1).toShort != 0), 3)
+
+  private def decFlShortMask(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
+    ((tag, BitSet fromBitMask Array(body.drop(1).toShort.toLong)), 3)
+  }
+
+  private def decFlNamedVar(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
+    val len = body(0)
+    ((tag, body.drop(1).toNamedVar(len)), len + 1)
+  }
+
+  private def decFlNamedArr(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
+    val len = body(0)
+    ((tag, body.drop(1).toNamedArray(len)), len + 1)
+  }
 
   //
   // Jump table from Tag to decoding function for floating part
   //
-  private val flTagToDecodeFunc: Array[(Tag, Int, ByteString) => (Tag, Any)] = Array(
+  private val flTagToDecodeFunc: Array[(Tag, ByteString) => ((Tag, Any), Int)] = Array(
     decFlRaw,       //   0: Invalid
     decFlStr,       //   1: CLIENT_ID
     decFlRaw,       //   2: CLIENT_PASSWORD
@@ -1104,7 +1127,7 @@ object Tag extends Enumeration {
     decFlStr,       //  37: CONTROLLER_DEVID
     decFlStr,       //  38: ADDED_PARTY_DEVID
     decFlInt,       //  39: PARTY_CALLID
-    (tag, len, body) => DeviceIDType.decode(tag, body),             //  40: PARTY_DEVID_TYPE
+    DeviceIDType.decodeFloat,       //  40: PARTY_DEVID_TYPE
     decFlStr,       //  41: PARTY_DEVID
     decFlStr,       //  42: TRANSFERRING_DEVID
     decFlStr,       //  43: TRANSFERRED_DEVID
@@ -1121,7 +1144,7 @@ object Tag extends Enumeration {
     decFlRaw,       //  54: RESERVED_54
     decFlRaw,       //  55: RESERVED_55
     decFlInt,       //  56: CALL_CONN_CALLID
-    (tag, len, body) => ConnectionDeviceIDType.decode(tag, body),   //  57: CALL_CONN_DEVID_TYPE
+    ConnectionDeviceIDType.decodeFloat,     //  57: CALL_CONN_DEVID_TYPE
     decFlStr,       //  58: CALL_CONN_DEVID
     decFlShort,     //  59: CALL_DEVID_TYPE
     decFlStr,       //  60: CALL_DEVID
@@ -1129,30 +1152,30 @@ object Tag extends Enumeration {
     decFlInt,       //  62: SKILL_GROUP_NUMBER
     decFlInt,       //  63: SKILL_GROUP_ID
     decFlShort,     //  64: SKILL_GROUP_PRIORITY
-    (tag, len, body) => AgentState.decode(tag, body),               //  65: SKILL_GROUP_STATE
+    AgentState.decodeFloat, //  65: SKILL_GROUP_STATE
     decFlStr,       //  66: OBJECT_NAME
     decFlStr,       //  67: DTMF_STRING
     decFlStr,       //  68: POSITION_ID
     decFlStr,       //  69: SUPERVISOR_ID
     decFlShort,     //  70: LINE_HANDLE
-    (tag, len, body) => LineType.decode(tag, body), //  71: LINE_TYPE
+    LineType.decodeFloat,   //  71: LINE_TYPE
     decFlInt,       //  72: ROUTER_CALL_KEY_DAY
     decFlInt,       //  73: ROUTER_CALL_KEY_CALLID
     decFlRaw,       //  74: RESERVED_74
-    (tag, len, body) => LocalConnectionState.decode(tag, body),     //  75: CALL_STATE
+    LocalConnectionState.decodeFloat,       //  75: CALL_STATE
     decFlStr,       //  76: MONITORED_DEVID
     decFlStr,       //  77: AUTHORIZATION_CODE
     decFlStr,       //  78: ACCOUNT_CODE
     decFlStr,       //  79: ORIGINATING_DEVID
     decFlStr,       //  80: ORIGINATING_LINE_ID
     decFlStr,       //  81: CLIENT_ADDRESS
-    (tag, len, body) => (tag, body.toNamedVar(len)),                //  82: NAMED_VARIABLE
-    (tag, len, body) => (tag, body.toNamedArray(len)),              //  83: NAMED_ARRAY
+    decFlNamedVar,  //  82: NAMED_VARIABLE
+    decFlNamedArr,  //  83: NAMED_ARRAY
     decFlStr,       //  84: CALL_CONTROL_TABLE
     decFlStr,       //  85: SUPERVISOR_INSTRUMENT
     decFlStr,       //  86: ATC_AGENT_ID
-    (tag, len, body) => (tag, BitSet fromBitMask Array(body.toShort.toLong)),       //  87: AGENT_FLAGS
-    (tag, len, body) => AgentState.decode(tag, body),               //  88: ATC_AGENT_STATE
+    decFlShortMask, //  87: AGENT_FLAGS
+    AgentState.decodeFloat, //  88: ATC_AGENT_STATE
     decFlInt,       //  89: ATC_STATE_DURATION
     decFlStr,       //  90: AGENT_CONNECTION_DEVID
     decFlStr,       //  91: SUPERVISOR_CONNECTION_DEVID
@@ -1187,7 +1210,7 @@ object Tag extends Enumeration {
     decFlRaw,       // 120: RESERVED_120
     decFlInt,       // 121: TRUNK_NUMBER
     decFlInt,       // 122: TRUNK_GROUP_NUMBER
-    (tag, len, body) => AgentState.decode(tag, body),               // 123: NEXT_AGENT_STATE
+    AgentState.decodeFloat, // 123: NEXT_AGENT_STATE
     decFlRaw,       // 124: DEQUEUE_TYPE
     decFlStr,       // 125: SENDING_ADDRESS
     decFlStr,       // 126: SENDING_PORT
@@ -1282,13 +1305,13 @@ object Tag extends Enumeration {
     decFlStr,       // 215: ANI_II
     decFlRaw,       // 216: MR_DOMAIN_ID
     decFlStr,       // 217: CTIOS_CIL_CLIENT_ID
-    (tag, len, body) => SilentMonitorStatus.decode(tag, body),      // 218: SILENT_MONITOR_STATUS
+    SilentMonitorStatus.decodeFloat,        // 218: SILENT_MONITOR_STATUS
     decFlStr,       // 219: REQUESTING_DEVICE_ID
     decFlRaw,       // 220: REQUESTING_DEVICE_ID_TYPE
     decFlInt,       // 221: PRE_CALL_INVOKE_ID
     decFlRaw,       // 222: ENTERPRISE_QUEUE_TIME
     decFlRaw,       // 223: CALL_REFERENCE_ID
-    (tag, len, body) => (tag, body.toShort != 0),   // 224: MULTI_LINE_AGENT_CONTROL
+    decFlShortBool, // 224: MULTI_LINE_AGENT_CONTROL
     decFlRaw,       // 225: NETWORK_CONTROLLED
     decFlStr,       // 226: CLIENT_ADDRESS_IPV6
     decFlStr,       // 227: SENDING_ADDRESS_IPV6
@@ -1296,7 +1319,7 @@ object Tag extends Enumeration {
     decFlInt,       // 229: COC_CONNECTION_CALL_ID
     decFlShort,     // 230: COC_CONNECTION_DEVICE_ID_TYPE
     decFlStr,       // 231: COC_CONNECTION_DEVICE_ID
-    (tag, len, body) => (tag, body(0)),             // 232: CALL_ORIGINATED_FROM
+    decFlByte,      // 232: CALL_ORIGINATED_FROM
     decFlRaw,       // 233: SET_APPDATA_CALLID
     decFlRaw,       // 234: CLIENT_SHARE_KEY
     decFlRaw,       // 235: RESERVED_235
@@ -1308,7 +1331,7 @@ object Tag extends Enumeration {
     decFlRaw,       // 241: RESERVED_241
     decFlRaw,       // 242: RESERVED_242
     decFlStr,       // 243: AGENT_TEAM_NAME
-    (tag, len, body) => CallDirection.decode(tag, body),            // 244: DIRECTION
+    CallDirection.decodeFloat,      // 244: DIRECTION
     decFlRaw,       // 245: RESERVED_245
     decFlRaw,       // 246: RESERVED_246
     decFlRaw,       // 247: RESERVED_247
@@ -1321,6 +1344,403 @@ object Tag extends Enumeration {
     decFlRaw,       // 254: RESERVED_254
     decFlRaw        // 255: RESERVED_255
   )
+
+
+  //
+  // Encode a fixed part field
+  //
+  def encodeFixedField(tag: Tag, field_value: Any): ByteString =
+    fxTagToEncodeFunc(tag.id - ActiveConnectionCallID.id)(tag, field_value)
+
+  //
+  // Encoder functions of fixed part for simple types
+  //
+  private def encFxRaw(tag: Tag, a: Any) = a match { case b: ByteString => b }
+  private def encFxInt(tag: Tag, a: Any) = a match { case i: Int => encodeByteString(i) }
+  private def encFxShort(tag: Tag, a: Any) = a match { case s: Short => encodeByteString(s) }
+  private def encFxIntBool(tag: Tag, a: Any) = a match { case b: Boolean => encodeByteString(if (b) 1 else 0) }
+  private def encFxShortBool(tag: Tag, a: Any) =
+    a match { case b: Boolean => encodeByteString((if (b) 1 else 0).toShort) }
+  private def encFxIntBitSet(tag: Tag, a: Any) = a match { case m: BitSet => encodeByteString(m.toInt) }
+  private def encFxShortBitSet(tag: Tag, a: Any) = a match { case m: BitSet => encodeByteString(m.toShort) }
+
+  //
+  // DON'T EDIT THIS TABLE!!
+  // This table is generated from TagFuncTbl.txt using gen-enc-table.sh
+  //
+  // Jump table from Tag to decoding function for fixed part
+  //
+  private val fxTagToEncodeFunc: Array[(Tag, Any) => ByteString] = Array(
+    // script generated code starts here
+    encFxInt, 	// ActiveConnectionCallID
+    ConnectionDeviceIDType.encode, 	// ActiveConnectionDeviceIDType
+    DeviceIDType.encode, 	// AddedPartyDeviceType
+    AgentGreetingAction.encode, 	// AgentActionTag
+    AgentAvailabilityStatus.encode, 	// AgentAvailabilityStatusTag
+    encFxInt, 	// AgentConnectionCallID
+    ConnectionDeviceIDType.encode, 	// AgentConnectionDeviceIDType
+    encFxShortBool, 	// AgentMode
+    encFxInt, 	// AgentOutCallsHeldSession
+    encFxInt, 	// AgentOutCallsHeldTimeSession
+    encFxInt, 	// AgentOutCallsHeldTimeTo5
+    encFxInt, 	// AgentOutCallsHeldTimeToHalf
+    encFxInt, 	// AgentOutCallsHeldTimeToday
+    encFxInt, 	// AgentOutCallsHeldTo5
+    encFxInt, 	// AgentOutCallsHeldToHalf
+    encFxInt, 	// AgentOutCallsHeldToday
+    encFxInt, 	// AgentOutCallsSession
+    encFxInt, 	// AgentOutCallsTalkTimeSession
+    encFxInt, 	// AgentOutCallsTalkTimeTo5
+    encFxInt, 	// AgentOutCallsTalkTimeToHalf
+    encFxInt, 	// AgentOutCallsTalkTimeToday
+    encFxInt, 	// AgentOutCallsTimeSession
+    encFxInt, 	// AgentOutCallsTimeTo5
+    encFxInt, 	// AgentOutCallsTimeToHalf
+    encFxInt, 	// AgentOutCallsTimeToday
+    encFxInt, 	// AgentOutCallsTo5
+    encFxInt, 	// AgentOutCallsToHalf
+    encFxInt, 	// AgentOutCallsToday
+    encFxIntBitSet, 	// AgentServiceReq
+    encFxIntBitSet, 	// AgentStateMaskTag
+    AgentState.encode, 	// AgentStateTag
+    AgentWorkMode.encode, 	// AgentWorkModeTag
+    encFxInt, 	// AgentsApplicationAvailable
+    encFxInt, 	// AgentsAvail
+    encFxInt, 	// AgentsBusyOther
+    encFxInt, 	// AgentsHold
+    encFxInt, 	// AgentsICMAvailable
+    encFxInt, 	// AgentsLoggedOn
+    encFxInt, 	// AgentsNotReady
+    encFxInt, 	// AgentsReady
+    encFxInt, 	// AgentsReserved
+    encFxInt, 	// AgentsTalkingAutoOut
+    encFxInt, 	// AgentsTalkingIn
+    encFxInt, 	// AgentsTalkingOther
+    encFxInt, 	// AgentsTalkingOut
+    encFxInt, 	// AgentsTalkingPreview
+    encFxInt, 	// AgentsTalkingReservation
+    encFxInt, 	// AgentsWorkNotReady
+    encFxInt, 	// AgentsWorkReady
+    encFxShort, 	// AlertRings
+    DeviceIDType.encode, 	// AlertingDeviceType
+    AllocationState.encode, 	// AllocationStateTag
+    encFxInt, 	// AnswerDetectControl1
+    encFxInt, 	// AnswerDetectControl2
+    AnswerDetectMode.encode, 	// AnswerDetectModeTag
+    encFxShort, 	// AnswerDetectTime
+    DeviceIDType.encode, 	// AnsweringDeviceType
+    AnsweringMachine.encode, 	// AnsweringMachineTag
+    encFxInt, 	// AutoOutCallsHeldSession
+    encFxInt, 	// AutoOutCallsHeldTimeSession
+    encFxInt, 	// AutoOutCallsHeldTimeTo5
+    encFxInt, 	// AutoOutCallsHeldTimeToHalf
+    encFxInt, 	// AutoOutCallsHeldTimeToday
+    encFxInt, 	// AutoOutCallsHeldTo5
+    encFxInt, 	// AutoOutCallsHeldToHalf
+    encFxInt, 	// AutoOutCallsHeldToday
+    encFxInt, 	// AutoOutCallsSession
+    encFxInt, 	// AutoOutCallsTalkTimeSession
+    encFxInt, 	// AutoOutCallsTalkTimeTo5
+    encFxInt, 	// AutoOutCallsTalkTimeToHalf
+    encFxInt, 	// AutoOutCallsTalkTimeToday
+    encFxInt, 	// AutoOutCallsTimeSession
+    encFxInt, 	// AutoOutCallsTimeTo5
+    encFxInt, 	// AutoOutCallsTimeToHalf
+    encFxInt, 	// AutoOutCallsTimeToday
+    encFxInt, 	// AutoOutCallsTo5
+    encFxInt, 	// AutoOutCallsToHalf
+    encFxInt, 	// AutoOutCallsToday
+    encFxIntBool, 	// AutoRecordOnEmergency
+    encFxInt, 	// AvailTimeSession
+    encFxInt, 	// AvailTimeTo5
+    encFxInt, 	// AvailTimeToHalf
+    encFxInt, 	// AvailTimeToday
+    encFxInt, 	// BargeInCallsSession
+    encFxInt, 	// BargeInCallsTo5
+    encFxInt, 	// BargeInCallsToHalf
+    encFxInt, 	// BargeInCallsToday
+    encFxInt, 	// BitRate
+    encFxIntBitSet, 	// CallControlSupported
+    encFxIntBitSet, 	// CallEventsSupported
+    CallMannerType.encode, 	// CallMannerTypeTag
+    encFxIntBitSet, 	// CallMsgMask
+    CallOption.encode, 	// CallOptionTag
+    CallPlacementType.encode, 	// CallPlacementTypeTag
+    encFxInt, 	// CallTypeID
+    CallType.encode, 	// CallTypeTag
+    encFxShortBitSet, 	// CallVariableMaskTag
+    DeviceIDType.encode, 	// CalledDeviceType
+    DispositionCodeValue.encode, 	// CalledPartyDisposition
+    DeviceIDType.encode, 	// CallingDeviceType
+    encFxInt, 	// CallsQ5
+    encFxInt, 	// CallsQHalf
+    encFxInt, 	// CallsQNow
+    encFxInt, 	// CallsQTime5
+    encFxInt, 	// CallsQTimeHalf
+    encFxInt, 	// CallsQTimeNow
+    encFxInt, 	// CallsQTimeToday
+    encFxInt, 	// CallsQToday
+    encFxInt, 	// CampaignID
+    encFxShortBitSet, 	// ClassOfDeviceTag
+    encFxInt, 	// ClientPort
+    encFxIntBitSet, 	// ConfigMsgMask
+    ConfigOperation.encode, 	// ConfigOperationTag
+    encFxInt, 	// ConnectionCallID
+    ConnectionDeviceIDType.encode, 	// ConnectionDeviceIDTypeTag
+    ConsultType.encode, 	// ConsultTypeTag
+    DeviceIDType.encode, 	// ControllerDeviceType
+    encFxIntBitSet, 	// DeskSettingsMaskTag
+    DestinationCountry.encode, 	// DestinationCountryTag
+    DistributionValue.encode, 	// Distribution
+    DeviceIDType.encode, 	// DivertingDeviceType
+    encFxShortBool, 	// EchoCancellation
+    encFxIntBool, 	// EmergencyCallMethod
+    encFxInt, 	// EmergencyCallsSession
+    encFxInt, 	// EmergencyCallsTo5
+    encFxInt, 	// EmergencyCallsToHalf
+    encFxInt, 	// EmergencyCallsToday
+    EventCause.encode, 	// EventCauseTag
+    EventCode.encode, 	// EventCodeTag
+    DeviceIDType.encode, 	// EventDeviceType
+    encFxShort, 	// EventReasonCode
+    FacilityType.encode, 	// FacilityTypeTag
+    DeviceIDType.encode, 	// FailingDeviceType
+    ControlFailureCode.encode, 	// FailureCode
+    ForcedFlag.encode, 	// ForcedFlagTag
+    encFxInt, 	// HandledCallsAfterCallTimeSession
+    encFxInt, 	// HandledCallsAfterCallTimeTo5
+    encFxInt, 	// HandledCallsAfterCallTimeToHalf
+    encFxInt, 	// HandledCallsAfterCallTimeToday
+    encFxInt, 	// HandledCallsSession
+    encFxInt, 	// HandledCallsTalkTimeSession
+    encFxInt, 	// HandledCallsTalkTimeTo5
+    encFxInt, 	// HandledCallsTalkTimeToHalf
+    encFxInt, 	// HandledCallsTalkTimeToday
+    encFxInt, 	// HandledCallsTimeSession
+    encFxInt, 	// HandledCallsTimeTo5
+    encFxInt, 	// HandledCallsTimeToHalf
+    encFxInt, 	// HandledCallsTimeToday
+    encFxInt, 	// HandledCallsTo5
+    encFxInt, 	// HandledCallsToHalf
+    encFxInt, 	// HandledCallsToday
+    encFxInt, 	// HeldConnectionCallID
+    ConnectionDeviceIDType.encode, 	// HeldConnectionDeviceIDType
+    DeviceIDType.encode, 	// HoldingDeviceType
+    encFxInt, 	// ICMAgentID
+    encFxInt, 	// ICMAvailableTimeSession
+    encFxInt, 	// ICMAvailableTimeToday
+    encFxInt, 	// ICMCentralControllerTime
+    encFxInt, 	// IdleTimeout
+    encFxInt, 	// IncomingCallsHeldSession
+    encFxInt, 	// IncomingCallsHeldTimeSession
+    encFxInt, 	// IncomingCallsHeldTimeTo5
+    encFxInt, 	// IncomingCallsHeldTimeToHalf
+    encFxInt, 	// IncomingCallsHeldTimeToday
+    encFxInt, 	// IncomingCallsHeldTo5
+    encFxInt, 	// IncomingCallsHeldToHalf
+    encFxInt, 	// IncomingCallsHeldToday
+    encFxInt, 	// InterceptCallsSession
+    encFxInt, 	// InterceptCallsTo5
+    encFxInt, 	// InterceptCallsToHalf
+    encFxInt, 	// InterceptCallsToday
+    encFxInt, 	// InternalCallsHeldSession
+    encFxInt, 	// InternalCallsHeldTimeSession
+    encFxInt, 	// InternalCallsHeldTimeTo5
+    encFxInt, 	// InternalCallsHeldTimeToHalf
+    encFxInt, 	// InternalCallsHeldTimeToday
+    encFxInt, 	// InternalCallsHeldTo5
+    encFxInt, 	// InternalCallsHeldToHalf
+    encFxInt, 	// InternalCallsHeldToday
+    encFxInt, 	// InternalCallsRcvdSession
+    encFxInt, 	// InternalCallsRcvdTimeSession
+    encFxInt, 	// InternalCallsRcvdTimeTo5
+    encFxInt, 	// InternalCallsRcvdTimeToHalf
+    encFxInt, 	// InternalCallsRcvdTimeToday
+    encFxInt, 	// InternalCallsRcvdTo5
+    encFxInt, 	// InternalCallsRcvdToHalf
+    encFxInt, 	// InternalCallsRcvdToday
+    encFxInt, 	// InternalCallsSession
+    encFxInt, 	// InternalCallsTimeSession
+    encFxInt, 	// InternalCallsTimeToday
+    encFxInt, 	// InternalCallsToday
+    encFxInt, 	// InvokeID
+    DeviceIDType.encode, 	// LastRedirectDeviceType
+    encFxShort, 	// LineHandle
+    LineType.encode, 	// LineTypeTag
+    LocalConnectionState.encode, 	// LocalConnectionStateTag
+    encFxInt, 	// LoggedOnTimeSession
+    encFxInt, 	// LoggedOnTimeTo5
+    encFxInt, 	// LoggedOnTimeToHalf
+    encFxInt, 	// LoggedOnTimeToday
+    encFxInt, 	// LogoutNonActivityTime
+    encFxInt, 	// LongestCallQ5
+    encFxInt, 	// LongestCallQHalf
+    encFxInt, 	// LongestCallQNow
+    encFxInt, 	// LongestCallQToday
+    encFxInt, 	// LongestRouterCallQNow
+    encFxInt, 	// MRDID
+    encFxIntBitSet, 	// MakeCallSetup
+    encFxShort, 	// MaxActiveCalls
+    encFxShort, 	// MaxDeviceInConference
+    encFxShort, 	// MaxHeldCalls
+    encFxInt, 	// MaxTaskLimit
+    encFxInt, 	// MonitorCallsSession
+    encFxInt, 	// MonitorCallsTo5
+    encFxInt, 	// MonitorCallsToHalf
+    encFxInt, 	// MonitorCallsToday
+    encFxInt, 	// MonitorID
+    DeviceIDType.encode, 	// MonitoredDeviceType
+    encFxShortBool, 	// More
+    encFxInt, 	// NewConnectionCallID
+    ConnectionDeviceIDType.encode, 	// NewConnectionDeviceIDType
+    encFxInt, 	// NotReadyTimeSession
+    encFxInt, 	// NotReadyTimeTo5
+    encFxInt, 	// NotReadyTimeToHalf
+    encFxInt, 	// NotReadyTimeToday
+    encFxShort, 	// NumCTIClients
+    encFxShort, 	// NumCallDevices
+    encFxShort, 	// NumCalls
+    encFxShort, 	// NumFltSkillGroups
+    encFxShort, 	// NumLines
+    encFxShort, 	// NumNamedArrays
+    encFxShort, 	// NumNamedVariables
+    encFxShort, 	// NumParties
+    encFxShort, 	// NumQueued
+    encFxShort, 	// NumSkillGroups
+    encFxInt, 	// NumTasks
+    encFxShort, 	// NumberOfAgentTeams
+    encFxShort, 	// NumberOfAgents
+    encFxInt, 	// OtherConnectionCallID
+    ConnectionDeviceIDType.encode, 	// OtherConnectionDeviceIDType
+    encFxIntBitSet, 	// OtherFeaturesSupported
+    encFxIntBitSet, 	// PGStatus
+    encFxInt, 	// PacketSize
+    encFxInt, 	// PauseDuration
+    encFxShort, 	// PayloadType
+    encFxInt, 	// PeripheralErrorCode
+    encFxInt, 	// PeripheralID
+    encFxShortBool, 	// PeripheralOnline
+    PeripheralType.encode, 	// PeripheralTypeTag
+    encFxShortBool, 	// PostRoute
+    encFxInt, 	// PreviewCallsHeldSession
+    encFxInt, 	// PreviewCallsHeldTimeSession
+    encFxInt, 	// PreviewCallsHeldTimeTo5
+    encFxInt, 	// PreviewCallsHeldTimeToHalf
+    encFxInt, 	// PreviewCallsHeldTimeToday
+    encFxInt, 	// PreviewCallsHeldTo5
+    encFxInt, 	// PreviewCallsHeldToHalf
+    encFxInt, 	// PreviewCallsHeldToday
+    encFxInt, 	// PreviewCallsSession
+    encFxInt, 	// PreviewCallsTalkTimeSession
+    encFxInt, 	// PreviewCallsTalkTimeTo5
+    encFxInt, 	// PreviewCallsTalkTimeToHalf
+    encFxInt, 	// PreviewCallsTalkTimeToday
+    encFxInt, 	// PreviewCallsTimeSession
+    encFxInt, 	// PreviewCallsTimeTo5
+    encFxInt, 	// PreviewCallsTimeToHalf
+    encFxInt, 	// PreviewCallsTimeToday
+    encFxInt, 	// PreviewCallsTo5
+    encFxInt, 	// PreviewCallsToHalf
+    encFxInt, 	// PreviewCallsToday
+    encFxInt, 	// PrimaryCallID
+    DeviceIDType.encode, 	// PrimaryDeviceIDType
+    encFxShortBool, 	// Priority
+    encFxInt, 	// QualityRecordingRate
+    encFxInt, 	// QueryRuleID
+    DeviceIDType.encode, 	// QueueDeviceType
+    RTPDirection.encode, 	// RTPDirectionTag
+    RTPType.encode, 	// RTPTypeTag
+    encFxRaw, 	// RawBytes
+    encFxIntBool, 	// RecordingMode
+    encFxInt, 	// RegisteredServiceID
+    DeviceIDType.encode, 	// ReleasingDeviceType
+    encFxShortBool, 	// Reservation
+    encFxInt, 	// ReservationCallsHeldSession
+    encFxInt, 	// ReservationCallsHeldTimeSession
+    encFxInt, 	// ReservationCallsHeldTimeTo5
+    encFxInt, 	// ReservationCallsHeldTimeToHalf
+    encFxInt, 	// ReservationCallsHeldTimeToday
+    encFxInt, 	// ReservationCallsHeldTo5
+    encFxInt, 	// ReservationCallsHeldToHalf
+    encFxInt, 	// ReservationCallsHeldToday
+    encFxInt, 	// ReservationCallsSession
+    encFxInt, 	// ReservationCallsTalkTimeSession
+    encFxInt, 	// ReservationCallsTalkTimeTo5
+    encFxInt, 	// ReservationCallsTalkTimeToHalf
+    encFxInt, 	// ReservationCallsTalkTimeToday
+    encFxInt, 	// ReservationCallsTimeSession
+    encFxInt, 	// ReservationCallsTimeTo5
+    encFxInt, 	// ReservationCallsTimeToHalf
+    encFxInt, 	// ReservationCallsTimeToday
+    encFxInt, 	// ReservationCallsTo5
+    encFxInt, 	// ReservationCallsToHalf
+    encFxInt, 	// ReservationCallsToday
+    encFxInt, 	// Reserved1
+    encFxInt, 	// Reserved2
+    encFxInt, 	// Reserved3
+    encFxShort, 	// Reserved16
+    DeviceIDType.encode, 	// RetrievingDeviceType
+    encFxInt, 	// RingNoAnswerDN
+    encFxInt, 	// RingNoAnswerTime
+    encFxInt, 	// RoutableTimeSession
+    encFxInt, 	// RoutableTimeToday
+    encFxInt, 	// RouterCallsQNow
+    encFxInt, 	// SecondaryCallID
+    encFxInt, 	// SecondaryConnectionCallID
+    DeviceIDType.encode, 	// SecondaryDeviceIDType
+    encFxShort, 	// SegmentNumber
+    encFxInt, 	// ServerData
+    ServerMode.encode, 	// ServerModeTag
+    encFxIntBitSet, 	// ServiceGranted
+    encFxInt, 	// ServiceID
+    encFxInt, 	// ServiceNumber
+    encFxIntBitSet, 	// ServiceRequested
+    encFxInt, 	// SessionID
+    encFxIntBool, 	// SilentMonitorAudibleIndication
+    encFxIntBool, 	// SilentMonitorWarningMessage
+    encFxInt, 	// SkillGroupID
+    encFxInt, 	// SkillGroupNumber
+    encFxShort, 	// SkillGroupPriority
+    AgentState.encode, 	// SkillGroupState
+    DeviceIDType.encode, 	// SnapshotDeviceType
+    ClientEventReportState.encode, 	// ClientEventStateTag
+    encFxInt, 	// StateDuration
+    StatusCode.encode, 	// Status
+    encFxIntBool, 	// SupervisorAssistCallMethod
+    encFxInt, 	// SupervisorConnectionCallID
+    ConnectionDeviceIDType.encode, 	// SupervisorConnectionDeviceIDType
+    encFxInt, 	// SupervisorID
+    SupervisoryAction.encode, 	// SupervisoryActionTag
+    encFxInt, 	// SystemEventArg1
+    encFxInt, 	// SystemEventArg2
+    encFxInt, 	// SystemEventArg3
+    SystemEventID.encode, 	// SystemEventIDTag
+    encFxInt, 	// TeamID
+    encFxShort, 	// ToneDuration
+    encFxIntBitSet, 	// TransferConferenceSetup
+    DeviceIDType.encode, 	// TransferredDeviceType
+    DeviceIDType.encode, 	// TransferringDeviceType
+    DeviceIDType.encode, 	// TrunkUsedDeviceType
+    TypeOfDevice.encode, 	// TypeOfDeviceTag
+    encFxInt, 	// VersionNumber
+    encFxInt, 	// WhisperCallsSession
+    encFxInt, 	// WhisperCallsTo5
+    encFxInt, 	// WhisperCallsToHalf
+    encFxInt, 	// WhisperCallsToday
+    encFxInt, 	// WorkModeTimer
+    WrapupDataMode.encode, 	// WrapupDataIncomingMode
+    WrapupDataMode.encode, 	// WrapupDataOutgoingMode
+    // script generated code ends here
+
+    encFxInt // Dummy entry.  Not used
+  )
+
+
+
+  //
+  // Encode a floating part field
+  //
+  def encodeFloatingField(tag: Tag, field_value: Any): ByteString = flTagToEncodeFunc(tag.id)(tag, field_value)
 
   //
   // Encoder functions of floating part for simple types
@@ -1337,15 +1757,8 @@ object Tag extends Enumeration {
       ByteString(tag.id, body.size) ++ body
   }
 
-  private def encFlInt(tag: Tag, a: Any) = a match {
-    case i: Int =>
-      ByteString(tag.id, 4, (i & 0xff000000) >> 24, (i & 0xff0000) >> 16, (i & 0xff00) >> 8, i & 0xff)
-  }
-
-  private def encFlShort(tag: Tag, a: Any) = a match {
-    case s: Short => ByteString(tag.id, 2, (s & 0xff00) >> 8, s & 0xff)
-  }
-
+  private def encFlInt(tag: Tag, a: Any) = a match { case i: Int => ByteString(tag.id, 4) ++ i }
+  private def encFlShort(tag: Tag, a: Any) = a match { case s: Short => ByteString(tag.id, 2) ++ s }
   private def encFlByte(tag: Tag, a: Any) = a match { case b: Byte => ByteString(tag.id, 1, b & 0xff) }
   private def encFlBool(tag: Tag, a: Any) = a match { case b: Boolean => ByteString(tag.id, 2, if (b) 1 else 0) }
   private def encFlShortMask(tag: Tag, a: Any) = a match { case m: BitSet => encFlShort(tag, m.toInt.toShort) }

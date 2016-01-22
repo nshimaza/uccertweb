@@ -116,5 +116,6 @@ package object ctidriver {
 
   implicit class CtiBitSet(val m: BitSet) extends AnyVal {
     def toInt: Int = (m.toBitMask(0) & 0xffffffff).toInt
+    def toShort: Short = (m.toBitMask(0) & 0xffff).toShort
   }
 }

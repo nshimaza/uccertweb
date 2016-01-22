@@ -1321,4 +1321,322 @@ object Tag extends Enumeration {
     decFlRaw,       // 254: RESERVED_254
     decFlRaw        // 255: RESERVED_255
   )
+
+  //
+  // Encoder functions of floating part for simple types
+  //
+  private def encFlRaw(tag: Tag, a: Any) = a match {
+    case b: ByteString =>
+      val body = b.take(MaxFloatStringLen - 1)
+      ByteString(tag.id, body.size) ++ body
+  }
+
+  private def encFlStr(tag: Tag, a: Any) = a match {
+    case s: String =>
+      val body = ByteString(s).take(MaxFloatStringLen - 1) ++ ByteString(0.toByte)
+      ByteString(tag.id, body.size) ++ body
+  }
+
+  private def encFlInt(tag: Tag, a: Any) = a match {
+    case i: Int =>
+      ByteString(tag.id, 4, (i & 0xff000000) >> 24, (i & 0xff0000) >> 16, (i & 0xff00) >> 8, i & 0xff)
+  }
+
+  private def encFlShort(tag: Tag, a: Any) = a match {
+    case s: Short => ByteString(tag.id, 2, (s & 0xff00) >> 8, s & 0xff)
+  }
+
+  private def encFlByte(tag: Tag, a: Any) = a match { case b: Byte => ByteString(tag.id, 1, b & 0xff) }
+  private def encFlBool(tag: Tag, a: Any) = a match { case b: Boolean => ByteString(tag.id, 2, if (b) 1 else 0) }
+  private def encFlShortMask(tag: Tag, a: Any) = a match { case m: BitSet => encFlShort(tag, m.toInt.toShort) }
+
+  private def encFlNamedVar(tag: Tag, a: Any) = a match {
+    case t: (Any, Any) =>
+      val (x, y) = t
+      x match {
+        case name: String => y match {
+          case body: String =>
+            val n = ByteString(name).take(MaxECCNameLen) ++ ByteString(0.toByte)
+            val b = ByteString(body).take(MaxECCValueLen) ++ ByteString(0.toByte)
+            ByteString(tag.id, n.size + b.size) ++ n ++ b
+        }
+      }
+  }
+
+  private def encFlNamedArr(tag: Tag, a: Any) = a match {
+    case t: (Any, Any, Any) =>
+      val (x, y, z) = t
+      x match {
+        case index: Int => y match {
+          case name: String => z match {
+            case body: String =>
+              val n = ByteString(name).take(MaxECCNameLen) ++ ByteString(0.toByte)
+              val b = ByteString(body).take(MaxECCValueLen) ++ ByteString(0.toByte)
+              ByteString(tag.id, n.size + b.size + 1, index) ++ n ++ b
+          }
+        }
+      }
+  }
+
+  //
+  // Jump table from Tag to encoding function for floating part
+  //
+  private val flTagToEncodeFunc: Array[(Tag, Any) => ByteString] = Array(
+    encFlRaw,       //   0: Invalid
+    encFlStr,       //   1: CLIENT_ID
+    encFlRaw,       //   2: CLIENT_PASSWORD
+    encFlStr,       //   3: CLIENT_SIGNATURE
+    encFlStr,       //   4: AGENT_EXTENSION
+    encFlStr,       //   5: AGENT_ID
+    encFlStr,       //   6: AGENT_INSTRUMENT
+    encFlStr,       //   7: TEXT
+    encFlStr,       //   8: ANI
+    encFlRaw,       //   9: UUI
+    encFlStr,       //  10: DNIS
+    encFlStr,       //  11: DIALED_NUMBER
+    encFlStr,       //  12: CED
+    encFlStr,       //  13: CALL_VAR_1
+    encFlStr,       //  14: CALL_VAR_2
+    encFlStr,       //  15: CALL_VAR_3
+    encFlStr,       //  16: CALL_VAR_4
+    encFlStr,       //  17: CALL_VAR_5
+    encFlStr,       //  18: CALL_VAR_6
+    encFlStr,       //  19: CALL_VAR_7
+    encFlStr,       //  20: CALL_VAR_8
+    encFlStr,       //  21: CALL_VAR_9
+    encFlStr,       //  22: CALL_VAR_10
+    encFlStr,       //  23: CTI_CLIENT_SIGNATURE
+    encFlInt,       //  24: CTI_CLIENT_TIMESTAMP
+    encFlStr,       //  25: CONNECTION_DEVID
+    encFlStr,       //  26: ALERTING_DEVID
+    encFlStr,       //  27: CALLING_DEVID
+    encFlStr,       //  28: CALLED_DEVID
+    encFlStr,       //  29: LAST_REDIRECT_DEVID
+    encFlStr,       //  30: ANSWERING_DEVID
+    encFlStr,       //  31: HOLDING_DEVID
+    encFlStr,       //  32: RETRIEVING_DEVID
+    encFlStr,       //  33: RELEASING_DEVID
+    encFlStr,       //  34: FAILING_DEVID
+    encFlStr,       //  35: PRIMARY_DEVID
+    encFlStr,       //  36: SECONDARY_DEVID
+    encFlStr,       //  37: CONTROLLER_DEVID
+    encFlStr,       //  38: ADDED_PARTY_DEVID
+    encFlInt,       //  39: PARTY_CALLID
+    DeviceIDType.encodeFloat,       //  40: PARTY_DEVID_TYPE
+    encFlStr,       //  41: PARTY_DEVID
+    encFlStr,       //  42: TRANSFERRING_DEVID
+    encFlStr,       //  43: TRANSFERRED_DEVID
+    encFlStr,       //  44: DIVERTING_DEVID
+    encFlStr,       //  45: QUEUE_DEVID
+    encFlStr,       //  46: CALL_WRAPUP_DATA
+    encFlStr,       //  47: NEW_CONNECTION_DEVID
+    encFlStr,       //  48: TRUNK_USED_DEVID
+    encFlStr,       //  49: AGENT_PASSWORD
+    encFlStr,       //  50: ACTIVE_CONN_DEVID
+    encFlStr,       //  51: FACILITY_CODE
+    encFlStr,       //  52: OTHER_CONN_DEVID
+    encFlStr,       //  53: HELD_CONN_DEVID
+    encFlRaw,       //  54: RESERVED_54
+    encFlRaw,       //  55: RESERVED_55
+    encFlInt,       //  56: CALL_CONN_CALLID
+    ConnectionDeviceIDType.encodeFloat,     //  57: CALL_CONN_DEVID_TYPE
+    encFlStr,       //  58: CALL_CONN_DEVID
+    encFlShort,     //  59: CALL_DEVID_TYPE
+    encFlStr,       //  60: CALL_DEVID
+    encFlShort,     //  61: CALL_DEV_CONN_STATE
+    encFlInt,       //  62: SKILL_GROUP_NUMBER
+    encFlInt,       //  63: SKILL_GROUP_ID
+    encFlShort,     //  64: SKILL_GROUP_PRIORITY
+    AgentState.encodeFloat, //  65: SKILL_GROUP_STATE
+    encFlStr,       //  66: OBJECT_NAME
+    encFlStr,       //  67: DTMF_STRING
+    encFlStr,       //  68: POSITION_ID
+    encFlStr,       //  69: SUPERVISOR_ID
+    encFlShort,     //  70: LINE_HANDLE
+    LineType.encodeFloat,   //  71: LINE_TYPE
+    encFlInt,       //  72: ROUTER_CALL_KEY_DAY
+    encFlInt,       //  73: ROUTER_CALL_KEY_CALLID
+    encFlRaw,       //  74: RESERVED_74
+    LocalConnectionState.encodeFloat,       //  75: CALL_STATE
+    encFlStr,       //  76: MONITORED_DEVID
+    encFlStr,       //  77: AUTHORIZATION_CODE
+    encFlStr,       //  78: ACCOUNT_CODE
+    encFlStr,       //  79: ORIGINATING_DEVID
+    encFlStr,       //  80: ORIGINATING_LINE_ID
+    encFlStr,       //  81: CLIENT_ADDRESS
+    encFlNamedVar,  //  82: NAMED_VARIABLE
+    encFlNamedArr,  //  83: NAMED_ARRAY
+    encFlStr,       //  84: CALL_CONTROL_TABLE
+    encFlStr,       //  85: SUPERVISOR_INSTRUMENT
+    encFlStr,       //  86: ATC_AGENT_ID
+    encFlShortMask, //  87: AGENT_FLAGS
+    AgentState.encodeFloat, //  88: ATC_AGENT_STATE
+    encFlInt,       //  89: ATC_STATE_DURATION
+    encFlStr,       //  90: AGENT_CONNECTION_DEVID
+    encFlStr,       //  91: SUPERVISOR_CONNECTION_DEVID
+    encFlInt,       //  92: LIST_TEAM_ID
+    encFlStr,       //  93: DEFAULT_DEVICE_PORT_ADDRESS
+    encFlStr,       //  94: SERVICE_NAME
+    encFlStr,       //  95: CUSTOMER_PHONE_NUMBER
+    encFlStr,       //  96: CUSTOMER_ACCOUNT_NUMBER
+    encFlInt,       //  97: APP_PATH_ID
+    encFlRaw,       //  98: RESERVED_98
+    encFlRaw,       //  99: RESERVED_99
+    encFlRaw,       // 100: RESERVED_100
+    encFlRaw,       // 101: RESERVED_101
+    encFlRaw,       // 102: RESERVED_102
+    encFlRaw,       // 103: RESERVED_103
+    encFlRaw,       // 104: RESERVED_104
+    encFlRaw,       // 105: RESERVED_105
+    encFlRaw,       // 106: RESERVED_106
+    encFlRaw,       // 107: RESERVED_107
+    encFlRaw,       // 108: RESERVED_108
+    encFlRaw,       // 109: RESERVED_109
+    encFlInt,       // 110: ROUTER_CALL_KEY_SEQUENCE_NUM
+    encFlRaw,       // 111: RESERVED_111
+    encFlRaw,       // 112: RESERVED_112
+    encFlRaw,       // 113: RESERVED_113
+    encFlRaw,       // 114: RESERVED_114
+    encFlRaw,       // 115: RESERVED_115
+    encFlRaw,       // 116: RESERVED_116
+    encFlRaw,       // 117: RESERVED_117
+    encFlRaw,       // 118: RESERVED_118
+    encFlRaw,       // 119: RESERVED_119
+    encFlRaw,       // 120: RESERVED_120
+    encFlInt,       // 121: TRUNK_NUMBER
+    encFlInt,       // 122: TRUNK_GROUP_NUMBER
+    AgentState.encodeFloat, // 123: NEXT_AGENT_STATE
+    encFlRaw,       // 124: DEQUEUE_TYPE
+    encFlStr,       // 125: SENDING_ADDRESS
+    encFlStr,       // 126: SENDING_PORT
+    encFlRaw,       // 127: RESERVED_127
+    encFlRaw,       // 128: RESERVED_128
+    encFlRaw,       // 129: MAX_QUEUED
+    encFlRaw,       // 130: QUEUE_ID
+    encFlRaw,       // 131: CUSTOMER_ID
+    encFlRaw,       // 132: SERVICE_SKILL_TARGET_ID
+    encFlRaw,       // 133: PERIPHERAL_NAME
+    encFlRaw,       // 134: DESCRIPTION
+    encFlRaw,       // 135: SERVICE_MEMBER_ID
+    encFlRaw,       // 136: SERVICE_MEMBER_PRIORITY
+    encFlRaw,       // 137: FIRST_NAME
+    encFlRaw,       // 138: LAST_NAME
+    encFlRaw,       // 139: SKILL_GROUP
+    encFlRaw,       // 140: RESERVED_140
+    encFlRaw,       // 141: AGENT_SKILL_TARGET_ID
+    encFlRaw,       // 142: SERVICE
+    encFlRaw,       // 143: RESERVED_143
+    encFlRaw,       // 144: RESERVED_144
+    encFlRaw,       // 145: RESERVED_145
+    encFlRaw,       // 146: RESERVED_146
+    encFlRaw,       // 147: RESERVED_147
+    encFlRaw,       // 148: RESERVED_148
+    encFlRaw,       // 149: RESERVED_149
+    encFlInt,       // 150: DURATION
+    encFlRaw,       // 151: RESERVED_151
+    encFlRaw,       // 152: RESERVED_152
+    encFlRaw,       // 153: RESERVED_153
+    encFlRaw,       // 154: RESERVED_154
+    encFlRaw,       // 155: RESERVED_155
+    encFlRaw,       // 156: RESERVED_156
+    encFlRaw,       // 157: RESERVED_157
+    encFlRaw,       // 158: RESERVED_158
+    encFlRaw,       // 159: RESERVED_159
+    encFlRaw,       // 160: RESERVED_160
+    encFlRaw,       // 161: RESERVED_161
+    encFlRaw,       // 162: RESERVED_162
+    encFlRaw,       // 163: RESERVED_163
+    encFlRaw,       // 164: RESERVED_164
+    encFlRaw,       // 165: RESERVED_165
+    encFlRaw,       // 166: RESERVED_166
+    encFlRaw,       // 167: RESERVED_167
+    encFlRaw,       // 168: RESERVED_168
+    encFlRaw,       // 169: RESERVED_169
+    encFlRaw,       // 170: RESERVED_170
+    encFlRaw,       // 171: RESERVED_171
+    encFlRaw,       // 172: RESERVED_172
+    encFlRaw,       // 173: EXTENSION
+    encFlRaw,       // 174: SERVICE_LEVEL_THRESHOLD
+    encFlRaw,       // 175: SERVICE_LEVEL_TYPE
+    encFlRaw,       // 176: CONFIG_PARAM
+    encFlRaw,       // 177: SERVICE_CONFIG_KEY
+    encFlRaw,       // 178: SKILL_GROUP_CONFIG_KEY
+    encFlRaw,       // 179: AGENT_CONFIG_KEY
+    encFlRaw,       // 180: DEVICE_CONFIG_KEY
+    encFlRaw,       // 181: RESERVED_181
+    encFlRaw,       // 182: RESERVED_182
+    encFlRaw,       // 183: RECORD_TYPE
+    encFlRaw,       // 184: PERIPHERAL_NUMBER
+    encFlRaw,       // 185: CONFIG_AGENT_SKILL_TARGET_ID
+    encFlRaw,       // 186: NUM_SERVICE_MEMBERS
+    encFlStr,       // 187: SERVICE_MEMBER
+    encFlRaw,       // 188: SERVICE_PRIORITY
+    encFlRaw,       // 189: AGENT_TYPE
+    encFlRaw,       // 190: LOGIN_ID
+    encFlRaw,       // 191: NUM_SKILLS
+    encFlRaw,       // 192: SKILL_GROUP_SKILL_TARGET_ID
+    encFlInt,       // 193: SERVICE_ID
+    encFlRaw,       // 194: AGENT_ID_LONG
+    encFlRaw,       // 195: DEVICE_TYPE
+    encFlRaw,       // 196: RESERVED_196
+    encFlRaw,       // 197: RESERVED_197
+    encFlRaw,       // 198: ENABLE
+    encFlRaw,       // 199: DEVICEID
+    encFlRaw,       // 200: TIMEOUT
+    encFlRaw,       // 201: CURRENT_ROUTE
+    encFlInt,       // 202: SECONDARY_CONNECTION_CALL_ID
+    encFlRaw,       // 203: PRIORITY_QUEUE_NUMBER
+    encFlRaw,       // 204: TEAM_NAME
+    encFlRaw,       // 205: MEMBER_TYPE
+    encFlStr,       // 206: EVENT_DEVICE_ID
+    encFlRaw,       // 207: LOGIN_NAME_V11
+    encFlInt,       // 208: PERIPHERAL_ID_V11
+    encFlRaw,       // 209: CALL_TYPE_KEY_CONFIG_V11
+    encFlRaw,       // 210: CALL_TYPE_ID_V11
+    encFlRaw,       // 211: CUSTOMER_DEFINITION_ID_V11
+    encFlRaw,       // 212: ENTERPRISE_NAME_V11
+    encFlRaw,       // 213: CUR_PERIPHERAL_NUMBER
+    encFlRaw,       // 214: CUR_LOGIN_ID
+    encFlStr,       // 215: ANI_II
+    encFlRaw,       // 216: MR_DOMAIN_ID
+    encFlStr,       // 217: CTIOS_CIL_CLIENT_ID
+    SilentMonitorStatus.encodeFloat,        // 218: SILENT_MONITOR_STATUS
+    encFlStr,       // 219: REQUESTING_DEVICE_ID
+    encFlRaw,       // 220: REQUESTING_DEVICE_ID_TYPE
+    encFlInt,       // 221: PRE_CALL_INVOKE_ID
+    encFlRaw,       // 222: ENTERPRISE_QUEUE_TIME
+    encFlRaw,       // 223: CALL_REFERENCE_ID
+    encFlBool,      // 224: MULTI_LINE_AGENT_CONTROL
+    encFlRaw,       // 225: NETWORK_CONTROLLED
+    encFlStr,       // 226: CLIENT_ADDRESS_IPV6
+    encFlStr,       // 227: SENDING_ADDRESS_IPV6
+    encFlShort,     // 228: NUM_PERIPHERALS
+    encFlInt,       // 229: COC_CONNECTION_CALL_ID
+    encFlShort,     // 230: COC_CONNECTION_DEVICE_ID_TYPE
+    encFlStr,       // 231: COC_CONNECTION_DEVICE_ID
+    encFlByte,      // 232: CALL_ORIGINATED_FROM
+    encFlRaw,       // 233: SET_APPDATA_CALLID
+    encFlRaw,       // 234: CLIENT_SHARE_KEY
+    encFlRaw,       // 235: RESERVED_235
+    encFlRaw,       // 236: RESERVED_236
+    encFlRaw,       // 237: RESERVED_237
+    encFlRaw,       // 238: RESERVED_238
+    encFlRaw,       // 239: RESERVED_239
+    encFlRaw,       // 240: RESERVED_240
+    encFlRaw,       // 241: RESERVED_241
+    encFlRaw,       // 242: RESERVED_242
+    encFlStr,       // 243: AGENT_TEAM_NAME
+    CallDirection.encodeFloat,      // 244: DIRECTION
+    encFlRaw,       // 245: RESERVED_245
+    encFlRaw,       // 246: RESERVED_246
+    encFlRaw,       // 247: RESERVED_247
+    encFlRaw,       // 248: RESERVED_248
+    encFlRaw,       // 249: RESERVED_249
+    encFlRaw,       // 250: RESERVED_250
+    encFlRaw,       // 251: RESERVED_251
+    encFlRaw,       // 252: RESERVED_252
+    encFlRaw,       // 253: RESERVED_253
+    encFlRaw,       // 254: RESERVED_254
+    encFlRaw        // 255: RESERVED_255
+  )
 }

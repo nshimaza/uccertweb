@@ -16,6 +16,11 @@ class ByteEnum extends Enumeration {
   }
 
   def decodeWithLen(tag: Tag, buf: ByteString) = (decode(tag, buf), 1)
+
+  def getId(a: Any): Int = a match { case o: Option[Any] => o.get match { case n: this.Value => n.id } }
+
+  def encode(a: Any) = ByteString(getId(a))
+  def encodeFloat(tag: Tag, a: Any) = ByteString(tag.id, 1) ++ encode(a)
 }
 
 class ShortEnum extends Enumeration {
@@ -28,6 +33,11 @@ class ShortEnum extends Enumeration {
   }
 
   def decodeWithLen(tag: Tag, buf: ByteString) = (decode(tag, buf), 2)
+
+  def getId(a: Any): Int = a match { case o: Option[Any] => o.get match { case n: this.Value => n.id } }
+
+  def encode(a: Any) = encodeByteString(getId(a).toShort)
+  def encodeFloat(tag: Tag, a: Any) = ByteString(tag.id, 2) ++ encode(a)
 }
 
 class IntEnum extends Enumeration {
@@ -40,4 +50,9 @@ class IntEnum extends Enumeration {
   }
 
   def decodeWithLen(tag: Tag, buf: ByteString) = (decode(tag, buf), 4)
+
+  def getId(a: Any): Int = a match { case o: Option[Any] => o.get match { case n: this.Value => n.id } }
+
+  def encode(a: Any) = encodeByteString(getId(a))
+  def encodeFloat(tag: Tag, a: Any) = ByteString(tag.id, 4) ++ encode(a)
 }

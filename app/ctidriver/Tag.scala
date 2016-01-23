@@ -1767,7 +1767,9 @@ object Tag extends Enumeration {
   private def encFlInt(tag: Tag, a: Any) = a match { case i: Int => ByteString(tag.id, 4) ++ i }
   private def encFlShort(tag: Tag, a: Any) = a match { case s: Short => ByteString(tag.id, 2) ++ s }
   private def encFlByte(tag: Tag, a: Any) = a match { case b: Byte => ByteString(tag.id, 1, b & 0xff) }
-  private def encFlBool(tag: Tag, a: Any) = a match { case b: Boolean => ByteString(tag.id, 2, if (b) 1 else 0) }
+  private def encFlShortBool(tag: Tag, a: Any) = a match {
+    case b: Boolean => ByteString(tag.id, 2) ++ (if (b) 1 else 0).toShort
+  }
   private def encFlShortMask(tag: Tag, a: Any) = a match { case m: BitSet => encFlShort(tag, m.toInt.toShort) }
 
   private def encFlNamedVar(tag: Tag, a: Any) = a match {
@@ -2026,7 +2028,7 @@ object Tag extends Enumeration {
     encFlInt,       // 221: PRE_CALL_INVOKE_ID
     encFlRaw,       // 222: ENTERPRISE_QUEUE_TIME
     encFlRaw,       // 223: CALL_REFERENCE_ID
-    encFlBool,      // 224: MULTI_LINE_AGENT_CONTROL
+    encFlShortBool, // 224: MULTI_LINE_AGENT_CONTROL
     encFlRaw,       // 225: NETWORK_CONTROLLED
     encFlStr,       // 226: CLIENT_ADDRESS_IPV6
     encFlStr,       // 227: SENDING_ADDRESS_IPV6

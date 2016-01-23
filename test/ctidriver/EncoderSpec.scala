@@ -1,4 +1,6 @@
 import akka.util.ByteString
+import ctidriver.MessageType._
+import ctidriver.Tag._
 import ctidriver._
 import org.scalatest.FunSuite
 import scala.collection.immutable.BitSet
@@ -8,6 +10,18 @@ import scala.collection.immutable.BitSet
  * Created by x on 2014/06/29.
  */
 class EncoderSpec extends FunSuite {
+
+  test("encoding 000: UNKNOWN_TYPE") {
+    val raw = ByteString(0,0,0,0, 1,2,3,4,5,6,7,8,9,10)
+    val msg: Message = List((MessageTypeTag, Some(UNKNOWN_TYPE)), (RawBytes, ByteString(1,2,3,4,5,6,7,8,9,10)))
+
+    assert(Encoder.encode(msg) == raw)
+  }
+
+
+
+
+
   test("encoding OPEN_REQ") {
     val src = Encoder.buildCtiRequest(Encoder.buildOpenReq(
       serviceRequested = BitSet.empty + CtiServiceMask.ALL_EVENTS,

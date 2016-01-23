@@ -27,7 +27,7 @@ abstract class CtiEnum extends Enumeration {
 class ByteEnum extends CtiEnum {
   def decode(tag: Tag, body: ByteString): ((Tag, Option[Value]), Int) = {
     try {
-      ((tag, Some(super.apply(body(0).toInt & 0xff))), 1)
+      ((tag, Some(super.apply(body.head.toInt & 0xff))), 1)
     } catch {
       case e: NoSuchElementException => ((tag, None), 1)
     }

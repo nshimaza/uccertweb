@@ -8,11 +8,17 @@ import scala.annotation.tailrec
  */
 object Decoder {
   def decode(buf: ByteString): Message = {
+    val (msgType, len)  = MessageType.decode(Tag.MessageTypeTag, buf)
+    val body = buf.drop(len)
+    val (fixed, next_offset) = decodeFixedPart(List(msgType), MessageType.getFixedPartList(msgType._2), body)
+
+
+/*
     val msgType = MessageType fromInt buf.toInt
     val body = buf.drop(4)
     val (fixed: Message, next_offset)
     = decodeFixedPart(List((Tag.MessageTypeTag, msgType)), MessageType.getFixedPartList(msgType), body)
-
+*/
 /*
     println(fixed)
     print("next_offset:"); println(next_offset)
@@ -40,18 +46,11 @@ object Decoder {
     if (buf.size <= 0)
       decoded
     else {
-      val tag = Tag(buf(0).toInt & 0xff)
+      val tag = Tag(buf.head.toInt & 0xff)
       val body = buf.drop(1)
       val (result, next_offset) = Tag.decodeFloatingField(tag, body)
 
       decodeFloatingPart(result +: decoded, body.drop(next_offset))
-
-//      val tag = Tag(buf(0).toInt & 0xff)
-//      val len = buf(1).toInt & 0xff
-//      val body = buf.drop(2)
-//      val rest = body.drop(len)
-//
-//      decodeFloatingPart(Tag.decodeFloatingField(tag, len, body) +: decoded, rest)
     }
   }
 }

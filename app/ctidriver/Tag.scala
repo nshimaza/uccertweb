@@ -663,7 +663,7 @@ object Tag extends Enumeration {
   private def decFxRaw(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), body.size)
   private def decFxInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toInt), 4)
   private def decFxShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toShort), 2)
-  private def decFxByte(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body(0)), 1)
+  private def decFxByte(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.head), 1)
   private def decFxIntBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toInt != 0), 4)
   private def decFxShortBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toShort != 0), 2)
   private def decFxIntBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
@@ -671,8 +671,6 @@ object Tag extends Enumeration {
   private def decFxShortBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
     ((tag, BitSet fromBitMask Array(body.toShort.toLong)), 2)
   private def decFxMsgType(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, MessageType fromInt body.toInt), 4)
-//  private def decFxNotYetImplementedInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 4)
-//  private def decFxNotYetImplementedShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), 2)
 
   //
   // DON'T EDIT THIS TABLE!!
@@ -1055,12 +1053,12 @@ object Tag extends Enumeration {
   // Decoder functions of floating part for simple types
   //
   private def decFlRaw(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
-    val len = body(0)
+    val len = body.head
     ((tag, body.drop(1).take(len)), len + 1)
   }
 
   private def decFlStr(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
-    val len = body(0)
+    val len = body.head
     ((tag, body.drop(1).toString(len)), len + 1)
   }
 
@@ -1074,12 +1072,12 @@ object Tag extends Enumeration {
   }
 
   private def decFlNamedVar(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
-    val len = body(0)
+    val len = body.head
     ((tag, body.drop(1).toNamedVar(len)), len + 1)
   }
 
   private def decFlNamedArr(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
-    val len = body(0)
+    val len = body.head
     ((tag, body.drop(1).toNamedArray(len)), len + 1)
   }
 
@@ -1347,9 +1345,18 @@ object Tag extends Enumeration {
 
 
   //
+  // Encode a field
+  //
+  def encodeField(tag: Tag, field_value: Any): ByteString = tag.id match {
+    case i if i == MessageTypeTag.id => MessageType.encode(tag, field_value)
+    case i if i > MessageTypeTag.id => encFixedField(tag, field_value)
+    case _ => encFloatingField(tag, field_value)
+  }
+
+  //
   // Encode a fixed part field
   //
-  def encodeFixedField(tag: Tag, field_value: Any): ByteString =
+  private def encFixedField(tag: Tag, field_value: Any): ByteString =
     fxTagToEncodeFunc(tag.id - ActiveConnectionCallID.id)(tag, field_value)
 
   //
@@ -1740,7 +1747,7 @@ object Tag extends Enumeration {
   //
   // Encode a floating part field
   //
-  def encodeFloatingField(tag: Tag, field_value: Any): ByteString = flTagToEncodeFunc(tag.id)(tag, field_value)
+  private def encFloatingField(tag: Tag, field_value: Any): ByteString = flTagToEncodeFunc(tag.id)(tag, field_value)
 
   //
   // Encoder functions of floating part for simple types

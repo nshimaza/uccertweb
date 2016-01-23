@@ -10,7 +10,7 @@ import ctidriver.Tag._
  *
  */
 
-object MessageType extends Enumeration {  
+object MessageType extends IntEnum {
   type MessageType = Value
   val UNKNOWN_TYPE                          = Value(  0)
   val FAILURE_CONF                          = Value(  1)
@@ -1106,5 +1106,5 @@ object MessageType extends Enumeration {
     }
   }
 
-  def getFixedPartList(msgType: MessageType): List[Tag] = fixedPartListTable(msgType.id)
+  def getFixedPartList(t: Option[MessageType]): List[Tag] = fixedPartListTable(t.getOrElse(UNKNOWN_TYPE).id)
 }

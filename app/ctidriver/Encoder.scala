@@ -1,6 +1,7 @@
 package ctidriver
 
 import akka.util.ByteString
+import scala.annotation.tailrec
 import scala.collection.immutable.BitSet
 import scala.collection.mutable.ArrayBuffer
 
@@ -12,13 +13,26 @@ object Encoder {
   // Message builder functions
   //
 
-  def setMessageLength(buf: => ArrayBuffer[Byte]) = {
-    val len = intToByteArray(buf.size - 8)		// message length doesn't include message header
-    buf(0) = len(0)
-    buf(1) = len(1)
-    buf(2) = len(2)
-    buf(3) = len(3)    
+  def encode(msg: Message): ByteString = encodeMsgField(ByteString.empty, msg)
+
+  @tailrec
+  def encodeMsgField(encoded: ByteString, rest: Message): ByteString = {
+    if (rest.isEmpty)
+      encoded
+    else {
+      val (tag, field) = rest.head
+      encodeMsgField(encoded ++ encodeField(tag, field), rest.drop(1))
+    }
   }
+
+
+//  def setMessageLength(buf: => ArrayBuffer[Byte]) = {
+//    val len = intToByteArray(buf.size - 8)		// message length doesn't include message header
+//    buf(0) = len(0)
+//    buf(1) = len(1)
+//    buf(2) = len(2)
+//    buf(3) = len(3)
+//  }
 
   //
   // Building a floating field

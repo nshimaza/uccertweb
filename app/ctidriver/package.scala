@@ -103,7 +103,7 @@ package object ctidriver {
     // Decode CTI Named Variable Array
     def toNamedArray(len: Int): (Int, String, String) = {
       val index = buf.head.toInt & 0xff
-      val name = buf drop 1
+      val name = buf.tail
       val len2 = len - 1
       val delim = { val l = name.take(len2).indexOf(0x00); if (l < 0) len2 else l }
       (index, name.toString(delim), name.drop(delim + 1).toString(len2 - (delim + 1)))

@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   ws,
   specs2 % Test,
   "com.typesafe.akka" %% "akka-agent" % "2.3.14",
+  "com.typesafe.akka" %% "akka-testkit" % "2.3.14",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
 

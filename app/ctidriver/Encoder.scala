@@ -21,7 +21,7 @@ object Encoder {
       encoded
     else {
       val (tag, field) = rest.head
-      encodeMsgField(encoded ++ encodeField(tag, field), rest.drop(1))
+      encodeMsgField(encoded ++ encodeField(tag, field), rest.tail)
     }
   }
 

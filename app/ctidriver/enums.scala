@@ -12,7 +12,7 @@ abstract class CtiEnum extends Enumeration {
   def encode(tag: Tag, a: Any): ByteString
 
   def decodeFloat(tag: Tag, body: ByteString) = {
-    val (result, len) = decode(tag, body.drop(1))
+    val (result, len) = decode(tag, body.tail)
     (result, len + 1)
   }
 

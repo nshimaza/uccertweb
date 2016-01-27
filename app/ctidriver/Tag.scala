@@ -1054,31 +1054,31 @@ object Tag extends Enumeration {
   //
   private def decFlRaw(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
     val len = body.head
-    ((tag, body.drop(1).take(len)), len + 1)
+    ((tag, body.tail.take(len)), len + 1)
   }
 
   private def decFlStr(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
     val len = body.head
-    ((tag, body.drop(1).toString(len)), len + 1)
+    ((tag, body.tail.toString(len)), len + 1)
   }
 
-  private def decFlInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.drop(1).toInt), 5)
-  private def decFlShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.drop(1).toShort), 3)
+  private def decFlInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.tail.toInt), 5)
+  private def decFlShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.tail.toShort), 3)
   private def decFlByte(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body(1)), 2)
-  private def decFlShortBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.drop(1).toShort != 0), 3)
+  private def decFlShortBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.tail.toShort != 0), 3)
 
   private def decFlShortMask(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
-    ((tag, BitSet fromBitMask Array(body.drop(1).toShort.toLong)), 3)
+    ((tag, BitSet fromBitMask Array(body.tail.toShort.toLong)), 3)
   }
 
   private def decFlNamedVar(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
     val len = body.head
-    ((tag, body.drop(1).toNamedVar(len)), len + 1)
+    ((tag, body.tail.toNamedVar(len)), len + 1)
   }
 
   private def decFlNamedArr(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
     val len = body.head
-    ((tag, body.drop(1).toNamedArray(len)), len + 1)
+    ((tag, body.tail.toNamedArray(len)), len + 1)
   }
 
   //

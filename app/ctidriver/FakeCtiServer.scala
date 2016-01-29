@@ -1,55 +1,88 @@
 package ctidriver
 
 import akka.actor.{ Actor, ActorRef, Props }
-import akka.io.{ IO, Tcp }
+import akka.io.{ IO, Tcp, TcpSO }
 import akka.io.Tcp._
 import akka.util.ByteString
 import java.net.InetSocketAddress
 
 /**
-  * Created by nshimaza on 2016/01/21.
+  * FakeCtiServer supports only one TCP client at a time.
+  * New connection from another client results unknown behavior.
   */
-class FakeCtiServer(scenario: Seq[ByteString]) {
+
+object FakeCtiServerProtocol {
+  case class Scenario(scenario: List[ByteString])
+  case class Packet(body: ByteString)
+  case class AddServerProve(p: ActorRef)
+  case class RemoveServerProve(p: ActorRef)
+  case object ClientHandlerReady
+  case object Rewind
+  case object Tick
+}
+
+class FakeCtiServer extends Actor {
+  import FakeCtiServerProtocol._
+  import context.system
+
+  var scenario: List[ByteString] = List()
   var curr = scenario
-  var peers: Set[ActorRef] = Set.empty
+  var handlers: Set[ActorRef] = Set.empty
+  var probes: Set[ActorRef] = Set.empty
 
-  class Server extends Actor {
-    import context.system
 
-    IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", 42027))
+  IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", 42027), options = List(TcpSO.tcpNoDelay(true)))
 
-    def receive = {
-      case b @ Bound(localAddress) =>
-        println("FakeCtiServer started to listen")
+  def receive = {
+    case b @ Bound(localAddress) =>
+      println("FakeCtiServer started to listen")
 
-      case CommandFailed(_: Bind) =>
-        context stop self
+    case CommandFailed(_: Bind) => context stop self
 
-      case c @ Connected(remote, local) =>
-        val handler = context.actorOf(Props[Handler])
-        val connection = sender()
-        connection ! Register(handler)
-        peers = peers + connection
-    }
+    case c @ Connected(remote, local) =>
+      val peer = sender()
+      val handler = context.actorOf(Props(new FakeCtiServerHandler(self, peer)))
+      peer ! Register(handler)
+      handlers = handlers + handler
+
+    case PeerClosed => handlers = handlers - sender()
+
+    case AddServerProve(p) => probes = probes + p
+    case RemoveServerProve(p) => probes = probes - p
+    case ClientHandlerReady => probes.foreach(p => p ! ClientHandlerReady)
+
+    case Scenario(new_scenario: List[ByteString]) =>
+      scenario = new_scenario
+      curr = scenario
+
+    case Rewind => curr = scenario
+
+    case Tick =>
+      val packet = Packet(curr.head)
+      curr = curr.tail
+      handlers.foreach(p => p ! packet)
   }
+}
 
-  class Handler extends Actor {
-    def receive = {
-      case Received(data) =>
-        println("received:", data)
+class FakeCtiServerHandler(parent: ActorRef, peer: ActorRef) extends Actor {
+  import FakeCtiServerProtocol._
 
-      case PeerClosed =>
-        peers = peers - sender()
-        context stop self
-    }
-  }
+  case object InitializationDone
+  self ! InitializationDone
 
-  def rewind() = { curr = scenario }
+  def receive = {
+    case InitializationDone =>
+      parent ! ClientHandlerReady
 
-  def tick() = {
-    val packet = curr.head
-    curr = curr.tail
-    peers.foreach(p => p ! Write(packet))
+    case Packet(body) =>
+      peer ! Write(body)
+
+    case Received(data) =>
+      println("FakeCtiServerHander received data from client (ignored):", data)
+
+    case p @ PeerClosed =>
+      parent ! p
+      context stop self
   }
 }
 

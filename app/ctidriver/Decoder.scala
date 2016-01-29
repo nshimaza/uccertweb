@@ -2,6 +2,7 @@ package ctidriver
 
 import akka.util.ByteString
 import scala.annotation.tailrec
+import Tag.Tag
 
 /**
  * Message extractor functions

@@ -2,11 +2,12 @@ import akka.util.ByteString
 import scala.collection.immutable.BitSet
 
 package object ctidriver {
+  import Tag.Tag
 
   //
   // Type alias of container for extracted CTI Server Protocol message
   //
-  type Tag = Tag.Value
+//  type Tag = Tag.Value
   type Message = List[(Tag, Any)]
   type CtiMessage = List[(Tag, Any)]
   type RevCtiMessage = List[(Tag, Any)]
@@ -23,6 +24,8 @@ package object ctidriver {
   val MaxFloatStringLen: Int    = 255
   val MaxTagValue: Int          = 255
   val NoIdleTimeout: Int        = 0xffffffff
+  val DefaultCtiServerPortA     = 42027
+  val DefaultCtiServerPortB     = 43027
 
   type Section = Section.Value
   object Section extends Enumeration {

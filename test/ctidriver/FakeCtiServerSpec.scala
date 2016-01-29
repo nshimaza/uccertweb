@@ -5,6 +5,7 @@ import akka.io.{ IO, Tcp }
 import akka.io.Tcp._
 import akka.testkit.{ TestActorRef, TestActors, TestKit, TestProbe }
 import akka.util.ByteString
+import ctidriver.FakeCtiServerProtocol.Scenario
 import org.scalatest.{ WordSpecLike, MustMatchers, BeforeAndAfterAll }
 import scala.concurrent.duration._
 import scala.concurrent.Future
@@ -15,10 +16,10 @@ import java.net.InetSocketAddress
   */
 
 
-class TCPClient(remote: InetSocketAddress, listener: ActorRef) extends Actor {
+class TCPClient(server: InetSocketAddress, listener: ActorRef) extends Actor {
   import context.system
 
-  IO(Tcp) ! Connect(remote)
+  IO(Tcp) ! Connect(server)
 
   def receive = {
     case CommandFailed(_: Connect) =>
@@ -49,7 +50,7 @@ class TCPClient(remote: InetSocketAddress, listener: ActorRef) extends Actor {
 class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {
 
-  def this() = this(ActorSystem("FakeServerSpec"))
+  def this() = this(ActorSystem("LoopbackServerSpec"))
 
   val server = system.actorOf(Props[LoopbackServer])
 
@@ -62,7 +63,7 @@ class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
       val probe = TestProbe()
       val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
 
-      val msg = probe.expectMsgClass(1.second, classOf[Connected])
+      val msg = probe.expectMsgClass(3.second, classOf[Connected])
 
       msg.remoteAddress.getHostName must be("localhost")
       msg.remoteAddress.getPort must be(42027)
@@ -73,11 +74,77 @@ class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
       val probe = TestProbe()
       val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
 
-      probe.expectMsgClass(1.second, classOf[Connected])
+      probe.expectMsgClass(3.second, classOf[Connected])
 
       client ! ByteString("Hello World.")
-      probe.expectMsg(1.second, ByteString("Hello World."))
+      probe.expectMsg(3.second, ByteString("Hello World."))
     }
+
+
+  }
+}
+
+class FakeCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
+  with WordSpecLike with MustMatchers with BeforeAndAfterAll {
+  import FakeCtiServerProtocol._
+
+  def this() = this(ActorSystem("FakeCtiServerSpec"))
+
+  val server = system.actorOf(Props[FakeCtiServer])
+
+  override def afterAll {
+    TestKit.shutdownActorSystem(system)
+  }
+
+  "FakeCtiServer" must {
+    "accept connection from TCP client" in {
+      val probe = TestProbe()
+      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
+
+      val msg = probe.expectMsgClass(3.second, classOf[Connected])
+
+      msg.remoteAddress.getHostName must be("localhost")
+      msg.remoteAddress.getPort must be(42027)
+      msg.localAddress.getHostName must be("localhost")
+
+      client ! "close"
+    }
+
+    "send single element of scenario at Tick arrival" in {
+      val server_prove = TestProbe()
+      server ! AddServerProve(server_prove.ref)
+      val probe = TestProbe()
+      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
+      probe.expectMsgClass(3.second, classOf[Connected])
+      server_prove.expectMsg(3.second, ClientHandlerReady)
+
+      server ! Scenario(List(ByteString("Tick1"), ByteString("Tick2")))
+      server ! Tick
+      probe.expectMsg(3.second, ByteString("Tick1"))
+
+      client ! "close"
+      server ! RemoveServerProve(server_prove.ref)
+    }
+
+    "send single packet for each Tick" in {
+      val server_prove = TestProbe()
+      server ! AddServerProve(server_prove.ref)
+      val probe = TestProbe()
+      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
+      probe.expectMsgClass(3.second, classOf[Connected])
+      server_prove.expectMsg(3.second, ClientHandlerReady)
+
+      server ! Scenario(List(ByteString("message 1"), ByteString("message 2")))
+      server ! Tick
+      probe.expectMsg(3.second, ByteString("message 1"))
+
+      server ! Tick
+      probe.expectMsg(3.second, ByteString("message 2"))
+
+      client ! "close"
+      server ! RemoveServerProve(server_prove.ref)
+    }
+
 
 
   }

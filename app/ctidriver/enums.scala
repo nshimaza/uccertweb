@@ -1,6 +1,7 @@
 package ctidriver
 
 import akka.util.ByteString
+import Tag.Tag
 
 /**
   * Enumeration with factory func which returns Value in wrapping Option.

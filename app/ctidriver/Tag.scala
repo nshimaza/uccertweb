@@ -12,6 +12,7 @@ import scala.collection.immutable.BitSet
  * 
  */
 object Tag extends Enumeration {
+  type Tag = Value
   //
   // Tag value 0 through 255 are directly mapped to Tag field in
   // floating part of CTI message.

@@ -671,7 +671,6 @@ object Tag extends Enumeration {
     ((tag, BitSet fromBitMask Array(body.toInt.toLong)), 4)
   private def decFxShortBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
     ((tag, BitSet fromBitMask Array(body.toShort.toLong)), 2)
-  private def decFxMsgType(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, MessageType fromInt body.toInt), 4)
 
   //
   // DON'T EDIT THIS TABLE!!

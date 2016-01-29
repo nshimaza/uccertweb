@@ -52,7 +52,8 @@ class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
 
   def this() = this(ActorSystem("LoopbackServerSpec"))
 
-  val server = system.actorOf(Props[LoopbackServer])
+  val server_port = 42027
+  val server = system.actorOf(Props(new LoopbackServer(server_port)))
 
   override def afterAll {
     TestKit.shutdownActorSystem(system)
@@ -61,18 +62,18 @@ class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
   "LoopbackServer" must {
     "accept connection from TCP client" in {
       val probe = TestProbe()
-      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
+      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", server_port), probe.ref)))
 
       val msg = probe.expectMsgClass(3.second, classOf[Connected])
 
       msg.remoteAddress.getHostName must be("localhost")
-      msg.remoteAddress.getPort must be(42027)
+      msg.remoteAddress.getPort must be(server_port)
       msg.localAddress.getHostName must be("localhost")
     }
 
     "echo back what TCP client sent" in {
       val probe = TestProbe()
-      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
+      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", server_port), probe.ref)))
 
       probe.expectMsgClass(3.second, classOf[Connected])
 
@@ -90,7 +91,8 @@ class FakeCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
 
   def this() = this(ActorSystem("FakeCtiServerSpec"))
 
-  val server = system.actorOf(Props[FakeCtiServer])
+  val server_port = 42028
+  val server = system.actorOf(Props(new FakeCtiServer(server_port)))
 
   override def afterAll {
     TestKit.shutdownActorSystem(system)
@@ -99,12 +101,12 @@ class FakeCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
   "FakeCtiServer" must {
     "accept connection from TCP client" in {
       val probe = TestProbe()
-      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
+      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", server_port), probe.ref)))
 
       val msg = probe.expectMsgClass(3.second, classOf[Connected])
 
       msg.remoteAddress.getHostName must be("localhost")
-      msg.remoteAddress.getPort must be(42027)
+      msg.remoteAddress.getPort must be(server_port)
       msg.localAddress.getHostName must be("localhost")
 
       client ! "close"
@@ -114,7 +116,7 @@ class FakeCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
       val server_prove = TestProbe()
       server ! AddServerProve(server_prove.ref)
       val probe = TestProbe()
-      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
+      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", server_port), probe.ref)))
       probe.expectMsgClass(3.second, classOf[Connected])
       server_prove.expectMsg(3.second, ClientHandlerReady)
 
@@ -130,7 +132,7 @@ class FakeCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
       val server_prove = TestProbe()
       server ! AddServerProve(server_prove.ref)
       val probe = TestProbe()
-      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", 42027), probe.ref)))
+      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", server_port), probe.ref)))
       probe.expectMsgClass(3.second, classOf[Connected])
       server_prove.expectMsg(3.second, ClientHandlerReady)
 

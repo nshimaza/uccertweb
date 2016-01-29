@@ -1,5 +1,6 @@
+package ctidriver
+
 import akka.util.ByteString
-import ctidriver._
 import ctidriver.MessageType._
 import ctidriver.Tag._
 import org.scalatest.FunSuite

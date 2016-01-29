@@ -1098,13 +1098,5 @@ object MessageType extends IntEnum {
     List(InvokeID)
   )
 
-  def fromInt(msgType: Int): MessageType = {
-    try {
-      MessageType(msgType)
-    } catch {
-      case e: NoSuchElementException => UNKNOWN_TYPE
-    }
-  }
-
   def getFixedPartList(t: Option[MessageType]): List[Tag] = fixedPartListTable(t.getOrElse(UNKNOWN_TYPE).id)
 }

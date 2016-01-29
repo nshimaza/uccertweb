@@ -1,7 +1,8 @@
+package ctidriver
+
 import akka.util.ByteString
 import ctidriver.MessageType._
 import ctidriver.Tag._
-import ctidriver._
 import org.scalatest.FunSuite
 import scala.collection.immutable.BitSet
 

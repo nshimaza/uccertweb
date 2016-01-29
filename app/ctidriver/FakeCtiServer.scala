@@ -21,7 +21,7 @@ object FakeCtiServerProtocol {
   case object Tick
 }
 
-class FakeCtiServer extends Actor {
+class FakeCtiServer(port: Int) extends Actor {
   import FakeCtiServerProtocol._
   import context.system
 
@@ -31,7 +31,7 @@ class FakeCtiServer extends Actor {
   var probes: Set[ActorRef] = Set.empty
 
 
-  IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", 42027), options = List(TcpSO.tcpNoDelay(true)))
+  IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", port))
 
   def receive = {
     case b @ Bound(localAddress) =>
@@ -86,10 +86,10 @@ class FakeCtiServerHandler(parent: ActorRef, peer: ActorRef) extends Actor {
   }
 }
 
-class LoopbackServer extends Actor {
+class LoopbackServer(port: Int) extends Actor {
   import context.system
 
-  IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", 42027))
+  IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", port))
 
   def receive = {
     case b @ Bound(localAddress) => println("LoopbackServer started to listen")

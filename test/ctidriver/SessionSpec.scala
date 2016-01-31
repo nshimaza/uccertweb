@@ -1,11 +1,14 @@
 package ctidriver
 
+import java.net.InetSocketAddress
+
 import akka.actor.{ Actor, ActorSystem, Props }
+import akka.io.Tcp._
 import akka.testkit.{ TestActorRef, TestActors, TestKit, TestProbe }
 import akka.util.ByteString
+import ctidriver.FakeCtiServerProtocol._
 import org.scalatest.{ WordSpecLike, MustMatchers, BeforeAndAfterAll }
 import scala.concurrent.duration._
-import scala.concurrent.Future
 
 
 /**
@@ -22,7 +25,9 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {
 
   def this() = this(ActorSystem("SessionSpec"))
-//  val stub = system.actorOf(Props[StubReceiver], "stub")
+
+  val server_port = 42029
+  val server = system.actorOf(Props(new FakeCtiServer(server_port)))
 
   override def afterAll {
     TestKit.shutdownActorSystem(system)
@@ -95,7 +100,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
 
   }
 
-  "Packetizer" should {
+  "Packetizer" must {
     "start with state WAIT_LENGTH" in {
       val packetizer = new Packetizer(TestProbe().ref)
 
@@ -198,6 +203,43 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       probe.expectMsgAllOf(1.second, ByteString(1,2,3,4, 5,6,7,8), ByteString(2,3,4,5, 6,7,8)) must
         be(Seq(ByteString(1,2,3,4, 5,6,7,8), ByteString(2,3,4,5, 6,7,8)))
     }
+  }
 
+  "SocketActor" must {
+    "connect to server" in {
+      val probe = TestProbe()
+      val client = system.actorOf(Props(new SocketActor(new InetSocketAddress("localhost", server_port), probe.ref)))
+
+      val msg = probe.expectMsgClass(3.second, classOf[Connected])
+
+      msg.remoteAddress.getHostName must be("localhost")
+      msg.remoteAddress.getPort must be(server_port)
+      msg.localAddress.getHostName must be("localhost")
+
+      client ! SessionProtocol.Close
+    }
+
+    "packetize received stream" in {
+      val server_prove = TestProbe()
+      server ! AddServerProve(server_prove.ref)
+      val probe = TestProbe()
+      val client = system.actorOf(Props(new SocketActor(new InetSocketAddress("localhost", server_port), probe.ref)))
+      probe.expectMsgClass(3.second, classOf[Connected])
+      server_prove.expectMsg(3.second, ClientHandlerReady)
+
+      server ! Scenario(List(ByteString(0,0,0,4), ByteString(1,2,3,4), ByteString(5,6,7,8),
+        ByteString(0,0), ByteString(0,3, 9,8,7,6), ByteString(5,4,3)))
+      server ! Tick
+      server ! Tick
+      server ! Tick
+      probe.expectMsg(3.second, ByteString(1,2,3,4,5,6,7,8))
+      server ! Tick
+      server ! Tick
+      server ! Tick
+      probe.expectMsg(3.second, ByteString(9,8,7,6,5,4,3))
+
+      client ! SessionProtocol.Close
+      server ! RemoveServerProve(server_prove.ref)
+    }
   }
 }

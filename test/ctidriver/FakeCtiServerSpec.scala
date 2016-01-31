@@ -1,51 +1,20 @@
 package ctidriver
 
+import java.net.InetSocketAddress
+
 import akka.actor.{ Actor, ActorRef, ActorSystem, Props }
 import akka.io.{ IO, Tcp }
 import akka.io.Tcp._
 import akka.testkit.{ TestActorRef, TestActors, TestKit, TestProbe }
 import akka.util.ByteString
-import ctidriver.FakeCtiServerProtocol.Scenario
 import org.scalatest.{ WordSpecLike, MustMatchers, BeforeAndAfterAll }
 import scala.concurrent.duration._
 import scala.concurrent.Future
-import java.net.InetSocketAddress
 
 /**
   * Created by nshimaza on 2016/01/27.
   */
 
-
-class TCPClient(server: InetSocketAddress, listener: ActorRef) extends Actor {
-  import context.system
-
-  IO(Tcp) ! Connect(server)
-
-  def receive = {
-    case CommandFailed(_: Connect) =>
-      listener ! "connect failed"
-      context stop self
-
-    case c @ Connected(remote, local) =>
-      listener ! c
-      val connection = sender()
-      connection ! Register(self)
-      context become {
-        case data: ByteString =>
-          connection ! Write(data)
-        case CommandFailed(w: Write) =>
-          // O/S buffer was full
-          listener ! "write failed"
-        case Received(data) =>
-          listener ! data
-        case "close" =>
-          connection ! Close
-        case _: ConnectionClosed =>
-          listener ! "connection closed"
-          context stop self
-      }
-  }
-}
 
 class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {

@@ -12,7 +12,7 @@ class DecoderSpec extends FunSuite {
     val src = ByteString(0,0,0,0, 1,2,3,4,5,6,7,8,9,10)
     val msg: Message = List((MessageTypeTag, Some(UNKNOWN_TYPE)), (RawBytes, ByteString(1,2,3,4,5,6,7,8,9,10)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 001: FAILURE_CONF") {
@@ -20,14 +20,14 @@ class DecoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x01020304),
       (Status, Some(StatusCode.INVALID_MONITOR_STATUS)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 002: FAILURE_EVENT") {
     val src = ByteString(0,0,0,2, 0,0,0,17)
     val msg: Message = List((MessageTypeTag, Some(FAILURE_EVENT)), (Status, Some(StatusCode.UNSPECIFIED_FAILURE)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 003: OPEN_REQ") {
@@ -49,7 +49,7 @@ class DecoderSpec extends FunSuite {
       (CLIENT_ID, "ClientID"), (CLIENT_PASSWORD, ByteString()), (CLIENT_SIGNATURE, "ClientSignature"),
       (AGENT_EXTENSION, "3001"),(AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (APP_PATH_ID, 0x03040506))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 004: OPEN_CONF") {
@@ -66,35 +66,35 @@ class DecoderSpec extends FunSuite {
       (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (NUM_PERIPHERALS, 0x0506.toShort),
       (MULTI_LINE_AGENT_CONTROL, false))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 005: HEARTBEAT_REQ") {
     val src = ByteString(0,0,0,5, 2,3,4,5)
     val msg: Message = List((MessageTypeTag, Some(HEARTBEAT_REQ)), (InvokeID, 0x02030405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 006: HEARTBEAT_CONF") {
     val src = ByteString(0,0,0,6, 3,4,6,7)
     val msg: Message = List((MessageTypeTag, Some(HEARTBEAT_CONF)), (InvokeID, 0x03040607))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 007: CLOSE_REQ") {
     val src = ByteString(0,0,0,7, 0,0,0,98)
     val msg: Message = List((MessageTypeTag, Some(CLOSE_REQ)), (Status, Some(StatusCode.INVALID_REQUEST_TYPE)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 008: CLOSE_CONF") {
     val src = ByteString(0,0,0,8, 3,4,5,6)
     val msg: Message = List((MessageTypeTag, Some(CLOSE_CONF)), (InvokeID, 0x03040506))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 009: CALL_DELIVERED_EVENT") {
@@ -143,7 +143,7 @@ class DecoderSpec extends FunSuite {
       (CALL_VAR_9, "CV9"), (CALL_VAR_10, "CV10"), (CALL_WRAPUP_DATA, "Wrapup"),
       (NAMED_VARIABLE, ("ECCVar", "ECCVal")), (NAMED_ARRAY, (1, "ECCArr", "ECCArrVal")))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 010: CALL_ESTABLISHED_EVENT") {
@@ -170,7 +170,7 @@ class DecoderSpec extends FunSuite {
       (LAST_REDIRECT_DEVID, "LastRedirectDeviceID"),
       (TRUNK_NUMBER, 0x01020304), (TRUNK_GROUP_NUMBER, 0x02030405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 011: CALL_HELD_EVENT") {
@@ -184,7 +184,7 @@ class DecoderSpec extends FunSuite {
       (LocalConnectionStateTag, Some(LocalConnectionState.INITIATE)), (EventCauseTag, Some(EventCause.NEW_CALL)),
       (CONNECTION_DEVID, "ConnectionDeviceID"), (HOLDING_DEVID, "HoldingDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 012: CALL_RETRIEVED_EVENT") {
@@ -198,7 +198,7 @@ class DecoderSpec extends FunSuite {
       (LocalConnectionStateTag, Some(LocalConnectionState.INITIATE)), (EventCauseTag, Some(EventCause.NEW_CALL)),
       (CONNECTION_DEVID, "ConnectionDeviceID"), (RETRIEVING_DEVID, "RetrievingDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 013: CALL_CLEARED_EVENT") {
@@ -210,7 +210,7 @@ class DecoderSpec extends FunSuite {
       (LocalConnectionStateTag, Some(LocalConnectionState.NULL)), (EventCauseTag, Some(EventCause.CALL_CANCELLED)),
       (CONNECTION_DEVID, "ConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 014: CALL_CONNECTION_CLEARED_EVENT") {
@@ -224,7 +224,7 @@ class DecoderSpec extends FunSuite {
       (LocalConnectionStateTag, Some(LocalConnectionState.NULL)), (EventCauseTag, Some(EventCause.CALL_CANCELLED)),
       (CONNECTION_DEVID, "ConnectionDeviceID"), (RELEASING_DEVID, "ReleasingDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 015: CALL_ORIGINATED_EVENT") {
@@ -244,7 +244,7 @@ class DecoderSpec extends FunSuite {
       (CONNECTION_DEVID, "ConnectionDeviceID"),
       (CALLING_DEVID, "CallingDeviceID"), (CALLED_DEVID, "CalledDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 016: CALL_FAILED_EVENT") {
@@ -260,7 +260,7 @@ class DecoderSpec extends FunSuite {
       (CONNECTION_DEVID, "ConnectionDeviceID"), (FAILING_DEVID, "FailingDeviceID"), (CALLED_DEVID, "CalledDeviceID")
     )
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 017: CALL_CONFERENCED_EVENT") {
@@ -289,7 +289,7 @@ class DecoderSpec extends FunSuite {
       (PARTY_CALLID, 0x08090a0b), (PARTY_DEVID_TYPE, Some(DeviceIDType.EXTERNAL)),
       (PARTY_DEVID, "ConnectedPartyDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 018: CALL_TRANSFERRED_EVENT") {
@@ -318,7 +318,7 @@ class DecoderSpec extends FunSuite {
       (PARTY_CALLID, 0x08090a0b), (PARTY_DEVID_TYPE, Some(DeviceIDType.EXTERNAL)),
       (PARTY_DEVID, "ConnectedPartyDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 019: CALL_DIVERTED_EVENT") {
@@ -336,7 +336,7 @@ class DecoderSpec extends FunSuite {
       (CONNECTION_DEVID, "ConnectionDeviceID"), (DIVERTING_DEVID, "DivertingDeviceID"),
       (CALLED_DEVID, "CalledDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 020: CALL_SERVICE_INITIATED_EVENT") {
@@ -355,7 +355,7 @@ class DecoderSpec extends FunSuite {
       (CONNECTION_DEVID, "ConnectionDeviceID"),
       (CALLING_DEVID, "CallingDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 021: CALL_QUEUED_EVENT") {
@@ -386,7 +386,7 @@ class DecoderSpec extends FunSuite {
       (SKILL_GROUP_ID, 0x090a0b0c),
       (SKILL_GROUP_PRIORITY, 0x0a0b:Short))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 022: CALL_TRANSLATION_ROUTE_EVENT") {
@@ -412,7 +412,7 @@ class DecoderSpec extends FunSuite {
       (CALL_VAR_9, "CV9"), (CALL_VAR_10, "CV10"),
       (NAMED_VARIABLE, ("ECCVar", "ECCVal")), (NAMED_ARRAY, (1, "ECCArr", "ECCArrVal")))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 023: BEGIN_CALL_EVENT") {
@@ -450,7 +450,7 @@ class DecoderSpec extends FunSuite {
       (CTI_CLIENT_SIGNATURE, "CtiClientSignature"), (CTI_CLIENT_TIMESTAMP, 0x090a0b0c),
       (CALL_REFERENCE_ID, ByteString(9,8,7,6,5,4,3,2,1,0)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 024: END_CALL_EVENT") {
@@ -461,7 +461,7 @@ class DecoderSpec extends FunSuite {
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.STATIC)), (ConnectionCallID, 0x06070809),
       (CONNECTION_DEVID, "ConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 025: CALL_DATA_UPDATE_EVENT") {
@@ -508,7 +508,7 @@ class DecoderSpec extends FunSuite {
       (CTI_CLIENT_SIGNATURE, "CtiClientSignature"), (CTI_CLIENT_TIMESTAMP, 0x090a0b0c),
       (CALL_REFERENCE_ID, ByteString(9,8,7,6,5,4,3,2,1,0)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 026: SET_CALL_DATA_REQ") {
@@ -542,14 +542,14 @@ class DecoderSpec extends FunSuite {
       (ROUTER_CALL_KEY_DAY, 0x01020304), (ROUTER_CALL_KEY_CALLID, 0x02030405),
       (ROUTER_CALL_KEY_SEQUENCE_NUM, 0x03040506), (CALL_ORIGINATED_FROM, 0x44:Byte))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 027: SET_CALL_DATA_CONF") {
     val src = ByteString(0,0,0,27, 7,8,8,9)
     val msg: Message = List((MessageTypeTag, Some(SET_CALL_DATA_CONF)), (InvokeID, 0x07080809))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 028: RELEASE_REQ") {
@@ -559,14 +559,14 @@ class DecoderSpec extends FunSuite {
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.STATIC)), (ConnectionCallID, 0x0a0b0b0c),
       (CONNECTION_DEVID, "ConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 029: RELEASE_CALL_CONF") {
     val src = ByteString(0,0,0,29, 5,6,7,8)
     val msg: Message = List((MessageTypeTag, Some(RELEASE_CALL_CONF)), (InvokeID, 0x05060708))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 030: AGENT_STATE_EVENT") {
@@ -591,7 +591,7 @@ class DecoderSpec extends FunSuite {
       (SKILL_GROUP_NUMBER, 0x0708090a), (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a:Short),
       (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 031: SYSTEM_EVENT") {
@@ -605,7 +605,7 @@ class DecoderSpec extends FunSuite {
       (SystemEventArg3, 0x04050607), (EventDeviceType, Some(DeviceIDType.TRUNK_IDENTIFIER)),
       (TEXT, "SystemEventText"), (EVENT_DEVICE_ID, "EventDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 032: CLIENT_EVENT_REPORT_REQ") {
@@ -616,14 +616,14 @@ class DecoderSpec extends FunSuite {
       (ClientEventStateTag, Some(ClientEventReportState.Warning)),
       (OBJECT_NAME, "ObjectName"), (TEXT, "Text"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 033: CLIENT_EVENT_REPORT_CONF") {
     val src = ByteString(0,0,0,33, 3,4,5,5)
     val msg: Message = List((MessageTypeTag, Some(CLIENT_EVENT_REPORT_CONF)), (InvokeID, 0x03040505))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 034: CALL_REACHED_NETWORK_EVENT") {
@@ -643,7 +643,7 @@ class DecoderSpec extends FunSuite {
       (TRUNK_USED_DEVID, "TrunkUsedDeviceID"), (CALLED_DEVID, "CalledDeviceID"),
       (TRUNK_NUMBER, 0x04050607), (TRUNK_GROUP_NUMBER, 0x05060708))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 035: CONTROL_FAILURE_CONF") {
@@ -651,7 +651,7 @@ class DecoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(CONTROL_FAILURE_CONF)), (InvokeID, 0x01020304),
       (FailureCode, Some(ControlFailureCode.REQUEST_TIMEOUT_REJECTION)), (PeripheralErrorCode, 0x02030405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 036: QUERY_AGENT_STATE_REQ") {
@@ -663,7 +663,7 @@ class DecoderSpec extends FunSuite {
       (PeripheralID, 0x02030405), (MRDID, 0x03040506), (ICMAgentID, 0x04050607),
       (AGENT_ID, "1001"), (AGENT_EXTENSION, "3001"), (AGENT_INSTRUMENT, "3001"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 037: QUERY_AGENT_STATE_CONF") {
@@ -680,7 +680,7 @@ class DecoderSpec extends FunSuite {
       (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a:Short),
       (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 038: SET_AGENT_STATE_REQ") {
@@ -698,42 +698,42 @@ class DecoderSpec extends FunSuite {
       (AGENT_INSTRUMENT, "3001"), (AGENT_ID, "1001"), (AGENT_PASSWORD, "Password"), (POSITION_ID, "PositionID"),
       (SUPERVISOR_ID, "SupervisorID"), (SKILL_GROUP_NUMBER, 0x04050607), (SKILL_GROUP_PRIORITY, 0x0304:Short))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 039: SET_AGENT_STATE_CONF") {
     val src = ByteString(0,0,0,39, 6,7,8,9)
     val msg: Message = List((MessageTypeTag, Some(SET_AGENT_STATE_CONF)), (InvokeID, 0x06070809))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 041: ALTERNATE_CALL_CONF") {
     val src = ByteString(0,0,0,41, 1,2,3,5)
     val msg: Message = List((MessageTypeTag, Some(ALTERNATE_CALL_CONF)), (InvokeID, 0x01020305))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 043: ANSWER_CALL_CONF") {
     val src = ByteString(0,0,0,43, 1,2,4,5)
     val msg: Message = List((MessageTypeTag, Some(ANSWER_CALL_CONF)), (InvokeID, 0x01020405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 045: CLEAR_CALL_CONF") {
     val src = ByteString(0,0,0,45, 3,3,4,5)
     val msg: Message = List((MessageTypeTag, Some(CLEAR_CALL_CONF)), (InvokeID, 0x03030405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 047: CLEAR_CONNECTION_CONF") {
     val src = ByteString(0,0,0,47, 3,4,4,5)
     val msg: Message = List((MessageTypeTag, Some(CLEAR_CONNECTION_CONF)), (InvokeID, 0x03040405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 049: CONFERENCE_CALL_CONF") {
@@ -751,7 +751,7 @@ class DecoderSpec extends FunSuite {
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"), (PARTY_CALLID, 0x03040506),
       (PARTY_DEVID_TYPE, Some(DeviceIDType.AGENT_DEVICE)), (PARTY_DEVID, "ConnectedPartyDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 051: CONSULTATION_CALL_CONF") {
@@ -764,21 +764,21 @@ class DecoderSpec extends FunSuite {
       (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 053: DEFLECT_CALL_CONF") {
     val src = ByteString(0,0,0,53, 3,4,5,7)
     val msg: Message = List((MessageTypeTag, Some(DEFLECT_CALL_CONF)), (InvokeID, 0x03040507))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 055: HOLD_CALL_CONF") {
     val src = ByteString(0,0,0,55, 3,5,6,7)
     val msg: Message = List((MessageTypeTag, Some(HOLD_CALL_CONF)), (InvokeID, 0x03050607))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 057: MAKE_CALL_CONF") {
@@ -791,7 +791,7 @@ class DecoderSpec extends FunSuite {
       (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 059: MAKE_PREDICTIVE_CALL_CONF") {
@@ -804,21 +804,21 @@ class DecoderSpec extends FunSuite {
       (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 061: RECONNECT_CALL_CONF") {
     val src = ByteString(0,0,0,61, 5,6,6,7)
     val msg: Message = List((MessageTypeTag, Some(RECONNECT_CALL_CONF)), (InvokeID, 0x05060607))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 063: RETRIEVE_CALL_CONF") {
     val src = ByteString(0,0,0,63, 5,6,7,9)
     val msg: Message = List((MessageTypeTag, Some(RETRIEVE_CALL_CONF)), (InvokeID, 0x05060709))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 065: TRANSFER_CALL_CONF") {
@@ -836,7 +836,7 @@ class DecoderSpec extends FunSuite {
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"), (PARTY_CALLID, 0x03040506),
       (PARTY_DEVID_TYPE, Some(DeviceIDType.AGENT_DEVICE)), (PARTY_DEVID, "ConnectedPartyDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 079: QUERY_DEVICE_INFO_CONF") {
@@ -853,7 +853,7 @@ class DecoderSpec extends FunSuite {
       (OtherFeaturesSupported, BitSet.empty + OtherFeatureMask.POST_ROUTE + OtherFeatureMask.UNIQUE_CONSULT_CALLID),
       (LINE_HANDLE, 0x0708:Short), (LINE_TYPE, Some(LineType.SUPERVISOR)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 083: SNAPSHOT_CALL_CONF") {
@@ -887,7 +887,7 @@ class DecoderSpec extends FunSuite {
       (CALL_VAR_9, "CV9"), (CALL_VAR_10, "CV10"), (CALL_WRAPUP_DATA, "Wrapup"),
       (NAMED_VARIABLE, ("ECCVar", "ECCVal")), (NAMED_ARRAY, (1, "ECCArr", "ECCArrVal")))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 085 SNAPSHOT_DEVICE_CONF") {
@@ -904,7 +904,7 @@ class DecoderSpec extends FunSuite {
       (CALL_CONN_DEVID_TYPE, Some(ConnectionDeviceIDType.STATIC)), (CALL_CONN_DEVID, "CallConnectionDeviceID"),
       (CALL_STATE, Some(LocalConnectionState.CONNECT)), (SILENT_MONITOR_STATUS, Some(SilentMonitorStatus.TARGET)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 086: CALL_DEQUEUED_EVENT") {
@@ -925,14 +925,14 @@ class DecoderSpec extends FunSuite {
       (SKILL_GROUP_ID, 0x090a0b0c),
       (SKILL_GROUP_PRIORITY, 0x0a0b:Short))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 092: SEND_DTMF_SIGNAL_CONF") {
     val src = ByteString(0,0,0,92, 5,6,8,9)
     val msg: Message = List((MessageTypeTag, Some(SEND_DTMF_SIGNAL_CONF)), (InvokeID, 0x05060809))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 094: MONITOR_START_CONF") {
@@ -940,21 +940,21 @@ class DecoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(MONITOR_START_CONF)), (InvokeID, 0x02030405),
       (MonitorID, 0x06070809))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 096: MONITOR_STOP_CONF") {
     val src = ByteString(0,0,0,96, 5,5,6,7)
     val msg: Message = List((MessageTypeTag, Some(MONITOR_STOP_CONF)), (InvokeID, 0x05050607))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 098: CHANGE_MONITOR_MASK_CONF") {
     val src = ByteString(0,0,0,98, 2,3,4,5)
     val msg: Message = List((MessageTypeTag, Some(CHANGE_MONITOR_MASK_CONF)), (InvokeID, 0x02030405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 099: CLIENT_SESSION_OPENED_EVENT") {
@@ -976,7 +976,7 @@ class DecoderSpec extends FunSuite {
       (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"),
       (CLIENT_ADDRESS_IPV6, "ClientAddressIPv6"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 100: CLIENT_SESSION_CLOSED_EVENT") {
@@ -994,7 +994,7 @@ class DecoderSpec extends FunSuite {
       (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"),
       (CLIENT_ADDRESS_IPV6, "ClientAddressIPv6"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 102: SESSION_MONITOR_START_CONF") {
@@ -1002,14 +1002,14 @@ class DecoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(SESSION_MONITOR_START_CONF)), (InvokeID, 0x03040506),
       (MonitorID, 0x0708090a))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 104: SESSION_MONITOR_STOP_CONF") {
     val src = ByteString(0,0,0,104, 5,7,8,9)
     val msg: Message = List((MessageTypeTag, Some(SESSION_MONITOR_STOP_CONF)), (InvokeID, 0x05070809))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 105: AGENT_PRE_CALL_EVENT") {
@@ -1038,7 +1038,7 @@ class DecoderSpec extends FunSuite {
       (CALL_VAR_9, "CV9"), (CALL_VAR_10, "CV10"),
       (NAMED_VARIABLE, ("ECCVar", "ECCVal")), (NAMED_ARRAY, (1, "ECCArr", "ECCArrVal")))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 106: AGENT_PRE_CALL_ABORT_EVENT") {
@@ -1049,14 +1049,14 @@ class DecoderSpec extends FunSuite {
       (MRDID, 0x02030405), (AGENT_INSTRUMENT, "3001"), (ROUTER_CALL_KEY_DAY, 0x06070809),
       (ROUTER_CALL_KEY_CALLID, 0x0708090a), (ROUTER_CALL_KEY_SEQUENCE_NUM, 0x08090a0b))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 108: USER_MESSAGE_CONF") {
     val src = ByteString(0,0,0,108, 7,8,10,11)
     val msg: Message = List((MessageTypeTag, Some(USER_MESSAGE_CONF)), (InvokeID, 0x07080a0b))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 109: USER_MESSAGE_EVENT") {
@@ -1067,14 +1067,14 @@ class DecoderSpec extends FunSuite {
       (ICMCentralControllerTime, 0x01020304), (Distribution, Some(DistributionValue.TEAM)),
       (CLIENT_ID, "ClientID"), (TEXT, "UserMessageEventText"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 111: REGISTER_VARIABLES_CONF") {
     val src = ByteString(0,0,0,111, 5,6,7,7)
     val msg: Message = List((MessageTypeTag, Some(REGISTER_VARIABLES_CONF)), (InvokeID, 0x05060707))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 116: RTP_STARTED_EVENT") {
@@ -1099,7 +1099,7 @@ class DecoderSpec extends FunSuite {
       (SENDING_ADDRESS, "SendingAddress"), (SENDING_PORT, "SendingPort"),
       (CLIENT_ADDRESS_IPV6, "ClientAddressIPv6"), (SENDING_ADDRESS_IPV6, "SendingAddressIPv6"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 117: RTP_STOPPED_EVENT") {
@@ -1121,7 +1121,7 @@ class DecoderSpec extends FunSuite {
       (SENDING_ADDRESS, "SendingAddress"), (SENDING_PORT, "SendingPort"),
       (CLIENT_ADDRESS_IPV6, "ClientAddressIPv6"), (SENDING_ADDRESS_IPV6, "SendingAddressIPv6"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 119: SUPERVISOR_ASSIST_CONF") {
@@ -1132,7 +1132,7 @@ class DecoderSpec extends FunSuite {
       (ConnectionCallID, 0x01020304), (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)),
       (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.DID)), (CONNECTION_DEVID, "ConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 122: EMERGENCY_CALL_CONF") {
@@ -1143,7 +1143,7 @@ class DecoderSpec extends FunSuite {
       (ConnectionCallID, 0x01020304), (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)),
       (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.DID)), (CONNECTION_DEVID, "ConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 123: EMERGENCY_CALL_EVENT") {
@@ -1163,7 +1163,7 @@ class DecoderSpec extends FunSuite {
       (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"),
       (CLIENT_ADDRESS_IPV6, "ClientAddressIPv6"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 125: SUPERVISE_CALL_CONF") {
@@ -1173,7 +1173,7 @@ class DecoderSpec extends FunSuite {
       (ConnectionCallID, 0x02030405), (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)),
       (CONNECTION_DEVID, "ConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 128: AGENT_TEAM_CONFIG_EVENT") {
@@ -1186,14 +1186,14 @@ class DecoderSpec extends FunSuite {
       (AGENT_TEAM_NAME, "AgentTeamName"), (ATC_AGENT_ID, "1001"), (AGENT_FLAGS, BitSet.empty + AgentFlags.Supervisor),
       (ATC_AGENT_STATE, Some(AgentState.HOLD)), (ATC_STATE_DURATION, 0x04050607))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 130: SET_APP_DATA_CONF") {
     val src = ByteString(0,0,0,130, 7,7,8,9)
     val msg: Message = List((MessageTypeTag, Some(SET_APP_DATA_CONF)), (InvokeID, 0x07070809))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 134: LIST_AGENT_TEAM_CONF") {
@@ -1201,7 +1201,7 @@ class DecoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(LIST_AGENT_TEAM_CONF)), (InvokeID, 0x02030405),
       (NumberOfAgentTeams, 64:Short), (SegmentNumber, 2:Short), (More, true), (LIST_TEAM_ID, 0x03040506))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 136: MONITOR_AGENT_TEAM_START_CONF") {
@@ -1209,28 +1209,28 @@ class DecoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(MONITOR_AGENT_TEAM_START_CONF)), (InvokeID, 0x01020304),
       (MonitorID, 0x05060708))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 138: MONITOR_AGENT_TEAM_STOP_CONF") {
     val src = ByteString(0,0,0,138, 4,5,6,7)
     val msg: Message = List((MessageTypeTag, Some(MONITOR_AGENT_TEAM_STOP_CONF)), (InvokeID, 0x04050607))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 140: BAD_CALL_CONF") {
     val src = ByteString(0,0,0,140, 1,3,4,5)
     val msg: Message = List((MessageTypeTag, Some(BAD_CALL_CONF)), (InvokeID, 0x01030405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 142: SET_DEVICE_ATTRIBUTES_CONF") {
     val src = ByteString(0,0,0,142, 7,8,9,9)
     val msg: Message = List((MessageTypeTag, Some(SET_DEVICE_ATTRIBUTES_CONF)), (InvokeID, 0x07080909))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 144: REGISTER_SERVICE_CONF") {
@@ -1238,14 +1238,14 @@ class DecoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(REGISTER_SERVICE_CONF)), (InvokeID, 0x01020304),
       (RegisteredServiceID, 0x02030405))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 146: UNREGISTER_SERVICE_CONF") {
     val src = ByteString(0,0,0,146, 7,8,9,11)
     val msg: Message = List((MessageTypeTag, Some(UNREGISTER_SERVICE_CONF)), (InvokeID, 0x0708090b))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 148: START_RECORDING_CONF") {
@@ -1256,14 +1256,14 @@ class DecoderSpec extends FunSuite {
       (SessionID, 0x02030405), (ServerData, 0x03040506),
       (CLIENT_ID, "ClientID"), (CLIENT_ADDRESS_IPV6, "ClientAddressIPv6"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 150: STOP_RECORDING_CONF") {
     val src = ByteString(0,0,0,150, 7,8,9,10)
     val msg: Message = List((MessageTypeTag, Some(STOP_RECORDING_CONF)), (InvokeID, 0x0708090a))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 240: CALL_ATTRIBUTE_CHANGE_EVENT") {
@@ -1275,7 +1275,7 @@ class DecoderSpec extends FunSuite {
       (ServiceNumber, 0x03040506),
       (CONNECTION_DEVID, "ConnectionDeviceID"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 248: CALL_AGENT_GREETING_EVENT") {
@@ -1288,14 +1288,14 @@ class DecoderSpec extends FunSuite {
       (EventCodeTag, Some(EventCode.GreetingHasEndedWithSuccess)), (PeripheralErrorCode, 0x03040506),
       (CONNECTION_DEVID, "ConnectionDeviceID"), (AGENT_ID, "1001"))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding 250: AGENT_GREETING_CONTROL_CONF") {
     val src = ByteString(0,0,0,250, 1,2,3,4)
     val msg: Message = List((MessageTypeTag, Some(AGENT_GREETING_CONTROL_CONF)), (InvokeID, 0x01020304))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 
   test("decoding undefined message type: 255") {
@@ -1304,6 +1304,6 @@ class DecoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, None),
       (RawBytes, ByteString(0,1,2,3,4,5,6,7,8,9)))
 
-    assert(Decoder.decode(src) == msg)
+    assert(src.decode == msg)
   }
 }

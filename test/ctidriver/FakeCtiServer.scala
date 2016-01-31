@@ -104,3 +104,34 @@ class LoopbackHandler extends Actor {
     case PeerClosed => context stop self
   }
 }
+
+class TCPClient(server: InetSocketAddress, listener: ActorRef) extends Actor {
+  import context.system
+
+  IO(Tcp) ! Connect(server)
+
+  def receive = {
+    case CommandFailed(_: Connect) =>
+      listener ! "connect failed"
+      context stop self
+
+    case c @ Connected(remote, local) =>
+      val connection = sender()
+      connection ! Register(self)
+      context become {
+        case data: ByteString =>
+          connection ! Write(data)
+        case CommandFailed(w: Write) =>
+          // O/S buffer was full
+          listener ! "write failed"
+        case Received(data) =>
+          listener ! data
+        case "close" =>
+          connection ! Close
+        case _: ConnectionClosed =>
+          listener ! "connection closed"
+          context stop self
+      }
+      listener ! c
+  }
+}

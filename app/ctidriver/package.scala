@@ -1,4 +1,5 @@
 import akka.util.ByteString
+import scala.annotation.tailrec
 import scala.collection.immutable.BitSet
 
 package object ctidriver {
@@ -9,8 +10,6 @@ package object ctidriver {
   //
 //  type Tag = Tag.Value
   type Message = List[(Tag, Any)]
-  type CtiMessage = List[(Tag, Any)]
-  type RevCtiMessage = List[(Tag, Any)]
 
   //
   // General constants for CTI Server Protocol messages
@@ -84,6 +83,20 @@ package object ctidriver {
     }
   }
 
+  implicit class CtiMessage(val msg: Message) extends AnyVal {
+    def encode: ByteString = encodeMsgField(ByteString.empty, msg)
+
+    @tailrec
+    private def encodeMsgField(encoded: ByteString, rest: Message): ByteString = {
+      if (rest.isEmpty)
+        encoded
+      else {
+        val (tag, field) = rest.head
+        encodeMsgField(encoded ++ Tag.encodeField(tag, field), rest.tail)
+      }
+    }
+  }
+
   implicit class CtiByteString(val buf: ByteString) extends AnyVal {
     // Decode big-endian integer from byte string
     def toInt: Int =
@@ -115,6 +128,39 @@ package object ctidriver {
     def ++(i: Int): ByteString = buf ++ encodeByteString(i)
 
     def ++(s: Short): ByteString = buf ++ encodeByteString(s)
+
+    def decode: Message = {
+      val (msgType, len)  = MessageType.decode(Tag.MessageTypeTag, buf)
+      val body = buf.drop(len)
+      val (fixed, next_offset) = decodeFixedPart(List(msgType), MessageType.getFixedPartList(msgType._2), body)
+
+      decodeFloatingPart(fixed, body.drop(next_offset)).reverse
+    }
+
+    @tailrec
+    private def decodeFixedPart(decoded: Message, seq: List[Tag], rest: ByteString, done: Int = 0): (Message, Int) = {
+      if (seq.isEmpty)
+        (decoded, done)
+      else {
+        val tag = seq.head
+        val (result, next_offset) = Tag.decodeFixedField(tag, rest)
+
+        decodeFixedPart(result +: decoded, seq.tail, rest.drop(next_offset), done + next_offset)
+      }
+    }
+
+    @tailrec
+    private def decodeFloatingPart(decoded: Message, rest: ByteString): Message = {
+      if (rest.size <= 0)
+        decoded
+      else {
+        val tag = Tag(rest.head.toInt & 0xff)
+        val body = rest.tail
+        val (result, next_offset) = Tag.decodeFloatingField(tag, body)
+
+        decodeFloatingPart(result +: decoded, body.drop(next_offset))
+      }
+    }
   }
 
   implicit class CtiBitSet(val m: BitSet) extends AnyVal {

@@ -83,6 +83,9 @@ class SocketActor(cti_server: InetSocketAddress, listener: ActorRef) extends Act
         case Received(data) =>
           packetizer receive data
 
+        case data: ByteString =>
+          connection ! Write(data.withlength)
+
         case _: ConnectionClosed =>
           context stop self
 

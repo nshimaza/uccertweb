@@ -78,7 +78,7 @@ class FakeCtiServerHandler(parent: ActorRef, peer: ActorRef) extends Actor {
       peer ! Write(body)
 
     case Received(data) =>
-      println("FakeCtiServerHander received data from client (ignored):", data)
+//      println("FakeCtiServerHander received data from client (ignored):", data)
 
     case p @ PeerClosed =>
       parent ! p

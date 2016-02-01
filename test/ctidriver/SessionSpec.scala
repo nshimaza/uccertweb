@@ -7,7 +7,10 @@ import akka.io.Tcp._
 import akka.testkit.{ TestActorRef, TestActors, TestKit, TestProbe }
 import akka.util.ByteString
 import ctidriver.FakeCtiServerProtocol._
+import ctidriver.MessageType._
+import ctidriver.Tag._
 import org.scalatest.{ WordSpecLike, MustMatchers, BeforeAndAfterAll }
+import scala.collection.immutable.BitSet
 import scala.concurrent.duration._
 
 
@@ -237,6 +240,87 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       server ! Tick
       server ! Tick
       probe.expectMsg(3.second, ByteString(9,8,7,6,5,4,3))
+
+      client ! SessionProtocol.Close
+      server ! RemoveServerProve(server_prove.ref)
+    }
+
+    "work with OPEN_REQ and OPEN_CONF" in {
+      val server_prove = TestProbe()
+      server ! AddServerProve(server_prove.ref)
+      val probe = TestProbe()
+      val client = system.actorOf(Props(new SocketActor(new InetSocketAddress("localhost", server_port), probe.ref)))
+      probe.expectMsgClass(3.second, classOf[Connected])
+      server_prove.expectMsg(3.second, ClientHandlerReady)
+
+
+      val open_req_body = List((MessageTypeTag, Some(OPEN_REQ)), (InvokeID, 0x04030201),
+        (VersionNumber, ProtocolVersion), (IdleTimeout, NoIdleTimeout), (PeripheralID, 0x02030405),
+        (ServiceRequested, BitSet.empty + CtiServiceMask.ALL_EVENTS),
+        (CallMsgMask, BitSet.empty + CallEventMessageMask.BEGIN_CALL + CallEventMessageMask.END_CALL),
+        (AgentStateMaskTag, BitSet.empty + AgentStateMask.AGENT_AVAILABLE + AgentStateMask.AGENT_HOLD),
+        (ConfigMsgMask, BitSet.empty), (Reserved1, 0), (Reserved2, 0), (Reserved3, 0),
+        (CLIENT_ID, "ClientID"), (CLIENT_PASSWORD, ByteString()), (CLIENT_SIGNATURE, "ClientSignature"),
+        (AGENT_EXTENSION, "3001"),(AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (APP_PATH_ID, 0x03040506)).encode
+      val open_conf_body = ByteString(0,0,0,4, 4,3,2,1, 0,0,0,0x10, 2,3,4,5, 0,0,0,0x13, 4,5,6,7, 0,1, 0,17, 0,3,
+        4,5,0x33, 0x30, 0x30, 0x31,0,
+        5,5,0x31, 0x30, 0x30, 0x31,0,
+        6,5,0x33, 0x30, 0x30, 0x31,0,
+        228,2,5,6, 224,2,0,0)
+      val open_conf_raw = open_conf_body.withlength
+      val open_conf_expected = List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, 0x04030201),
+        (ServiceGranted, BitSet.empty + CtiServiceMask.ALL_EVENTS), (MonitorID, 0x02030405),
+        (PGStatus, BitSet.empty + PGStatusCode.OPC_DOWN + PGStatusCode.CC_DOWN + PGStatusCode.LIMITED_FUNCTION),
+        (ICMCentralControllerTime, 0x04050607), (PeripheralOnline, true),
+        (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)), (AgentStateTag, Some(AgentState.AVAILABLE)),
+        (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (NUM_PERIPHERALS, 0x0506.toShort),
+        (MULTI_LINE_AGENT_CONTROL, false))
+
+      server ! Scenario(List(open_conf_raw))
+      client ! open_req_body
+      server ! Tick
+      val msg = probe.expectMsgClass(3.second, classOf[akka.util.ByteString])
+      msg.decode must be(open_conf_expected)
+
+      client ! SessionProtocol.Close
+      server ! RemoveServerProve(server_prove.ref)
+    }
+
+    "work with FAILURE_EVENT" in {
+      val server_prove = TestProbe()
+      server ! AddServerProve(server_prove.ref)
+      val probe = TestProbe()
+      val client = system.actorOf(Props(new SocketActor(new InetSocketAddress("localhost", server_port), probe.ref)))
+      probe.expectMsgClass(3.second, classOf[Connected])
+      server_prove.expectMsg(3.second, ClientHandlerReady)
+
+
+      val open_req_body = List((MessageTypeTag, Some(OPEN_REQ)), (InvokeID, 0x04030201),
+        (VersionNumber, ProtocolVersion), (IdleTimeout, NoIdleTimeout), (PeripheralID, 0x02030405),
+        (ServiceRequested, BitSet.empty + CtiServiceMask.ALL_EVENTS),
+        (CallMsgMask, BitSet.empty + CallEventMessageMask.BEGIN_CALL + CallEventMessageMask.END_CALL),
+        (AgentStateMaskTag, BitSet.empty + AgentStateMask.AGENT_AVAILABLE + AgentStateMask.AGENT_HOLD),
+        (ConfigMsgMask, BitSet.empty), (Reserved1, 0), (Reserved2, 0), (Reserved3, 0),
+        (CLIENT_ID, "ClientID"), (CLIENT_PASSWORD, ByteString()), (CLIENT_SIGNATURE, "ClientSignature"),
+        (AGENT_EXTENSION, "3001"),(AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (APP_PATH_ID, 0x03040506)).encode
+      val open_conf_raw = List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, 0x04030201),
+        (ServiceGranted, BitSet.empty + CtiServiceMask.ALL_EVENTS), (MonitorID, 0x02030405),
+        (PGStatus, BitSet.empty + PGStatusCode.OPC_DOWN + PGStatusCode.CC_DOWN + PGStatusCode.LIMITED_FUNCTION),
+        (ICMCentralControllerTime, 0x04050607), (PeripheralOnline, true),
+        (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)), (AgentStateTag, Some(AgentState.AVAILABLE)),
+        (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (NUM_PERIPHERALS, 0x0506.toShort),
+        (MULTI_LINE_AGENT_CONTROL, false)).encode.withlength
+      val failure_event_msg = List((MessageTypeTag, Some(FAILURE_EVENT)),
+        (Status, Some(StatusCode.UNSPECIFIED_FAILURE)))
+      val failure_event_raw = failure_event_msg.encode.withlength
+
+      server ! Scenario(List(open_conf_raw, failure_event_raw))
+      client ! open_req_body
+      server ! Tick
+      server ! Tick
+      probe.expectMsgClass(3.second, classOf[akka.util.ByteString])
+      val msg = probe.expectMsgClass(3.second, classOf[akka.util.ByteString])
+      msg.decode must be(failure_event_msg)
 
       client ! SessionProtocol.Close
       server ! RemoveServerProve(server_prove.ref)

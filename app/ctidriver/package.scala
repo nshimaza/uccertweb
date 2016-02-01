@@ -1,6 +1,7 @@
 import akka.util.ByteString
 import scala.annotation.tailrec
 import scala.collection.immutable.BitSet
+import scala.reflect.ClassTag
 
 package object ctidriver {
   import Tag.Tag
@@ -83,6 +84,10 @@ package object ctidriver {
     }
   }
 
+  implicit class CtiString(val s: String) extends AnyVal {
+    def toIntOpt: Option[Int] = scala.util.Try(s.toInt).toOption
+  }
+
   implicit class CtiMessage(val msg: Message) extends AnyVal {
     def encode: ByteString = encodeMsgField(ByteString.empty, msg)
 
@@ -95,6 +100,12 @@ package object ctidriver {
         encodeMsgField(encoded ++ Tag.encodeField(tag, field), rest.tail)
       }
     }
+
+    def findField(tag: Tag): Option[Any] = msg.find(_._1 == tag).flatMap(tpl => Some(tpl._2))
+    def findT[T](tag: Tag)(implicit c: ClassTag[T]): Option[T] = findField(tag).collectFirst{ case v: T => v }
+    def findStrInt(tag: Tag): Option[Int] = findT[String](tag).flatMap(_.toIntOpt)
+    def findEnum[T](tag: Tag)(implicit c: ClassTag[T]): Option[T] =
+      findField(tag).collectFirst{ case s: Some[Any] => s.get }.collectFirst{ case e: T => e }
   }
 
   implicit class CtiByteString(val buf: ByteString) extends AnyVal {
@@ -128,6 +139,8 @@ package object ctidriver {
     def ++(i: Int): ByteString = buf ++ encodeByteString(i)
 
     def ++(s: Short): ByteString = buf ++ encodeByteString(s)
+
+    def withlength: ByteString = encodeByteString(buf.size - 4) ++ buf
 
     def decode: Message = {
       val (msgType, len)  = MessageType.decode(Tag.MessageTypeTag, buf)

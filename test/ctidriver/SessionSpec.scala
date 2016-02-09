@@ -1,3 +1,21 @@
+/**
+  * Copyright (c) 2016 Naoto Shimazaki
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+  * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+  * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  *
+  * The above copyright notice and this permission notice shall be included in all copies or substantial
+  * portions of the Software.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+  * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  * DEALINGS IN THE SOFTWARE.
+  */
+
 package ctidriver
 
 import java.net.InetSocketAddress
@@ -342,19 +360,123 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
   }
 
   "MessageFilter" must {
-    "be constructed with multiple listener" in {
-      val actor1 = TestProbe()
-      val msgset1 = Set(AGENT_STATE_EVENT)
-      val listener1 = (actor1.ref, msgset1)
-      val actor2 = TestProbe()
-      val msgset2 = Set(BEGIN_CALL_EVENT, END_CALL_EVENT)
-      val listener2 = (actor2.ref, msgset2)
-      val filter_conf: List[(ActorRef, Set[MessageType])] = List(listener1, listener2)
-      val msg_filter = new MessageFilter(filter_conf)
+//    "be constructed with multiple listener" in {
+//      def handler1(p: ByteString): Unit = Unit
+//      val msgset1 = Set(AGENT_STATE_EVENT)
+//      val listener1: (ByteString => Unit, Set[MessageType]) = (handler1, msgset1)
+//      val handler2 = (p: ByteString) => Unit: Unit
+//      val msgset2 = Set(BEGIN_CALL_EVENT, END_CALL_EVENT)
+//      val listener2 = (handler2, msgset2)
+//      val filter_conf = Seq(listener1, listener2)
+//      val msg_filter = new MessageFilter(filter_conf)
+//
+//      msg_filter.toString mustBe MessageFilter(Seq(
+//        ((p: ByteString) => Unit: Unit, Set(AGENT_STATE_EVENT)),
+//        ((p: ByteString) => Unit: Unit, Set(BEGIN_CALL_EVENT, END_CALL_EVENT)))).toString
+//    }
 
-      msg_filter mustBe MessageFilter(List(
-        (actor1.ref, Set(AGENT_STATE_EVENT)),
-        (actor2.ref, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))))
+    "pass desired message type" in {
+      var data = ByteString.empty
+      val msg = List((MessageTypeTag, Some(AGENT_STATE_EVENT)), (MonitorID, 0x01020304),
+        (PeripheralID, 0x02030405), (SessionID, 0x03040506),
+        (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
+        (SkillGroupState, Some(AgentState.BUSY_OTHER)), (StateDuration, 0x04050607),
+        (SkillGroupNumber, 0x06070809), (SkillGroupID, 0x0708090a), (SkillGroupPriority, 0x0809:Short),
+        (AgentStateTag, Some(AgentState.HOLD)), (EventReasonCode, 0x090a:Short), (MRDID, 0x090a0b0c),
+        (NumTasks, 0x0a0b0c0d), (AgentMode, false), (MaxTaskLimit, 0x09080706), (ICMAgentID, 0x08070605),
+        (AgentAvailabilityStatusTag, Some(AgentAvailabilityStatus.ICM_AVAILABLE)), (NumFltSkillGroups, 0x0706:Short),
+        (CLIENT_SIGNATURE, "ClientSignature"),
+        (AGENT_ID, "1001"), (AGENT_EXTENSION, "3001"), (AGENT_INSTRUMENT, "3001"),
+        (DURATION, 0x06050403), (NEXT_AGENT_STATE, Some(AgentState.TALKING)),
+        (DIRECTION, Some(CallDirection.In)),
+        (SKILL_GROUP_NUMBER, 0x0708090a), (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a:Short),
+        (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER))).encode
+      val entry = MessageFilterEntry(data = _, Set(AGENT_STATE_EVENT))
+      val filter = MessageFilter(Traversable(entry))
+
+      filter.receive(msg)
+      data mustBe msg
+
+    }
+
+    "pass multiple desired message type" in {
+      var data = ByteString.empty
+      val msg1 = List((MessageTypeTag, Some(END_CALL_EVENT)), (MonitorID, 0x01020304)).encode
+      val msg2 = List((MessageTypeTag, Some(BEGIN_CALL_EVENT)), (MonitorID, 0x01020304)).encode
+      val entry = MessageFilterEntry(data = _, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))
+      val filter = MessageFilter(Seq(entry))
+
+      filter.receive(msg1)
+      data mustBe msg1
+      filter.receive(msg2)
+      data mustBe msg2
+    }
+
+    "pass all defined type of message" in {
+      var data = ByteString.empty
+      val filter = MessageFilter(Traversable(MessageFilterEntry(data = _, MessageType.values)))
+      for (mtyp <- MessageType.values) {
+        val msg = encodeByteString(mtyp.id) ++ ByteString(4,3,2,1, 9,8,7,6)
+        filter.receive(msg)
+        data mustBe msg
+      }
+    }
+
+    "pass message only to desiring handler" in {
+      var data1 = ByteString.empty
+      var data2 = ByteString.empty
+      val msg = List((MessageTypeTag, Some(BEGIN_CALL_EVENT)), (MonitorID, 0x01020304)).encode
+      val entry1 = MessageFilterEntry(data1 = _, Set(AGENT_STATE_EVENT))
+      val entry2 = MessageFilterEntry(data2 = _, Set(AGENT_STATE_EVENT, BEGIN_CALL_EVENT))
+      val filter = MessageFilter(Seq(entry1, entry2))
+
+      filter.receive(msg)
+      data1 mustBe ByteString.empty
+      data2 mustBe msg
+    }
+
+    "duplicate message to multiple handler if desired" in {
+      var data1 = ByteString.empty
+      var data2 = ByteString.empty
+      val msg = List((MessageTypeTag, Some(AGENT_STATE_EVENT)), (MonitorID, 0x01020304)).encode
+      val entry1 = MessageFilterEntry(data1 = _, Set(AGENT_STATE_EVENT))
+      val entry2 = MessageFilterEntry(data2 = _, Set(AGENT_STATE_EVENT, BEGIN_CALL_EVENT))
+      val filter = MessageFilter(Seq(entry1, entry2))
+
+      filter.receive(msg)
+      data1 mustBe msg
+      data2 mustBe msg
+    }
+
+    "drop undesired message type" in {
+      var data = ByteString.empty
+      val msg = List((MessageTypeTag, Some(AGENT_STATE_EVENT)), (MonitorID, 0x01020304),
+        (PeripheralID, 0x02030405), (SessionID, 0x03040506),
+        (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
+        (SkillGroupState, Some(AgentState.BUSY_OTHER)), (StateDuration, 0x04050607),
+        (SkillGroupNumber, 0x06070809), (SkillGroupID, 0x0708090a), (SkillGroupPriority, 0x0809:Short),
+        (AgentStateTag, Some(AgentState.HOLD)), (EventReasonCode, 0x090a:Short), (MRDID, 0x090a0b0c),
+        (NumTasks, 0x0a0b0c0d), (AgentMode, false), (MaxTaskLimit, 0x09080706), (ICMAgentID, 0x08070605),
+        (AgentAvailabilityStatusTag, Some(AgentAvailabilityStatus.ICM_AVAILABLE)), (NumFltSkillGroups, 0x0706:Short),
+        (CLIENT_SIGNATURE, "ClientSignature"),
+        (AGENT_ID, "1001"), (AGENT_EXTENSION, "3001"), (AGENT_INSTRUMENT, "3001"),
+        (DURATION, 0x06050403), (NEXT_AGENT_STATE, Some(AgentState.TALKING)),
+        (DIRECTION, Some(CallDirection.In)),
+        (SKILL_GROUP_NUMBER, 0x0708090a), (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a:Short),
+        (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER))).encode
+      val entry = MessageFilterEntry(data = _, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))
+      val filter = MessageFilter(Seq(entry))
+
+      filter.receive(msg)
+      data mustBe ByteString.empty
+    }
+
+    "drop undefined message type message" in {
+      var data = ByteString.empty
+      val msg = ByteString(1,1,1,1, 1,2,3,4, 5,6,7,8)
+
+      MessageFilter(Traversable(MessageFilterEntry(data = _, MessageType.values))).receive(msg)
+      data mustBe ByteString.empty
     }
   }
 

@@ -82,18 +82,20 @@ class Packetizer(listener: ByteString => Unit) {
   }
 }
 
-case class MessageFilterEntry(handler: ByteString => Unit, set: Set[MessageType.MessageType])
+case class MessageFilterEntry(handler: Message => Unit, set: Set[MessageType.MessageType])
 
 case class MessageFilter(filter_conf: Traversable[MessageFilterEntry]) {
+  val jump_table: Array[Traversable[(Message) => Unit]] = {
+    val flat_table = for (entry <- filter_conf; mtyp <- entry.set) yield (mtyp, Traversable(entry.handler))
+    val base_table = MessageType.values.map((_, Traversable[(Message) => Unit]())).toTraversable
+    val optimized_table = (flat_table ++ base_table).groupBy(_._1).map(t => (t._1, t._2.flatMap(_._2)))
+    optimized_table.map(t => (t._1.id, t._2)).toSeq.sortWith(_._1 < _._1).map(_._2).toArray
+  }
 
   def receive(packet: ByteString): Unit = {
     val ((tag, optmtyp), len) = MessageType.decode(Tag.MessageTypeTag, packet)
-    for (mtyp <- optmtyp) yield {
-      filter_conf.foreach(entry => {
-        if (entry.set.contains(mtyp))
-          entry.handler(packet)
-      })
-    }
+    lazy val msg = packet.decode
+    for (mtyp <- optmtyp; handler <- jump_table(mtyp.id)) handler(msg)
   }
 }
 

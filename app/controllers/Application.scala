@@ -30,6 +30,8 @@ class Application extends Controller {
 
   def extension(ext: Int) = Action {
     try {
+      ctidriver.MessageType.decode(ctidriver.Tag.MessageTypeTag, akka.util.ByteString(0,0,1,1))
+
       val (state, reason) = agent_map(ext).get
       val json = Json.obj("state" -> state.toString, "reason" -> reason)
       Ok(json.toString)

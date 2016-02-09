@@ -1,4 +1,6 @@
 import akka.util.ByteString
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 import scala.annotation.tailrec
 import scala.collection.immutable.BitSet
 import scala.reflect.ClassTag
@@ -23,9 +25,12 @@ package object ctidriver {
   val MaxECCValueLen: Int       = 210
   val MaxFloatStringLen: Int    = 255
   val MaxTagValue: Int          = 255
+  val MaxMessageLen: Int        = 4329 - 8
   val NoIdleTimeout: Int        = 0xffffffff
   val DefaultCtiServerPortA     = 42027
   val DefaultCtiServerPortB     = 43027
+
+  val ctilog = Logger(LoggerFactory.getLogger("ctidriver"))
 
   type Section = Section.Value
   object Section extends Enumeration {

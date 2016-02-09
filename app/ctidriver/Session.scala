@@ -10,7 +10,7 @@ import akka.util.ByteString
   * Use this class instance only within an Actor.
   * This code is not thread safe.  Never call single instance from multiple threads.
   */
-class Packetizer(packet_listener: ActorRef) {
+class Packetizer(listener: ByteString => Unit) {
 
   object State extends Enumeration {
     val WAIT_LENGTH, WAIT_BODY = Value
@@ -30,6 +30,11 @@ class Packetizer(packet_listener: ActorRef) {
           // at the state WAIT_LENGTH, the head of buf is aligned to message length field
           // now you have plenty bytes to decode message length
           val message_length = buf.toInt
+          if (message_length < 0 || message_length > MaxMessageLen) {
+            val msg = s"Message length $message_length out of defined range (0 - $MaxMessageLen) decoded.  Potential socket out of sync."
+            ctilog.error(msg)
+            throw new java.io.SyncFailedException(msg)
+          }
           buf = buf.drop(4)
           // here you have buf which contains message aligned to Message Type field at the head
           // let's set next state for waiting body
@@ -53,13 +58,18 @@ class Packetizer(packet_listener: ActorRef) {
           state = State.WAIT_LENGTH
           offset = buf.size - 4
 
-          packet_listener ! packet
+          listener(packet)
       }
     }
   }
 }
 
+case class MessageFilter(filter_conf: List[(ActorRef, Set[MessageType.MessageType])]) {
+
+}
+
 object SessionProtocol {
+  case class Send(data: ByteString)
   case object Close
 }
 
@@ -67,7 +77,7 @@ class SocketActor(cti_server: InetSocketAddress, listener: ActorRef) extends Act
   import akka.io.Tcp._
   import context.system
 
-  val packetizer = new Packetizer(listener)
+  val packetizer = new Packetizer(listener ! _)
 
   IO(Tcp) ! Connect(cti_server)
 
@@ -80,17 +90,11 @@ class SocketActor(cti_server: InetSocketAddress, listener: ActorRef) extends Act
       val connection = sender()
       connection ! Register(self)
       context become {
-        case Received(data) =>
-          packetizer receive data
-
-        case data: ByteString =>
-          connection ! Write(data.withlength)
-
-        case _: ConnectionClosed =>
-          context stop self
-
-        case SessionProtocol.Close =>
-          connection ! Tcp.Close
+        case Received(data) => packetizer receive data
+        case data: ByteString => connection ! Write(data.withlength)
+        case SessionProtocol.Send(data) => connection ! Write(data.withlength)
+        case _: ConnectionClosed => context stop self
+        case SessionProtocol.Close => connection ! Tcp.Close
       }
       listener ! c
 
@@ -104,6 +108,7 @@ class SocketActor(cti_server: InetSocketAddress, listener: ActorRef) extends Act
 /**
   * Packetizing binary stream from TCP into entire CTI Server Protocol message.
   */
+/*
 class PacketizerActor(packet_listener: ActorRef) extends Actor {
 
   object State extends Enumeration {
@@ -153,4 +158,4 @@ class PacketizerActor(packet_listener: ActorRef) extends Actor {
       }
   }
 }
-
+*/

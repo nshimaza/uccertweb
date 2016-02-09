@@ -15,6 +15,64 @@ import scala.concurrent.Future
   * Created by nshimaza on 2016/01/27.
   */
 
+class FakeCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
+  with WordSpecLike with MustMatchers with BeforeAndAfterAll {
+  import FakeCtiServerProtocol._
+
+  def this() = this(ActorSystem("FakeCtiServerSpec"))
+
+  val server_port = 42028
+  val server = system.actorOf(Props(classOf[FakeCtiServer], server_port))
+
+  override def afterAll {
+    TestKit.shutdownActorSystem(system)
+  }
+
+  "FakeCtiServer" must {
+    "accept connection from TCP client" in {
+      val probe = TestProbe()
+      val client = system.actorOf(Props(classOf[TCPClient], new InetSocketAddress("localhost", server_port), probe.ref))
+
+      val msg = probe.expectMsgClass(3.second, classOf[Connected])
+
+      msg.remoteAddress.getHostName must be("localhost")
+      msg.remoteAddress.getPort must be(server_port)
+      msg.localAddress.getHostName must be("localhost")
+    }
+
+    "send single element of scenario at Tick arrival" in {
+      val server_probe = TestProbe()
+      server ! WarmRestart(server_probe.ref)
+      val probe = TestProbe()
+      val client = system.actorOf(Props(classOf[TCPClient], new InetSocketAddress("localhost", server_port), probe.ref))
+      probe.expectMsgClass(3.second, classOf[Connected])
+      server_probe.expectMsg(3.second, ClientHandlerReady)
+
+      server ! Scenario(List(ByteString("Tick1"), ByteString("Tick2")))
+      server ! Tick
+      probe.expectMsg(3.second, ByteString("Tick1"))
+    }
+
+    "send single packet for each Tick" in {
+      val server_probe = TestProbe()
+      server ! WarmRestart(server_probe.ref)
+      val probe = TestProbe()
+      val client = system.actorOf(Props(classOf[TCPClient], new InetSocketAddress("localhost", server_port), probe.ref))
+      probe.expectMsgClass(3.second, classOf[Connected])
+      server_probe.expectMsg(3.second, ClientHandlerReady)
+
+      server ! Scenario(List(ByteString("message 1"), ByteString("message 2")))
+      server ! Tick
+      probe.expectMsg(3.second, ByteString("message 1"))
+
+      server ! Tick
+      probe.expectMsg(3.second, ByteString("message 2"))
+    }
+
+
+
+  }
+}
 
 class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {
@@ -54,69 +112,3 @@ class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
   }
 }
 
-class FakeCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
-  with WordSpecLike with MustMatchers with BeforeAndAfterAll {
-  import FakeCtiServerProtocol._
-
-  def this() = this(ActorSystem("FakeCtiServerSpec"))
-
-  val server_port = 42028
-  val server = system.actorOf(Props(new FakeCtiServer(server_port)))
-
-  override def afterAll {
-    TestKit.shutdownActorSystem(system)
-  }
-
-  "FakeCtiServer" must {
-    "accept connection from TCP client" in {
-      val probe = TestProbe()
-      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", server_port), probe.ref)))
-
-      val msg = probe.expectMsgClass(3.second, classOf[Connected])
-
-      msg.remoteAddress.getHostName must be("localhost")
-      msg.remoteAddress.getPort must be(server_port)
-      msg.localAddress.getHostName must be("localhost")
-
-      client ! "close"
-    }
-
-    "send single element of scenario at Tick arrival" in {
-      val server_prove = TestProbe()
-      server ! AddServerProve(server_prove.ref)
-      val probe = TestProbe()
-      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", server_port), probe.ref)))
-      probe.expectMsgClass(3.second, classOf[Connected])
-      server_prove.expectMsg(3.second, ClientHandlerReady)
-
-      server ! Scenario(List(ByteString("Tick1"), ByteString("Tick2")))
-      server ! Tick
-      probe.expectMsg(3.second, ByteString("Tick1"))
-
-      client ! "close"
-      server ! RemoveServerProve(server_prove.ref)
-    }
-
-    "send single packet for each Tick" in {
-      val server_prove = TestProbe()
-      server ! AddServerProve(server_prove.ref)
-      val probe = TestProbe()
-      val client = system.actorOf(Props(new TCPClient(new InetSocketAddress("localhost", server_port), probe.ref)))
-      probe.expectMsgClass(3.second, classOf[Connected])
-      server_prove.expectMsg(3.second, ClientHandlerReady)
-
-      server ! Scenario(List(ByteString("message 1"), ByteString("message 2")))
-      server ! Tick
-      probe.expectMsg(3.second, ByteString("message 1"))
-
-      server ! Tick
-      probe.expectMsg(3.second, ByteString("message 2"))
-
-      client ! "close"
-      server ! RemoveServerProve(server_prove.ref)
-    }
-
-
-
-  }
-}

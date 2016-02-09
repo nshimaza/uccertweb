@@ -1,10 +1,13 @@
 package ctidriver
 
-import akka.actor.{ Actor, ActorRef, Props }
+import java.net.InetSocketAddress
+
+import akka.actor.{ Actor, ActorRef, Props, PoisonPill }
+import akka.event.Logging
 import akka.io.{ IO, Tcp, TcpSO }
 import akka.io.Tcp._
 import akka.util.ByteString
-import java.net.InetSocketAddress
+
 
 /**
   * FakeCtiServer supports only one TCP client at a time.
@@ -12,13 +15,17 @@ import java.net.InetSocketAddress
   */
 
 object FakeCtiServerProtocol {
+  case class WarmRestart(new_probe: ActorRef)
+  case object ClientHandlerReady
   case class Scenario(scenario: List[ByteString])
+  case object Tick
+
+
+
   case class Packet(body: ByteString)
   case class AddServerProve(p: ActorRef)
   case class RemoveServerProve(p: ActorRef)
-  case object ClientHandlerReady
   case object Rewind
-  case object Tick
 }
 
 class FakeCtiServer(port: Int) extends Actor {
@@ -27,40 +34,49 @@ class FakeCtiServer(port: Int) extends Actor {
 
   var scenario: List[ByteString] = List()
   var curr = scenario
-  var handlers: Set[ActorRef] = Set.empty
-  var probes: Set[ActorRef] = Set.empty
-
+  var handler: Option[ActorRef] = None
+  var probe: Option[ActorRef] = None
 
   IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", port))
 
   def receive = {
     case b @ Bound(localAddress) =>
-      println("FakeCtiServer started to listen")
+//      println("FakeCtiServer started to listen")
 
     case CommandFailed(_: Bind) => context stop self
 
     case c @ Connected(remote, local) =>
       val peer = sender()
-      val handler = context.actorOf(Props(new FakeCtiServerHandler(self, peer)))
-      peer ! Register(handler)
-      handlers = handlers + handler
+      val new_handler = context.actorOf(Props(classOf[FakeCtiServerHandler], self, peer))
+      peer ! Register(new_handler)
+      handler.foreach(_ ! PoisonPill)
+      handler = Some(new_handler)
 
-    case PeerClosed => handlers = handlers - sender()
+    case PeerClosed => handler = None
 
-    case AddServerProve(p) => probes = probes + p
-    case RemoveServerProve(p) => probes = probes - p
-    case ClientHandlerReady => probes.foreach(p => p ! ClientHandlerReady)
+    case WarmRestart(new_probe) =>
+      handler.foreach(_ ! PoisonPill)
+      handler = None
+      probe.foreach(_ ! PoisonPill)
+      probe = Some(new_probe)
+
+    case ClientHandlerReady => probe.foreach(_ ! ClientHandlerReady)
 
     case Scenario(new_scenario: List[ByteString]) =>
       scenario = new_scenario
       curr = scenario
 
-    case Rewind => curr = scenario
-
     case Tick =>
       val packet = Packet(curr.head)
       curr = curr.tail
-      handlers.foreach(p => p ! packet)
+      handler.foreach(_ ! packet)
+
+
+
+
+    case Rewind => curr = scenario
+//    case AddServerProve(p) => probes = probes + p
+//    case RemoveServerProve(p) => probes = probes - p
   }
 }
 
@@ -92,13 +108,13 @@ class LoopbackServer(port: Int) extends Actor {
   IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", port))
 
   def receive = {
-    case b @ Bound(localAddress) => println("LoopbackServer started to listen")
+    case b @ Bound(localAddress) => // println("LoopbackServer started to listen")
     case CommandFailed(_: Bind) => context stop self
-    case c @ Connected(remote, local) => sender() ! Register(context.actorOf(Props[LoopbackHandler]))
+    case c @ Connected(remote, local) => sender() ! Register(context.actorOf(Props[LoopbackServerHandler]))
   }
 }
 
-class LoopbackHandler extends Actor {
+class LoopbackServerHandler extends Actor {
   def receive = {
     case Received(data) => sender() ! Write(data)
     case PeerClosed => context stop self

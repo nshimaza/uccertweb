@@ -32,7 +32,7 @@ class AgentStateMapSpec(_system: ActorSystem) extends TestKit(_system)
       pool.get(1000).getClass must be(classOf[Some[(AgentState.Value, String)]])
     }
 
-    "return None for unknown estension" in {
+    "return None for unknown extension" in {
       val pool = AgentStateMap(1000 to 1999)
       pool.get(2000) must be(None)
     }

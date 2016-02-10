@@ -83,6 +83,63 @@ class Packetizer(listener: ByteString => Unit) {
   }
 }
 
+class PacketizerNew {
+
+  object State extends Enumeration {
+    val WAIT_LENGTH, WAIT_BODY = Value
+  }
+
+  var buf = ByteString.empty
+  var state = State.WAIT_LENGTH
+  var offset = -4
+
+  def receive(data: ByteString): Seq[ByteString] = {
+    offset = offset + data.size
+    buf = buf ++ data
+    var result: Seq[ByteString] = Seq.empty
+
+    while (offset >= 0) {
+      state match {
+        case State.WAIT_LENGTH =>
+          // at the state WAIT_LENGTH, the head of buf is aligned to message length field
+          // now you have plenty bytes to decode message length
+          val message_length = buf.toInt
+          if (message_length < 0 || message_length > MaxMessageLen) {
+            val msg = s"Message length $message_length out of defined range (0 - $MaxMessageLen) decoded." +
+              "  Potential socket out of sync."
+            ctilog.error(msg)
+            throw new java.io.SyncFailedException(msg)
+          }
+          buf = buf.drop(4)
+          // here you have buf which contains message aligned to Message Type field at the head
+          // let's set next state for waiting body
+          state = State.WAIT_BODY
+
+          // the message length doesn't include Message Type filed so you need to wait 4 more bytes
+          offset = buf.size - (message_length + 4)
+
+        case State.WAIT_BODY =>
+          // at the state WAIT_BODY, the head of buf is aligned to message type field
+          // now you have at least one entire message in buf
+
+          // take single message to packet
+          val len = buf.size - offset
+          val packet = buf.take(len)
+
+          buf = buf.drop(len)
+          // here you have buf which is aligned to next message length
+          // let's set next state for waiting message length
+          // we need 4 bytes to continue
+          state = State.WAIT_LENGTH
+          offset = buf.size - 4
+
+          result = packet +: result
+      }
+    }
+    result.reverse
+  }
+}
+
 case class MessageFilterEntry(handler: Message => Unit, set: Set[MessageType.MessageType])
 
 case class MessageFilter(filter_conf: Traversable[MessageFilterEntry]) {

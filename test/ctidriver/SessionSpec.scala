@@ -375,6 +375,81 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
 //        ((p: ByteString) => Unit: Unit, Set(BEGIN_CALL_EVENT, END_CALL_EVENT)))).toString
 //    }
 
+    "returns handlers which wanted to process the message" in {
+      val handler = (m: Message) => Unit: Unit
+      val entry = MessageFilterEntry(handler, Set(AGENT_STATE_EVENT))
+      val filter = MessageFilter(Traversable(entry))
+      val msg = List((MessageTypeTag, Some(AGENT_STATE_EVENT)), (MonitorID, 0x01020304)).encode
+
+      filter.handlers(msg) mustBe Traversable(handler)
+    }
+
+    "work with multiple type of messages" in {
+      val handler = (m: Message) => Unit: Unit
+      val entry = MessageFilterEntry(handler, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))
+      val filter = MessageFilter(Traversable(entry))
+      val msg1 = List((MessageTypeTag, Some(END_CALL_EVENT)), (MonitorID, 0x01020304)).encode
+      val msg2 = List((MessageTypeTag, Some(BEGIN_CALL_EVENT)), (MonitorID, 0x01020304)).encode
+
+      filter.handlers(msg1) mustBe Traversable(handler)
+      filter.handlers(msg2) mustBe Traversable(handler)
+    }
+
+    "identify all defined type of message" in {
+      val handler = (m: Message) => Unit: Unit
+      val filter = MessageFilter(Traversable(MessageFilterEntry(handler, MessageType.values)))
+      for (mtyp <- MessageType.values) {
+        val msg = encodeByteString(mtyp.id) ++ ByteString(4,3,2,1, 9,8,7,6)
+        filter.handlers(msg) mustBe Traversable(handler)
+      }
+    }
+
+    "return empty list of handler if no handler wanted to process the message" in {
+      val handler1 = (m: Message) => Unit: Unit
+      val handler2 = (m: Message) => Unit: Unit
+      val entry1 = MessageFilterEntry(handler1, Set(AGENT_STATE_EVENT))
+      val entry2 = MessageFilterEntry(handler2, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))
+      val filter = MessageFilter(Traversable(entry1, entry2))
+      val msg = List((MessageTypeTag, Some(CLOSE_CONF)), (InvokeID, 0x03040506)).encode
+
+      filter.handlers(msg) mustBe Traversable()
+    }
+
+    "return only desiring handler for the message" in {
+      val handler1 = (m: Message) => Unit: Unit
+      val handler2 = (m: Message) => Unit: Unit
+      val entry1 = MessageFilterEntry(handler1, Set(FAILURE_EVENT))
+      val entry2 = MessageFilterEntry(handler2, Set(FAILURE_EVENT, FAILURE_CONF))
+      val filter = MessageFilter(Traversable(entry1, entry2))
+      val msg = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x03040506)).encode
+
+      filter.handlers(msg) mustBe Traversable(handler2)
+    }
+
+    "return all desiring handlers for the message" in {
+      val handler1 = (m: Message) => Unit: Unit
+      val handler2 = (m: Message) => Unit: Unit
+      val entry1 = MessageFilterEntry(handler1, Set(FAILURE_EVENT))
+      val entry2 = MessageFilterEntry(handler2, Set(FAILURE_EVENT, FAILURE_CONF))
+      val filter = MessageFilter(Traversable(entry1, entry2))
+      val msg = List((MessageTypeTag, Some(FAILURE_EVENT)), (InvokeID, 0x03040506)).encode
+
+      (filter.handlers(msg).toSeq diff Seq(handler2, handler1)) mustBe Seq()
+    }
+
+    "return no handler for undefined message type" in {
+      val handler = (m: Message) => Unit: Unit
+      val filter = MessageFilter(Traversable(MessageFilterEntry(handler, MessageType.values)))
+      val msg = ByteString(1,1,1,1, 1,2,3,4, 5,6,7,8)
+
+      filter.handlers(msg) mustBe Traversable()
+    }
+
+
+
+
+
+
     "pass desired message type" in {
       var data: Message = List.empty
       val msg = List((MessageTypeTag, Some(AGENT_STATE_EVENT)), (MonitorID, 0x01020304),
@@ -392,11 +467,10 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
         (SKILL_GROUP_NUMBER, 0x0708090a), (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a:Short),
         (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER)))
       val entry = MessageFilterEntry(data = _, Set(AGENT_STATE_EVENT))
-      val filter = MessageFilter(Traversable(entry))
+      val filter = XXXXXXXMessageFilterOldNoLongerUsed(Traversable(entry))
 
       filter.receive(msg.encode)
       data mustBe msg
-
     }
 
     "pass multiple desired message type" in {
@@ -422,7 +496,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
         (CTI_CLIENT_SIGNATURE, "CtiClientSignature"), (CTI_CLIENT_TIMESTAMP, 0x090a0b0c),
         (CALL_REFERENCE_ID, ByteString(9,8,7,6,5,4,3,2,1,0)))
       val entry = MessageFilterEntry(data = _, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))
-      val filter = MessageFilter(Seq(entry))
+      val filter = XXXXXXXMessageFilterOldNoLongerUsed(Seq(entry))
 
       filter.receive(msg1.encode)
       data mustBe msg1
@@ -447,7 +521,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       val msg = List((MessageTypeTag, Some(CLOSE_CONF)), (InvokeID, 0x03040506))
       val entry1 = MessageFilterEntry(data1 = _, Set(FAILURE_EVENT))
       val entry2 = MessageFilterEntry(data2 = _, Set(FAILURE_EVENT, CLOSE_CONF))
-      val filter = MessageFilter(Traversable(entry1, entry2))
+      val filter = XXXXXXXMessageFilterOldNoLongerUsed(Traversable(entry1, entry2))
 
       filter.receive(msg.encode)
       data1 mustBe List.empty
@@ -460,7 +534,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       val msg = List((MessageTypeTag, Some(FAILURE_EVENT)), (Status, Some(StatusCode.UNSPECIFIED_FAILURE)))
       val entry1 = MessageFilterEntry(data1 = _, Set(FAILURE_EVENT))
       val entry2 = MessageFilterEntry(data2 = _, Set(FAILURE_EVENT, CLOSE_CONF))
-      val filter = MessageFilter(Seq(entry1, entry2))
+      val filter = XXXXXXXMessageFilterOldNoLongerUsed(Seq(entry1, entry2))
 
       filter.receive(msg.encode)
       data1 mustBe msg
@@ -471,7 +545,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       var data: Message = List.empty
       val msg = List((MessageTypeTag, Some(HEARTBEAT_CONF)), (InvokeID, 0x03040607))
       val entry = MessageFilterEntry(data = _, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))
-      val filter = MessageFilter(Seq(entry))
+      val filter = XXXXXXXMessageFilterOldNoLongerUsed(Seq(entry))
 
       filter.receive(msg.encode)
       data mustBe List.empty
@@ -481,7 +555,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       var data: Message = List.empty
       val msg = ByteString(1,1,1,1, 1,2,3,4, 5,6,7,8)
 
-      MessageFilter(Traversable(MessageFilterEntry(data = _, MessageType.values))).receive(msg)
+      XXXXXXXMessageFilterOldNoLongerUsed(Traversable(MessageFilterEntry(data = _, MessageType.values))).receive(msg)
       data mustBe List.empty
     }
 

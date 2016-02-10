@@ -49,7 +49,8 @@ class Packetizer(listener: ByteString => Unit) {
           // now you have plenty bytes to decode message length
           val message_length = buf.toInt
           if (message_length < 0 || message_length > MaxMessageLen) {
-            val msg = s"Message length $message_length out of defined range (0 - $MaxMessageLen) decoded.  Potential socket out of sync."
+            val msg = s"Message length $message_length out of defined range (0 - $MaxMessageLen) decoded." +
+              "  Potential socket out of sync."
             ctilog.error(msg)
             throw new java.io.SyncFailedException(msg)
           }
@@ -85,6 +86,21 @@ class Packetizer(listener: ByteString => Unit) {
 case class MessageFilterEntry(handler: Message => Unit, set: Set[MessageType.MessageType])
 
 case class MessageFilter(filter_conf: Traversable[MessageFilterEntry]) {
+  val handlerTable: Array[Traversable[(Message) => Unit]] = {
+    val flat_table = for (entry <- filter_conf; mtyp <- entry.set) yield (mtyp, Traversable(entry.handler))
+    val base_table = MessageType.values.map((_, Traversable[(Message) => Unit]())).toTraversable
+    val optimized_table = (flat_table ++ base_table).groupBy(_._1).map(t => (t._1, t._2.flatMap(_._2)))
+    optimized_table.map(t => (t._1.id, t._2)).toSeq.sortWith(_._1 < _._1).map(_._2).toArray
+  }
+
+  def handlers(packet: ByteString): Traversable[(Message) => Unit] = {
+    val ((tag, have_message_type), len) = MessageType.decode(Tag.MessageTypeTag, packet)
+    (for (message_type <- have_message_type) yield handlerTable(message_type.id)
+      ).getOrElse(Traversable[(Message) => Unit]())
+  }
+}
+
+case class XXXXXXXMessageFilterOldNoLongerUsed(filter_conf: Traversable[MessageFilterEntry]) {
   val jump_table: Array[Traversable[(Message) => Unit]] = {
     val flat_table = for (entry <- filter_conf; mtyp <- entry.set) yield (mtyp, Traversable(entry.handler))
     val base_table = MessageType.values.map((_, Traversable[(Message) => Unit]())).toTraversable

@@ -23,12 +23,13 @@ import java.net.InetSocketAddress
 import akka.actor.{ Actor, ActorRef, Props }
 import akka.io.{ IO, Tcp }
 import akka.util.ByteString
+import ctidriver.MessageType._
 
 /**
   * Use this class instance only within an Actor.
   * This code is not thread safe.  Never call single instance from multiple threads.
   */
-class Packetizer(listener: ByteString => Unit) {
+class XXXXXPacketizerOldDoNotUse(listener: ByteString => Unit) {
 
   object State extends Enumeration {
     val WAIT_LENGTH, WAIT_BODY = Value
@@ -83,24 +84,24 @@ class Packetizer(listener: ByteString => Unit) {
   }
 }
 
-class PacketizerNew {
+class Packetizer {
 
   object State extends Enumeration {
-    val WAIT_LENGTH, WAIT_BODY = Value
+    val WaitLength, WaitBody = Value
   }
 
   var buf = ByteString.empty
-  var state = State.WAIT_LENGTH
+  var state = State.WaitLength
   var offset = -4
 
-  def receive(data: ByteString): Seq[ByteString] = {
+  def apply(data: ByteString): Seq[ByteString] = {
     offset = offset + data.size
     buf = buf ++ data
     var result: Seq[ByteString] = Seq.empty
 
     while (offset >= 0) {
       state match {
-        case State.WAIT_LENGTH =>
+        case State.WaitLength =>
           // at the state WAIT_LENGTH, the head of buf is aligned to message length field
           // now you have plenty bytes to decode message length
           val message_length = buf.toInt
@@ -113,12 +114,12 @@ class PacketizerNew {
           buf = buf.drop(4)
           // here you have buf which contains message aligned to Message Type field at the head
           // let's set next state for waiting body
-          state = State.WAIT_BODY
+          state = State.WaitBody
 
           // the message length doesn't include Message Type filed so you need to wait 4 more bytes
           offset = buf.size - (message_length + 4)
 
-        case State.WAIT_BODY =>
+        case State.WaitBody =>
           // at the state WAIT_BODY, the head of buf is aligned to message type field
           // now you have at least one entire message in buf
 
@@ -130,7 +131,7 @@ class PacketizerNew {
           // here you have buf which is aligned to next message length
           // let's set next state for waiting message length
           // we need 4 bytes to continue
-          state = State.WAIT_LENGTH
+          state = State.WaitLength
           offset = buf.size - 4
 
           result = packet +: result
@@ -143,17 +144,17 @@ class PacketizerNew {
 case class MessageFilterEntry(handler: Message => Unit, set: Set[MessageType.MessageType])
 
 case class MessageFilter(filter_conf: Traversable[MessageFilterEntry]) {
-  val handlerTable: Array[Traversable[(Message) => Unit]] = {
+  val handlerTable: Array[Traversable[Message => Unit]] = {
     val flat_table = for (entry <- filter_conf; mtyp <- entry.set) yield (mtyp, Traversable(entry.handler))
-    val base_table = MessageType.values.map((_, Traversable[(Message) => Unit]())).toTraversable
+    val base_table = MessageType.values.map((_, Traversable[Message => Unit]())).toTraversable
     val optimized_table = (flat_table ++ base_table).groupBy(_._1).map(t => (t._1, t._2.flatMap(_._2)))
     optimized_table.map(t => (t._1.id, t._2)).toSeq.sortWith(_._1 < _._1).map(_._2).toArray
   }
 
-  def handlers(packet: ByteString): Traversable[(Message) => Unit] = {
+  def apply(packet: ByteString): Traversable[Message => Unit] = {
     val ((tag, have_message_type), len) = MessageType.decode(Tag.MessageTypeTag, packet)
     (for (message_type <- have_message_type) yield handlerTable(message_type.id)
-      ).getOrElse(Traversable[(Message) => Unit]())
+      ).getOrElse(Traversable[Message => Unit]())
   }
 }
 
@@ -162,11 +163,88 @@ object SessionProtocol {
   case object Close
 }
 
-class SocketActor(cti_server: InetSocketAddress, listener: ActorRef) extends Actor {
+trait UsesSocketActor { val socketActor: ActorRef }
+
+trait MixInSocketActorSample {
+  object SocketActorInitializer {
+    val server = new InetSocketAddress("localhost", DefaultCtiServerPortA)
+    val handler: Message => Unit = (m) => Unit
+    val filter_entry = MessageFilterEntry(handler, Set(AGENT_STATE_EVENT))
+    val filter = MessageFilter(Seq(filter_entry))
+    val props = Props(classOf[SocketActorImpl], server, filter)
+  }
+//  val socketActor: ActorRef = system.actorOf(SocketActorInitializer.props)
+}
+
+class SocketActorImpl(server: InetSocketAddress, filter: MessageFilter) extends Actor {
   import akka.io.Tcp._
   import context.system
 
-  val packetizer = new Packetizer(listener ! _)
+  val packetizer = new Packetizer
+
+  IO(Tcp) ! Connect(server)
+
+  def receive = {
+    case CommandFailed(_: Connect) =>
+      println("connect to cti server failed.")
+      context stop self
+
+    case c @ Connected(remote, local) =>
+      val connection = sender()
+      connection ! Register(self)
+      context become {
+        case data: ByteString => connection ! Write(data.withlength)
+        case SessionProtocol.Send(data) => connection ! Write(data.withlength)
+        case _: ConnectionClosed => context stop self
+        case SessionProtocol.Close => connection ! Tcp.Close
+
+        case Received(data) =>
+          for (packet <- packetizer(data)) {
+            lazy val msg = packet.decode
+            filter(packet).foreach(_(msg))
+          }
+      }
+  }
+}
+
+/*
+object foo {
+  import ctidriver.Tag._
+  val handler1: Message => Unit = (m) => { println("handler1 called.  msg: " + m) ; Unit }
+  val handler2: Message => Unit = (m) => { println("handler2 called.  msg: " + m) ; Unit }
+  val filter_entry1 = MessageFilterEntry(handler1, Set(FAILURE_EVENT))
+  val filter_entry2 = MessageFilterEntry(handler2, Set(FAILURE_EVENT))
+  val filter = MessageFilter(Seq(filter_entry1, filter_entry2))
+  val packet = List((MessageTypeTag, Some(FAILURE_EVENT)), (Status, Some(StatusCode.UNSPECIFIED_FAILURE))).encode
+
+  def act() = {
+    lazy val msg = packet.decode
+    filter(packet).foreach(_(msg))
+  }
+}
+
+object bar {
+  def body(n: Int) = (1 to n).sum
+  def act(n: Int, i: Int) = {
+    val start1 = System.nanoTime()
+    val r1 = (1 to i).map(e => body(n)).sum
+    val end1 = System.nanoTime()
+    println(r1 + "  elapsed " + (end1 - start1))
+
+    val a = body(n)
+    val start2 = System.nanoTime()
+    val r2 = (1 to i).map(e => a).sum
+    val end2 = System.nanoTime()
+    println(r2 + "  elapsed " + (end2 - start2))
+  }
+}
+*/
+
+class SocketActorOld(cti_server: InetSocketAddress, listener: ActorRef) extends Actor {
+  import akka.io.Tcp._
+  import context.system
+
+  val packetizer = new XXXXXPacketizerOldDoNotUse(listener ! _)
 
   IO(Tcp) ! Connect(cti_server)
 

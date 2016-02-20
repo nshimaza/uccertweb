@@ -18,33 +18,19 @@
 
 package models
 
-import javax.inject._
-
 import akka.agent.Agent
-import ctidriver._
 import ctidriver.AgentState._
-import com.google.inject.{ ImplementedBy, AbstractModule }
-import com.google.inject.assistedinject.{ Assisted, FactoryModuleBuilder }
-
+import ctidriver.{ AgentState, Message }
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 /**
-  * Created by nshimaza on 2016/02/11.
+  * Created by nshimaza on 2016/01/31.
   */
-trait AgentStateMap {
-  def get(extension: Int): Option[(AgentState, Int)]
-  def future(extension: Int): Option[Future[(AgentState, Int)]]
-  def receive(msg: Message): Unit
-}
+case class AgentStateMapOld(extension_range: Range) {
+  val agent_map: Map[Int, Agent[(AgentState, Int)]] = extension_range.map(n => (n, Agent((LOGOUT, 0)))).toMap
 
-trait AgentStateMapFactory { def apply(extension_range: Range): AgentStateMap }
-
-class AgentStateMapImpl @Inject()(@Assisted extension_range: Range) extends AgentStateMap {
-  val stateMap: Map[Int, Agent[(AgentState, Int)]] = extension_range.map(n => (n, Agent((LOGOUT, 0)))).toMap
-
-  def get(ext: Int) = for (agent <- stateMap.get(ext)) yield agent.get
-  def future(ext: Int) = for (agent <- stateMap.get(ext)) yield agent.future
+  def get(extension: Int): Option[(AgentState, Int)] = for (agent <- agent_map.get(extension)) yield agent.get
+  def future(extension: Int) = for (agent <- agent_map.get(extension)) yield agent.future
 
   def receive(msg: Message) = {
     import ctidriver.Tag._
@@ -53,35 +39,11 @@ class AgentStateMapImpl @Inject()(@Assisted extension_range: Range) extends Agen
     for (
       msgType <- msg.findEnum[MessageType](MessageTypeTag).find(_ == AGENT_STATE_EVENT);
       ext <- msg.findStrInt(AGENT_EXTENSION);
-      agent <- stateMap.get(ext);
+      agent <- agent_map.get(ext);
       state <- msg.findEnum[AgentState.AgentState](AgentStateTag);
       reason <- msg.findT[Short](EventReasonCode)
-    ) {
+    ) yield {
       agent send (state, reason)
     }
-
-    /*
-    import ctidriver.Tag._
-    import ctidriver.MessageType._
-
-    for (msgType <- msg.findEnum[MessageType](MessageTypeTag).find(_ == AGENT_STATE_EVENT);
-         ext <- msg.findStrInt(AGENT_EXTENSION);
-         state <- msg.findEnum[AgentState.AgentState](AgentStateTag);
-         reason <- msg.findT[Short](EventReasonCode)) {
-      state_map.get(ext) match {
-        case None => state_map = state_map + (ext -> Agent((state, reason.toInt)))
-        case Some(agent) => agent send (state, reason)
-      }
-    }
-    */
-  }
-}
-
-class AgentStateMapModule extends AbstractModule {
-  def configure() = {
-    install(new FactoryModuleBuilder()
-      .implement(classOf[AgentStateMap], classOf[AgentStateMapImpl])
-      .build(classOf[AgentStateMapFactory]))
-
   }
 }

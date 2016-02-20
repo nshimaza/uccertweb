@@ -26,8 +26,6 @@ import Tag.Tag
   */
 
 abstract class CtiEnum extends Enumeration {
-  val unrecognized_enum_id = "Unrecognized CTI Enumeration ID decoded.  Return None."
-
   // Abstruct functions
   def decode(tag: Tag, body: ByteString): ((Tag, Option[Value]), Int)
   def encode(tag: Tag, a: Any): ByteString
@@ -45,13 +43,17 @@ abstract class CtiEnum extends Enumeration {
   }
 }
 
+object CtiEnum {
+  val UnrecognizedEnumId = "Unrecognized CTI Enumeration ID decoded.  Return None."
+}
+
 class ByteEnum extends CtiEnum {
   def decode(tag: Tag, body: ByteString): ((Tag, Option[Value]), Int) = {
     try {
       ((tag, Some(super.apply(body.head.toInt & 0xff))), 1)
     } catch {
       case e: NoSuchElementException =>
-        ctilog.warn(unrecognized_enum_id)
+        ctilog.warn(CtiEnum.UnrecognizedEnumId)
         ((tag, None), 1)
     }
   }
@@ -65,7 +67,7 @@ class ShortEnum extends CtiEnum {
       ((tag, Some(super.apply(body.toShort.toInt & 0xffff))), 2)
     } catch {
       case e: NoSuchElementException =>
-        ctilog.warn(unrecognized_enum_id)
+        ctilog.warn(CtiEnum.UnrecognizedEnumId)
         ((tag, None), 2)
     }
   }
@@ -79,7 +81,7 @@ class IntEnum extends CtiEnum {
       ((tag, Some(super.apply(body.toInt))), 4)
     } catch {
       case e: NoSuchElementException =>
-        ctilog.warn(unrecognized_enum_id)
+        ctilog.warn(CtiEnum.UnrecognizedEnumId)
         ((tag, None), 4)
     }
   }

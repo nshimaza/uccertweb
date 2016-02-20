@@ -19,12 +19,15 @@
 package ctidriver
 
 import ctidriver.Tag._
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 
 
 /**
   * Created by nshimaza on 2016/01/08.
   */
+@RunWith(classOf[JUnitRunner])
 class TagSpec extends FunSuite {
 
   test("CLIENT_ID must be 1") {

@@ -21,9 +21,12 @@ package ctidriver
 import akka.util.ByteString
 import ctidriver.MessageType._
 import ctidriver.Tag._
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import scala.collection.immutable.BitSet
 
+@RunWith(classOf[JUnitRunner])
 class DecoderSpec extends FunSuite {
 
   test("decoding 000: UNKNOWN_TYPE") {

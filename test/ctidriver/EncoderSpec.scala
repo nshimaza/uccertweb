@@ -21,13 +21,16 @@ package ctidriver
 import akka.util.ByteString
 import ctidriver.MessageType._
 import ctidriver.Tag._
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import scala.collection.immutable.BitSet
 
 
 /**
   * Created by x on 2014/06/29.
   */
+@RunWith(classOf[JUnitRunner])
 class EncoderSpec extends FunSuite {
 
   test("encoding 000: UNKNOWN_TYPE") {

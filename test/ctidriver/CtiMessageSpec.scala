@@ -21,12 +21,15 @@ package ctidriver
 import akka.util.ByteString
 import ctidriver.MessageType._
 import ctidriver.Tag._
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{ WordSpecLike, MustMatchers }
 
 
 /**
   * Created by nshimaza on 2016/02/01.
   */
+@RunWith(classOf[JUnitRunner])
 class CtiMessageSpec extends WordSpecLike with MustMatchers {
   "CtiMessage" must {
     "have function findField" in {

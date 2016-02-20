@@ -73,39 +73,12 @@ package object ctidriver {
   // Helper functions for binary data processing
   //
 
-  def ubyteToInt(b: Byte): Int = b.toInt & 0xff
-  
-  def intToByte(i: Int): Byte = (i & 0xff).toByte
-
   // Encode integer to big-endian byte string
   def encodeByteString(i: Int) =
     ByteString((i & 0xff000000) >> 24, (i & 0x00ff0000) >> 16, (i & 0x0000ff00) >>  8, (i & 0x000000ff) >>  0)
 
   // Encode short to big-endian byte string
   def encodeByteString(s: Short) = ByteString((s & 0xff00) >> 8, s & 0x00ff)
-
-  def shortToByteArray(value: Short, isBigEndian: Boolean = true): Array[Byte] = {
-    if (isBigEndian)
-      Array(((value & 0xff00) >> 8).toByte, (value & 0x00ff).toByte)          
-    else
-      Array((value & 0x00ff).toByte, ((value & 0xff00) >> 8).toByte)
-  }
-
-  def intToByteArray(value: Int, isBigEndian: Boolean = true): Array[Byte] = {
-    if (isBigEndian) {
-      Array(
-          ((value & 0xff000000) >> 24).toByte,
-          ((value & 0x00ff0000) >> 16).toByte,
-          ((value & 0x0000ff00) >>  8).toByte,
-          ((value & 0x000000ff) >>  0).toByte)          
-    } else {
-      Array(
-          ((value & 0x000000ff) >>  0).toByte,
-          ((value & 0x0000ff00) >>  8).toByte,
-          ((value & 0x00ff0000) >> 16).toByte,
-          ((value & 0xff000000) >> 24).toByte)      
-    }
-  }
 
   implicit class CtiString(val s: String) extends AnyVal {
     def toIntOpt: Option[Int] = scala.util.Try(s.toInt).toOption
@@ -203,4 +176,37 @@ package object ctidriver {
     def toInt: Int = (m.toBitMask(0) & 0xffffffff).toInt
     def toShort: Short = (m.toBitMask(0) & 0xffff).toShort
   }
+
+  //
+  // Unused helper functions
+  // These are not tested.
+  //
+  def ubyteToInt(b: Byte): Int = b.toInt & 0xff
+
+  def intToByte(i: Int): Byte = (i & 0xff).toByte
+
+  def shortToByteArray(value: Short, isBigEndian: Boolean = true): Array[Byte] = {
+    if (isBigEndian)
+      Array(((value & 0xff00) >> 8).toByte, (value & 0x00ff).toByte)
+    else
+      Array((value & 0x00ff).toByte, ((value & 0xff00) >> 8).toByte)
+  }
+
+  def intToByteArray(value: Int, isBigEndian: Boolean = true): Array[Byte] = {
+    if (isBigEndian) {
+      Array(
+        ((value & 0xff000000) >> 24).toByte,
+        ((value & 0x00ff0000) >> 16).toByte,
+        ((value & 0x0000ff00) >>  8).toByte,
+        ((value & 0x000000ff) >>  0).toByte)
+    } else {
+      Array(
+        ((value & 0x000000ff) >>  0).toByte,
+        ((value & 0x0000ff00) >>  8).toByte,
+        ((value & 0x00ff0000) >> 16).toByte,
+        ((value & 0xff000000) >> 24).toByte)
+    }
+  }
+
+
 }

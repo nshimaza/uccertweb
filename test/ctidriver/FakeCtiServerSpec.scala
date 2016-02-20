@@ -25,6 +25,8 @@ import akka.io.{ IO, Tcp }
 import akka.io.Tcp._
 import akka.testkit.{ TestActorRef, TestActors, TestKit, TestProbe }
 import akka.util.ByteString
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{ WordSpecLike, MustMatchers, BeforeAndAfterAll }
 import scala.concurrent.duration._
 import scala.concurrent.Future
@@ -32,7 +34,7 @@ import scala.concurrent.Future
 /**
   * Created by nshimaza on 2016/01/27.
   */
-
+@RunWith(classOf[JUnitRunner])
 class FakeCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {
   import FakeCtiServerProtocol._

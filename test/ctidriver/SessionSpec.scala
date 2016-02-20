@@ -27,7 +27,10 @@ import akka.util.ByteString
 import ctidriver.FakeCtiServerProtocol._
 import ctidriver.MessageType._
 import ctidriver.Tag._
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{ WordSpecLike, MustMatchers, BeforeAndAfterAll }
+
 import scala.collection.immutable.BitSet
 import scala.concurrent.duration._
 
@@ -42,6 +45,7 @@ import scala.concurrent.duration._
 //  }
 //}
 
+@RunWith(classOf[JUnitRunner])
 class SessionSpec(_system: ActorSystem) extends TestKit(_system)
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {
 
@@ -122,130 +126,130 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
   }
 */
 
-  "PacketizerNew" must {
+  "Packetizer" must {
     "start with state WAIT_LENGH" in {
-      val packetizer = new PacketizerNew()
+      val packetizer = new Packetizer()
 
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
+      packetizer.state mustBe packetizer.State.WaitLength
     }
 
     "start with offset -4" in {
-      val packetizer = new PacketizerNew()
+      val packetizer = new Packetizer()
 
       packetizer.offset mustBe -4
     }
 
     "return empty Seq[ByteString] on receive until entire packet becomes available" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(1, 2, 3) mustBe Seq[ByteString]()
+      packetizer(ByteString(1, 2, 3)) mustBe Seq[ByteString]()
     }
 
     "stay on state WAIT_LENGTH until 4 bytes received" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(1, 2, 3) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
+      packetizer(ByteString(1, 2, 3)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitLength
     }
 
     "transit to state WAIT_BODY when 4 bytes received" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(0, 0, 1, 2) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_BODY
+      packetizer(ByteString(0, 0, 1, 2)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitBody
     }
 
     "transit to state WAIT_BODY when 4 bytes received separately" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(0) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
-      packetizer receive ByteString(0) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
-      packetizer receive ByteString(3) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
-      packetizer receive ByteString(4) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_BODY
+      packetizer(ByteString(0)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitLength
+      packetizer(ByteString(0)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitLength
+      packetizer(ByteString(3)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitLength
+      packetizer(ByteString(4)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitBody
     }
 
     "transit to state WAIT_BODY when more than 4 bytes received" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(0, 0, 3, 4, 5) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_BODY
+      packetizer apply ByteString(0, 0, 3, 4, 5) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitBody
     }
 
     "keep remaining data received when successfully decode message length" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(0, 0, 3, 4, 5) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_BODY
+      packetizer(ByteString(0, 0, 3, 4, 5)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitBody
       packetizer.buf.size mustBe 1
       packetizer.buf.head mustBe 5.toByte
     }
 
     "decode and keep message length when transit to WAIT_BODY" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(0,0,0x10,0xe0, 5,6,7,8) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_BODY
+      packetizer(ByteString(0,0,0x10,0xe0, 5,6,7,8)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitBody
       packetizer.offset mustBe (4 - (0x000010e0 + 4))
     }
 
     "throw java.io.SyncFailedException when negative message length is decoded" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
       intercept[java.io.SyncFailedException] {
-        val packets = packetizer receive encodeByteString(-1: Int)
+        val packets = packetizer(encodeByteString(-1: Int))
       }
     }
 
     "throw java.io.SyncFailedException when decoded message length is greater than MaxMessageLen" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
       intercept[java.io.SyncFailedException] {
-        val packets = packetizer receive encodeByteString(MaxMessageLen + 1: Int)
+        val packets = packetizer(encodeByteString(MaxMessageLen + 1: Int))
       }
     }
 
     "decode mesasge length when it is just equal to MaxMessageLen" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive encodeByteString(MaxMessageLen) mustBe Seq()
-      packetizer.state mustBe packetizer.State.WAIT_BODY
+      packetizer(encodeByteString(MaxMessageLen)) mustBe Seq()
+      packetizer.state mustBe packetizer.State.WaitBody
       packetizer.offset mustBe (-(MaxMessageLen + 4))
     }
 
     "transit back to state WAIT_LENGTH when desired bytes are received" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8) mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
+      packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8)) mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
+      packetizer.state mustBe packetizer.State.WaitLength
       packetizer.offset mustBe (-4)
     }
 
     "send entire single message to listener when it reached next WAIT_LENGTH state" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8) mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
+      packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8)) mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
+      packetizer.state mustBe packetizer.State.WaitLength
       packetizer.offset mustBe (-4)
     }
 
     "keep remaining bytes after sending an entire message" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      packetizer receive ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8, 9,10) mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
+      packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8, 9,10)) mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
+      packetizer.state mustBe packetizer.State.WaitLength
       packetizer.offset mustBe (-2)
       packetizer.buf mustBe ByteString(9, 10)
     }
 
     "can separate multiple messages received at a time" in {
-      val packetizer = new PacketizerNew
+      val packetizer = new Packetizer
 
-      val packets = packetizer receive ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8, 0,0,0,3, 2,3,4,5, 6,7,8)
-      packetizer.state mustBe packetizer.State.WAIT_LENGTH
+      val packets = packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8, 0,0,0,3, 2,3,4,5, 6,7,8))
+      packetizer.state mustBe packetizer.State.WaitLength
       packetizer.offset mustBe (-4)
       packets mustBe Seq(ByteString(1,2,3,4, 5,6,7,8), ByteString(2,3,4,5, 6,7,8))
     }
@@ -256,35 +260,35 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
 
   }
 
-  "Packetizer" must {
+  "PacketizerOld" must {
     "start with state WAIT_LENGTH" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer.state mustBe packetizer.State.WAIT_LENGTH
     }
 
     "start with offset -4" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer.offset mustBe -4
     }
 
     "stay on state WAIT_LENGTH until 4 bytes received" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer receive ByteString(1, 2, 3)
       packetizer.state mustBe packetizer.State.WAIT_LENGTH
     }
 
     "transit to state WAIT_BODY when 4 bytes received" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer receive ByteString(0, 0, 1, 2)
       packetizer.state mustBe packetizer.State.WAIT_BODY
     }
 
     "transit to state WAIT_BODY when 4 bytes received separately" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer receive ByteString(0)
       packetizer.state mustBe packetizer.State.WAIT_LENGTH
@@ -297,14 +301,14 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
     }
 
     "transit to state WAIT_BODY when more than 4 bytes received" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer receive ByteString(0, 0, 3, 4, 5)
       packetizer.state mustBe packetizer.State.WAIT_BODY
     }
 
     "keep remaining data received when successfully decode message length" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer receive ByteString(0, 0, 3, 4, 5)
       packetizer.state mustBe packetizer.State.WAIT_BODY
@@ -313,7 +317,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
     }
 
     "decode and keep message length when transit to WAIT_BODY" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer receive ByteString(0,0,0x10,0xe0, 5,6,7,8)
       packetizer.state mustBe packetizer.State.WAIT_BODY
@@ -321,7 +325,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
     }
 
     "throw java.io.SyncFailedException when negative message length is decoded" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       intercept[java.io.SyncFailedException] {
         packetizer receive encodeByteString(-1: Int)
@@ -329,7 +333,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
     }
 
     "throw java.io.SyncFailedException when decoded message length is greater than MaxMessageLen" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       intercept[java.io.SyncFailedException] {
         packetizer receive encodeByteString(MaxMessageLen + 1: Int)
@@ -337,7 +341,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
     }
 
     "decode mesasge length when it is just equal to MaxMessageLen" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer receive encodeByteString(MaxMessageLen)
       packetizer.state mustBe packetizer.State.WAIT_BODY
@@ -345,7 +349,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
     }
 
     "transit back to state WAIT_LENGTH when desired bytes are received" in {
-      val packetizer = new Packetizer(_ => Unit)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
 
       packetizer receive ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8)
       packetizer.state mustBe packetizer.State.WAIT_LENGTH
@@ -354,7 +358,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
 
     "send entire single message to listener when it reached next WAIT_LENGTH state" in {
       var data = ByteString.empty
-      val packetizer = new Packetizer(data = _)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(data = _)
 
       packetizer receive ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8)
       packetizer.state mustBe packetizer.State.WAIT_LENGTH
@@ -364,7 +368,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
 
     "keep remaining bytes after sending an entire message" in {
       var data = ByteString.empty
-      val packetizer = new Packetizer(data = _)
+      val packetizer = new XXXXXPacketizerOldDoNotUse(data = _)
 
       packetizer receive ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8, 9,10)
       packetizer.state mustBe packetizer.State.WAIT_LENGTH
@@ -375,7 +379,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
 
     "can separate multiple messages received at a time" in {
       var data = Seq.empty[ByteString]
-      val packetizer = new Packetizer(p => { data = data :+ p })
+      val packetizer = new XXXXXPacketizerOldDoNotUse(p => { data = data :+ p })
 
       packetizer receive ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8, 0,0,0,3, 2,3,4,5, 6,7,8)
       packetizer.state mustBe packetizer.State.WAIT_LENGTH
@@ -387,7 +391,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
   "SocketActor" must {
     "connect to server" in {
       val probe = TestProbe()
-      val client = system.actorOf(Props(classOf[SocketActor], new InetSocketAddress("localhost", sv_port), probe.ref))
+      val client = system.actorOf(Props(classOf[SocketActorOld], new InetSocketAddress("localhost", sv_port), probe.ref))
 
       val msg = probe.expectMsgClass(3.second, classOf[Connected])
 
@@ -402,7 +406,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       val server_probe = TestProbe()
       server ! WarmRestart(server_probe.ref)
       val probe = TestProbe()
-      val client = system.actorOf(Props(classOf[SocketActor], new InetSocketAddress("localhost", sv_port), probe.ref))
+      val client = system.actorOf(Props(classOf[SocketActorOld], new InetSocketAddress("localhost", sv_port), probe.ref))
       probe.expectMsgClass(3.second, classOf[Connected])
       server_probe.expectMsg(3.second, ClientHandlerReady)
 
@@ -422,7 +426,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       val server_probe = TestProbe()
       server ! WarmRestart(server_probe.ref)
       val probe = TestProbe()
-      val client = system.actorOf(Props(classOf[SocketActor], new InetSocketAddress("localhost", sv_port), probe.ref))
+      val client = system.actorOf(Props(classOf[SocketActorOld], new InetSocketAddress("localhost", sv_port), probe.ref))
       probe.expectMsgClass(3.second, classOf[Connected])
       server_probe.expectMsg(3.second, ClientHandlerReady)
 
@@ -460,7 +464,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       val server_probe = TestProbe()
       server ! WarmRestart(server_probe.ref)
       val probe = TestProbe()
-      val client = system.actorOf(Props(classOf[SocketActor], new InetSocketAddress("localhost", sv_port), probe.ref))
+      val client = system.actorOf(Props(classOf[SocketActorOld], new InetSocketAddress("localhost", sv_port), probe.ref))
       probe.expectMsgClass(3.second, classOf[Connected])
       server_probe.expectMsg(3.second, ClientHandlerReady)
 
@@ -511,73 +515,90 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
 //    }
 
     "returns handlers which wanted to process the message" in {
-      val handler = (m: Message) => Unit: Unit
+      val handler: Message => Unit = (m) => Unit
       val entry = MessageFilterEntry(handler, Set(AGENT_STATE_EVENT))
       val filter = MessageFilter(Traversable(entry))
       val msg = List((MessageTypeTag, Some(AGENT_STATE_EVENT)), (MonitorID, 0x01020304)).encode
 
-      filter.handlers(msg) mustBe Traversable(handler)
+      filter(msg) mustBe Traversable(handler)
     }
 
     "work with multiple type of messages" in {
-      val handler = (m: Message) => Unit: Unit
+      val handler: Message => Unit = (m) => Unit
       val entry = MessageFilterEntry(handler, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))
       val filter = MessageFilter(Traversable(entry))
       val msg1 = List((MessageTypeTag, Some(END_CALL_EVENT)), (MonitorID, 0x01020304)).encode
       val msg2 = List((MessageTypeTag, Some(BEGIN_CALL_EVENT)), (MonitorID, 0x01020304)).encode
 
-      filter.handlers(msg1) mustBe Traversable(handler)
-      filter.handlers(msg2) mustBe Traversable(handler)
+      filter(msg1) mustBe Traversable(handler)
+      filter(msg2) mustBe Traversable(handler)
     }
 
     "identify all defined type of message" in {
-      val handler = (m: Message) => Unit: Unit
+      val handler: Message => Unit = (m) => Unit
       val filter = MessageFilter(Traversable(MessageFilterEntry(handler, MessageType.values)))
       for (mtyp <- MessageType.values) {
         val msg = encodeByteString(mtyp.id) ++ ByteString(4,3,2,1, 9,8,7,6)
-        filter.handlers(msg) mustBe Traversable(handler)
+        filter(msg) mustBe Traversable(handler)
+      }
+    }
+
+    "return no handler for entry with empty set of message type" in {
+      val handler: Message => Unit = (m) => Unit
+      val filter = MessageFilter(Traversable(MessageFilterEntry(handler, Set())))
+      for (mtyp <- MessageType.values) {
+        val msg = encodeByteString(mtyp.id) ++ ByteString(4,3,2,1, 9,8,7,6)
+        filter(msg) mustBe empty
+      }
+    }
+
+    "return no handler for empty filter entry list" in {
+      val filter = MessageFilter(Traversable())
+      for (mtyp <- MessageType.values) {
+        val msg = encodeByteString(mtyp.id) ++ ByteString(4,3,2,1, 9,8,7,6)
+        filter(msg) mustBe empty
       }
     }
 
     "return empty list of handler if no handler wanted to process the message" in {
-      val handler1 = (m: Message) => Unit: Unit
-      val handler2 = (m: Message) => Unit: Unit
+      val handler1: Message => Unit = (m) => Unit
+      val handler2: Message => Unit = (m) => Unit
       val entry1 = MessageFilterEntry(handler1, Set(AGENT_STATE_EVENT))
       val entry2 = MessageFilterEntry(handler2, Set(BEGIN_CALL_EVENT, END_CALL_EVENT))
       val filter = MessageFilter(Traversable(entry1, entry2))
       val msg = List((MessageTypeTag, Some(CLOSE_CONF)), (InvokeID, 0x03040506)).encode
 
-      filter.handlers(msg) mustBe Traversable()
+      filter(msg) mustBe empty
     }
 
     "return only desiring handler for the message" in {
-      val handler1 = (m: Message) => Unit: Unit
-      val handler2 = (m: Message) => Unit: Unit
+      val handler1: Message => Unit = (m) => Unit
+      val handler2: Message => Unit = (m) => Unit
       val entry1 = MessageFilterEntry(handler1, Set(FAILURE_EVENT))
       val entry2 = MessageFilterEntry(handler2, Set(FAILURE_EVENT, FAILURE_CONF))
       val filter = MessageFilter(Traversable(entry1, entry2))
       val msg = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x03040506)).encode
 
-      filter.handlers(msg) mustBe Traversable(handler2)
+      filter(msg) mustBe Traversable(handler2)
     }
 
     "return all desiring handlers for the message" in {
-      val handler1 = (m: Message) => Unit: Unit
-      val handler2 = (m: Message) => Unit: Unit
+      val handler1: Message => Unit = (m) => Unit
+      val handler2: Message => Unit = (m) => Unit
       val entry1 = MessageFilterEntry(handler1, Set(FAILURE_EVENT))
       val entry2 = MessageFilterEntry(handler2, Set(FAILURE_EVENT, FAILURE_CONF))
       val filter = MessageFilter(Traversable(entry1, entry2))
       val msg = List((MessageTypeTag, Some(FAILURE_EVENT)), (InvokeID, 0x03040506)).encode
 
-      (filter.handlers(msg).toSeq diff Seq(handler2, handler1)) mustBe Seq()
+      filter(msg) must contain theSameElementsAs Traversable(handler2, handler1)
     }
 
     "return no handler for undefined message type" in {
-      val handler = (m: Message) => Unit: Unit
+      val handler: Message => Unit = (m) => Unit
       val filter = MessageFilter(Traversable(MessageFilterEntry(handler, MessageType.values)))
       val msg = ByteString(1,1,1,1, 1,2,3,4, 5,6,7,8)
 
-      filter.handlers(msg) mustBe Traversable()
+      filter(msg) mustBe empty
     }
   }
 

@@ -677,13 +677,20 @@ object Tag extends Enumeration {
   // Decoder functions of fixed part for simple types
   //
   private def decFxRaw(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body), body.size)
+
   private def decFxInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toInt), 4)
+
   private def decFxShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toShort), 2)
+
   private def decFxByte(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.head), 1)
+
   private def decFxIntBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toInt != 0), 4)
+
   private def decFxShortBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.toShort != 0), 2)
+
   private def decFxIntBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
     ((tag, BitSet fromBitMask Array(body.toInt.toLong)), 4)
+
   private def decFxShortBitSet(tag: Tag, body: ByteString): ((Tag, Any), Int) =
     ((tag, BitSet fromBitMask Array(body.toShort.toLong)), 2)
 
@@ -1078,8 +1085,11 @@ object Tag extends Enumeration {
   }
 
   private def decFlInt(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.tail.toInt), 5)
+
   private def decFlShort(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.tail.toShort), 3)
+
   private def decFlByte(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body(1)), 2)
+
   private def decFlShortBool(tag: Tag, body: ByteString): ((Tag, Any), Int) = ((tag, body.tail.toShort != 0), 3)
 
   private def decFlShortMask(tag: Tag, body: ByteString): ((Tag, Any), Int) = {
@@ -1378,12 +1388,18 @@ object Tag extends Enumeration {
   // Encoder functions of fixed part for simple types
   //
   private def encFxRaw(tag: Tag, a: Any) = a match { case b: ByteString => b }
+
   private def encFxInt(tag: Tag, a: Any) = a match { case i: Int => encodeByteString(i) }
+
   private def encFxShort(tag: Tag, a: Any) = a match { case s: Short => encodeByteString(s) }
+
   private def encFxIntBool(tag: Tag, a: Any) = a match { case b: Boolean => encodeByteString(if (b) 1 else 0) }
+
   private def encFxShortBool(tag: Tag, a: Any) =
     a match { case b: Boolean => encodeByteString((if (b) 1 else 0).toShort) }
+
   private def encFxIntBitSet(tag: Tag, a: Any) = a match { case m: BitSet => encodeByteString(m.toInt) }
+
   private def encFxShortBitSet(tag: Tag, a: Any) = a match { case m: BitSet => encodeByteString(m.toShort) }
 
   //
@@ -1780,11 +1796,15 @@ object Tag extends Enumeration {
   }
 
   private def encFlInt(tag: Tag, a: Any) = a match { case i: Int => ByteString(tag.id, 4) ++ i }
+
   private def encFlShort(tag: Tag, a: Any) = a match { case s: Short => ByteString(tag.id, 2) ++ s }
+
   private def encFlByte(tag: Tag, a: Any) = a match { case b: Byte => ByteString(tag.id, 1, b & 0xff) }
+
   private def encFlShortBool(tag: Tag, a: Any) = a match {
     case b: Boolean => ByteString(tag.id, 2) ++ (if (b) 1 else 0).toShort
   }
+
   private def encFlShortMask(tag: Tag, a: Any) = a match { case m: BitSet => encFlShort(tag, m.toInt.toShort) }
 
   private def encFlNamedVar(tag: Tag, a: Any) = a match {

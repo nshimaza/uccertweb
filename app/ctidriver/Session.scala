@@ -84,79 +84,7 @@ class XXXXXPacketizerOldDoNotUse(listener: ByteString => Unit) {
   }
 }
 
-class Packetizer {
 
-  object State extends Enumeration {
-    val WaitLength, WaitBody = Value
-  }
-
-  var buf = ByteString.empty
-  var state = State.WaitLength
-  var offset = -4
-
-  def apply(data: ByteString): Seq[ByteString] = {
-    offset = offset + data.size
-    buf = buf ++ data
-    var result: Seq[ByteString] = Seq.empty
-
-    while (offset >= 0) {
-      state match {
-        case State.WaitLength =>
-          // at the state WAIT_LENGTH, the head of buf is aligned to message length field
-          // now you have plenty bytes to decode message length
-          val message_length = buf.toInt
-          if (message_length < 0 || message_length > MaxMessageLen) {
-            val msg = s"Message length $message_length out of defined range (0 - $MaxMessageLen) decoded." +
-              "  Potential socket out of sync."
-            ctilog.error(msg)
-            throw new java.io.SyncFailedException(msg)
-          }
-          buf = buf.drop(4)
-          // here you have buf which contains message aligned to Message Type field at the head
-          // let's set next state for waiting body
-          state = State.WaitBody
-
-          // the message length doesn't include Message Type filed so you need to wait 4 more bytes
-          offset = buf.size - (message_length + 4)
-
-        case State.WaitBody =>
-          // at the state WAIT_BODY, the head of buf is aligned to message type field
-          // now you have at least one entire message in buf
-
-          // take single message to packet
-          val len = buf.size - offset
-          val packet = buf.take(len)
-
-          buf = buf.drop(len)
-          // here you have buf which is aligned to next message length
-          // let's set next state for waiting message length
-          // we need 4 bytes to continue
-          state = State.WaitLength
-          offset = buf.size - 4
-
-          result = packet +: result
-      }
-    }
-    result.reverse
-  }
-}
-
-case class MessageFilterEntry(handler: Message => Unit, set: Set[MessageType.MessageType])
-
-case class MessageFilter(filter_conf: Traversable[MessageFilterEntry]) {
-  val handlerTable: Array[Traversable[Message => Unit]] = {
-    val flat_table = for (entry <- filter_conf; mtyp <- entry.set) yield (mtyp, Traversable(entry.handler))
-    val base_table = MessageType.values.map((_, Traversable[Message => Unit]())).toTraversable
-    val optimized_table = (flat_table ++ base_table).groupBy(_._1).map(t => (t._1, t._2.flatMap(_._2)))
-    optimized_table.map(t => (t._1.id, t._2)).toSeq.sortWith(_._1 < _._1).map(_._2).toArray
-  }
-
-  def apply(packet: ByteString): Traversable[Message => Unit] = {
-    val ((tag, have_message_type), len) = MessageType.decode(Tag.MessageTypeTag, packet)
-    (for (message_type <- have_message_type) yield handlerTable(message_type.id)
-      ).getOrElse(Traversable[Message => Unit]())
-  }
-}
 
 object SessionProtocol {
   case class Send(data: ByteString)
@@ -169,7 +97,7 @@ trait MixInSocketActorSample {
   object SocketActorInitializer {
     val server = new InetSocketAddress("localhost", DefaultCtiServerPortA)
     val handler: Message => Unit = (m) => Unit
-    val filter_entry = MessageFilterEntry(handler, Set(AGENT_STATE_EVENT))
+    val filter_entry = MessageFilterEntry(Set(AGENT_STATE_EVENT), handler)
     val filter = MessageFilter(Seq(filter_entry))
     val props = Props(classOf[SocketActorImpl], server, filter)
   }
@@ -180,7 +108,7 @@ class SocketActorImpl(server: InetSocketAddress, filter: MessageFilter) extends 
   import akka.io.Tcp._
   import context.system
 
-  val packetizer = new Packetizer
+  val packetizer = Packetizer()
 
   IO(Tcp) ! Connect(server)
 

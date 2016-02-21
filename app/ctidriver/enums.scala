@@ -30,14 +30,14 @@ abstract class CtiEnum extends Enumeration {
   def decode(tag: Tag, body: ByteString): ((Tag, Option[Value]), Int)
   def encode(tag: Tag, a: Any): ByteString
 
-  def decodeFloat(tag: Tag, body: ByteString) = {
+  def decodeFloat(tag: Tag, body: ByteString): ((Tag, Option[Value]), Int) = {
     val (result, len) = decode(tag, body.tail)
     (result, len + 1)
   }
 
   def getId(a: Any): Int = a match { case o: Option[Any] => o.get match { case n: this.Value => n.id } }
 
-  def encodeFloat(tag: Tag, a: Any) = {
+  def encodeFloat(tag: Tag, a: Any): ByteString = {
     val buf = encode(tag, a)
     ByteString(tag.id, buf.size) ++ buf
   }

@@ -38,10 +38,10 @@ trait AgentStateMap {
   def receive(msg: Message): Unit
 }
 
-trait AgentStateMapFactory { def apply(extension_range: Range): AgentStateMap }
+trait AgentStateMapFactory { def apply(extensionRange: Range): AgentStateMap }
 
-class AgentStateMapImpl @Inject()(@Assisted extension_range: Range) extends AgentStateMap {
-  val stateMap: Map[Int, Agent[(AgentState, Int)]] = extension_range.map(n => (n, Agent((LOGOUT, 0)))).toMap
+class AgentStateMapImpl @Inject()(@Assisted extensionRange: Range) extends AgentStateMap {
+  val stateMap: Map[Int, Agent[(AgentState, Int)]] = extensionRange.map(n => (n, Agent((LOGOUT, 0)))).toMap
 
   def get(ext: Int) = for (agent <- stateMap.get(ext)) yield agent.get
   def future(ext: Int) = for (agent <- stateMap.get(ext)) yield agent.future

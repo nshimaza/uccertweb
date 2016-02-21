@@ -97,11 +97,14 @@ package object ctidriver {
       }
     }
 
-    def findField(tag: Tag): Option[Any] = msg.find(_._1 == tag).flatMap(tpl => Some(tpl._2))
-    def findT[T](tag: Tag)(implicit c: ClassTag[T]): Option[T] = findField(tag).collectFirst{ case v: T => v }
-    def findStrInt(tag: Tag): Option[Int] = findT[String](tag).flatMap(_.toIntOpt)
+    def findField(tag: Tag): Option[Any] = msg find (_._1 == tag) flatMap (tpl => Some(tpl._2))
+
+    def findT[T](tag: Tag)(implicit c: ClassTag[T]): Option[T] = findField(tag) collectFirst { case v: T => v }
+
+    def findStrInt(tag: Tag): Option[Int] = findT[String](tag) flatMap (_.toIntOpt)
+
     def findEnum[T](tag: Tag)(implicit c: ClassTag[T]): Option[T] =
-      findField(tag).collectFirst{ case s: Some[Any] => s.get }.collectFirst{ case e: T => e }
+      findField(tag) collectFirst { case s: Some[Any] => s.get } collectFirst { case e: T => e }
   }
 
   implicit class CtiByteString(val buf: ByteString) extends AnyVal {
@@ -174,6 +177,7 @@ package object ctidriver {
 
   implicit class CtiBitSet(val m: BitSet) extends AnyVal {
     def toInt: Int = (m.toBitMask(0) & 0xffffffff).toInt
+
     def toShort: Short = (m.toBitMask(0) & 0xffff).toShort
   }
 

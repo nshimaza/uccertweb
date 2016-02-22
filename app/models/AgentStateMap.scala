@@ -23,8 +23,8 @@ import javax.inject._
 import akka.agent.Agent
 import ctidriver._
 import ctidriver.AgentState._
-import com.google.inject.{ ImplementedBy, AbstractModule }
-import com.google.inject.assistedinject.{ Assisted, FactoryModuleBuilder }
+import com.google.inject.{ImplementedBy, AbstractModule}
+import com.google.inject.assistedinject.{Assisted, FactoryModuleBuilder}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,16 +34,21 @@ import scala.concurrent.Future
   */
 trait AgentStateMap {
   def get(extension: Int): Option[(AgentState, Int)]
+
   def future(extension: Int): Option[Future[(AgentState, Int)]]
+
   def receive(msg: Message): Unit
 }
 
-trait AgentStateMapFactory { def apply(extensionRange: Range): AgentStateMap }
+trait AgentStateMapFactory {
+  def apply(extensionRange: Range): AgentStateMap
+}
 
 class AgentStateMapImpl @Inject()(@Assisted extensionRange: Range) extends AgentStateMap {
   val stateMap: Map[Int, Agent[(AgentState, Int)]] = extensionRange.map(n => (n, Agent((LOGOUT, 0)))).toMap
 
   def get(ext: Int) = for (agent <- stateMap.get(ext)) yield agent.get
+
   def future(ext: Int) = for (agent <- stateMap.get(ext)) yield agent.future
 
   def receive(msg: Message) = {

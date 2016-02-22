@@ -28,10 +28,6 @@ class Packetizer {
   var state = State.WaitLength
   var offset = -4
 
-  object State extends Enumeration {
-    val WaitLength, WaitBody = Value
-  }
-
   def apply(data: ByteString): Seq[ByteString] = {
     offset = offset + data.size
     buf = buf ++ data
@@ -77,8 +73,14 @@ class Packetizer {
     }
     result.reverse
   }
+
+  object State extends Enumeration {
+    val WaitLength, WaitBody = Value
+  }
 }
 
 object Packetizer {
-  def apply() = { new Packetizer }
+  def apply() = {
+    new Packetizer
+  }
 }

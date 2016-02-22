@@ -148,15 +148,15 @@ class EncoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(CALL_DELIVERED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.STATIC)), (ConnectionCallID, 0x06070809),
-      (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
+      (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
       (ServiceNumber, 0x04050607), (ServiceID, 0x05060708),
-      (SkillGroupNumber, 0x04050607), (SkillGroupID, 0x05060708), (SkillGroupPriority, 0x0607:Short),
+      (SkillGroupNumber, 0x04050607), (SkillGroupID, 0x05060708), (SkillGroupPriority, 0x0607: Short),
       (AlertingDeviceType, Some(DeviceIDType.AGENT_DEVICE)),
       (CallingDeviceType, Some(DeviceIDType.EXTERNAL)),
       (CalledDeviceType, Some(DeviceIDType.ROUTE_POINT)),
       (LastRedirectDeviceType, Some(DeviceIDType.CTI_PORT)),
       (LocalConnectionStateTag, Some(LocalConnectionState.NULL)), (EventCauseTag, Some(EventCause.NONE)),
-      (NumNamedVariables, 0x0405:Short), (NumNamedArrays, 0x0506:Short),
+      (NumNamedVariables, 0x0405: Short), (NumNamedArrays, 0x0506: Short),
       (CONNECTION_DEVID, "ConnectionDeviceID"), (ALERTING_DEVID, "AlertingDeviceID"),
       (CALLING_DEVID, "CallingDeviceID"), (CALLED_DEVID, "CalledDeviceID"),
       (LAST_REDIRECT_DEVID, "LastRedirectDeviceID"),
@@ -184,9 +184,9 @@ class EncoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(CALL_ESTABLISHED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)), (ConnectionCallID, 0x03040506),
-      (LineHandle, 0x0405:Short), (LineTypeTag, Some(LineType.SUPERVISOR)), (ServiceNumber, 0x05060708),
+      (LineHandle, 0x0405: Short), (LineTypeTag, Some(LineType.SUPERVISOR)), (ServiceNumber, 0x05060708),
       (ServiceID, 0x06070809), (SkillGroupNumber, 0x0708090a), (SkillGroupID, 0x08090a0b),
-      (SkillGroupPriority, 0x090a:Short), (AnsweringDeviceType, Some(DeviceIDType.AGENT_DEVICE)),
+      (SkillGroupPriority, 0x090a: Short), (AnsweringDeviceType, Some(DeviceIDType.AGENT_DEVICE)),
       (CallingDeviceType, Some(DeviceIDType.EXTERNAL)), (CalledDeviceType, Some(DeviceIDType.ROUTE_POINT)),
       (LastRedirectDeviceType, Some(DeviceIDType.CTI_PORT)),
       (LocalConnectionStateTag, Some(LocalConnectionState.CONNECT)), (EventCauseTag, Some(EventCause.NEW_CALL)),
@@ -261,9 +261,9 @@ class EncoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(CALL_ORIGINATED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)), (ConnectionCallID, 0x03040506),
-      (LineHandle, 0x0405:Short), (LineTypeTag, Some(LineType.SUPERVISOR)), (ServiceNumber, 0x05060708),
+      (LineHandle, 0x0405: Short), (LineTypeTag, Some(LineType.SUPERVISOR)), (ServiceNumber, 0x05060708),
       (ServiceID, 0x06070809), (SkillGroupNumber, 0x0708090a), (SkillGroupID, 0x08090a0b),
-      (SkillGroupPriority, 0x090a:Short),
+      (SkillGroupPriority, 0x090a: Short),
       (CallingDeviceType, Some(DeviceIDType.EXTERNAL)), (CalledDeviceType, Some(DeviceIDType.ROUTE_POINT)),
       (LocalConnectionStateTag, Some(LocalConnectionState.CONNECT)), (EventCauseTag, Some(EventCause.NEW_CALL)),
       (CONNECTION_DEVID, "ConnectionDeviceID"),
@@ -303,9 +303,9 @@ class EncoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(CALL_CONFERENCED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (PrimaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)), (PrimaryCallID, 0x06070809),
-      (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
-      (SkillGroupNumber, 0x04050607), (SkillGroupID, 0x05060708), (SkillGroupPriority, 0x0607:Short),
-      (NumParties, 0x0708:Short), (SecondaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)),
+      (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
+      (SkillGroupNumber, 0x04050607), (SkillGroupID, 0x05060708), (SkillGroupPriority, 0x0607: Short),
+      (NumParties, 0x0708: Short), (SecondaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)),
       (SecondaryCallID, 0x0708090a), (ControllerDeviceType, Some(DeviceIDType.AGENT_DEVICE)),
       (AddedPartyDeviceType, Some(DeviceIDType.TRUNK_IDENTIFIER)),
       (LocalConnectionStateTag, Some(LocalConnectionState.CONNECT)), (EventCauseTag, Some(EventCause.PARK)),
@@ -332,9 +332,9 @@ class EncoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(CALL_TRANSFERRED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (PrimaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)), (PrimaryCallID, 0x06070809),
-      (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
-      (SkillGroupNumber, 0x04050607), (SkillGroupID, 0x05060708), (SkillGroupPriority, 0x0607:Short),
-      (NumParties, 0x0708:Short), (SecondaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)),
+      (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
+      (SkillGroupNumber, 0x04050607), (SkillGroupID, 0x05060708), (SkillGroupPriority, 0x0607: Short),
+      (NumParties, 0x0708: Short), (SecondaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)),
       (SecondaryCallID, 0x0708090a), (TransferringDeviceType, Some(DeviceIDType.AGENT_DEVICE)),
       (TransferredDeviceType, Some(DeviceIDType.TRUNK_IDENTIFIER)),
       (LocalConnectionStateTag, Some(LocalConnectionState.CONNECT)), (EventCauseTag, Some(EventCause.PARK)),
@@ -372,9 +372,9 @@ class EncoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(CALL_SERVICE_INITIATED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)), (ConnectionCallID, 0x03040506),
-      (LineHandle, 0x0405:Short), (LineTypeTag, Some(LineType.SUPERVISOR)), (ServiceNumber, 0x05060708),
+      (LineHandle, 0x0405: Short), (LineTypeTag, Some(LineType.SUPERVISOR)), (ServiceNumber, 0x05060708),
       (ServiceID, 0x06070809), (SkillGroupNumber, 0x0708090a), (SkillGroupID, 0x08090a0b),
-      (SkillGroupPriority, 0x090a:Short),
+      (SkillGroupPriority, 0x090a: Short),
       (CallingDeviceType, Some(DeviceIDType.EXTERNAL)),
       (LocalConnectionStateTag, Some(LocalConnectionState.CONNECT)), (EventCauseTag, Some(EventCause.NEW_CALL)),
       (CONNECTION_DEVID, "ConnectionDeviceID"),
@@ -401,7 +401,7 @@ class EncoderSpec extends FunSuite {
       (QueueDeviceType, Some(DeviceIDType.QUEUE)),
       (CallingDeviceType, Some(DeviceIDType.EXTERNAL)), (CalledDeviceType, Some(DeviceIDType.ROUTE_POINT)),
       (LastRedirectDeviceType, Some(DeviceIDType.CTI_PORT)),
-      (NumQueued, 0x0607:Short), (NumSkillGroups, 0x0708:Short),
+      (NumQueued, 0x0607: Short), (NumSkillGroups, 0x0708: Short),
       (LocalConnectionStateTag, Some(LocalConnectionState.NULL)), (EventCauseTag, Some(EventCause.NONE)),
       (CONNECTION_DEVID, "ConnectionDeviceID"),
       (QUEUE_DEVID, "QueueDeviceID"),
@@ -409,7 +409,7 @@ class EncoderSpec extends FunSuite {
       (LAST_REDIRECT_DEVID, "LastRedirectDeviceID"),
       (SKILL_GROUP_NUMBER, 0x08090a0b),
       (SKILL_GROUP_ID, 0x090a0b0c),
-      (SKILL_GROUP_PRIORITY, 0x0a0b:Short))
+      (SKILL_GROUP_PRIORITY, 0x0a0b: Short))
 
     assert(msg.encode == raw)
   }
@@ -428,7 +428,7 @@ class EncoderSpec extends FunSuite {
       82,14,0x45,0x43,0x43,0x56,0x61,0x72,0,0x45,0x43,0x43,0x56,0x61,0x6c,0,
       83,18,1,0x45,0x43,0x43,0x41,0x72,0x72,0,0x45,0x43,0x43,0x41,0x72,0x72,0x56,0x61,0x6c,0)
     val msg: Message = List((MessageTypeTag, Some(CALL_TRANSLATION_ROUTE_EVENT)),
-      (NumNamedVariables, 0x0405:Short), (NumNamedArrays, 0x0506:Short),
+      (NumNamedVariables, 0x0405: Short), (NumNamedArrays, 0x0506: Short),
       (ANI, "09012345678"), (UUI, ByteString(0,1,2,3,4,5,6,7,8,9)),
       (DNIS, "0398765432"), (DIALED_NUMBER, "0120123123"), (CED, "321"), (ROUTER_CALL_KEY_DAY, 0x06070809),
       (ROUTER_CALL_KEY_CALLID, 0x0708090a), (ROUTER_CALL_KEY_SEQUENCE_NUM, 0x08090a0b),
@@ -460,7 +460,7 @@ class EncoderSpec extends FunSuite {
       223,10,9,8,7,6,5,4,3,2,1,0)
     val msg: Message = List((MessageTypeTag, Some(BEGIN_CALL_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
-      (NumCTIClients, 0x0304:Short), (NumNamedVariables, 0x0405:Short), (NumNamedArrays, 0x0506:Short),
+      (NumCTIClients, 0x0304: Short), (NumNamedVariables, 0x0405: Short), (NumNamedArrays, 0x0506: Short),
       (CallTypeTag, Some(CallType.PREROUTE_ACD_IN)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.STATIC)), (ConnectionCallID, 0x06070809),
       (CalledPartyDisposition, Some(DispositionCodeValue.Disconnect_drop_handled_primary_route)),
@@ -515,7 +515,7 @@ class EncoderSpec extends FunSuite {
       223,10,9,8,7,6,5,4,3,2,1,0)
     val msg: Message = List((MessageTypeTag, Some(CALL_DATA_UPDATE_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
-      (NumCTIClients, 0x0304:Short), (NumNamedVariables, 0x0405:Short), (NumNamedArrays, 0x0506:Short),
+      (NumCTIClients, 0x0304: Short), (NumNamedVariables, 0x0405: Short), (NumNamedArrays, 0x0506: Short),
       (CallTypeTag, Some(CallType.PREROUTE_ACD_IN)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.STATIC)), (ConnectionCallID, 0x06070809),
       (NewConnectionDeviceIDType, Some(ConnectionDeviceIDType.STATIC)), (NewConnectionCallID, 0x02030405),
@@ -554,7 +554,7 @@ class EncoderSpec extends FunSuite {
       232,1,0x44)
     val msg: Message = List((MessageTypeTag, Some(SET_CALL_DATA_REQ)), (InvokeID, 0x07080809), (PeripheralID, 0x09080706),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.STATIC)), (ConnectionCallID, 0x08070605),
-      (NumNamedVariables, 0x0706:Short), (NumNamedArrays, 0x0605:Short), (CallTypeTag, Some(CallType.PREROUTE_ACD_IN)),
+      (NumNamedVariables, 0x0706: Short), (NumNamedArrays, 0x0605: Short), (CallTypeTag, Some(CallType.PREROUTE_ACD_IN)),
       (CalledPartyDisposition, Some(DispositionCodeValue.Disconnect_drop_handled_primary_route)),
       (CampaignID, 0x05040302), (QueryRuleID, 0x04030201),
       (CONNECTION_DEVID, "ConnectionDeviceID"),
@@ -565,7 +565,7 @@ class EncoderSpec extends FunSuite {
       (NAMED_VARIABLE, ("ECCVar", "ECCVal")), (NAMED_ARRAY, (1, "ECCArr", "ECCArrVal")),
       (CUSTOMER_PHONE_NUMBER, "CustPhoneNum"), (CUSTOMER_ACCOUNT_NUMBER, "CustAcctNum"),
       (ROUTER_CALL_KEY_DAY, 0x01020304), (ROUTER_CALL_KEY_CALLID, 0x02030405),
-      (ROUTER_CALL_KEY_SEQUENCE_NUM, 0x03040506), (CALL_ORIGINATED_FROM, 0x44:Byte))
+      (ROUTER_CALL_KEY_SEQUENCE_NUM, 0x03040506), (CALL_ORIGINATED_FROM, 0x44: Byte))
 
     assert(msg.encode == raw)
   }
@@ -605,15 +605,15 @@ class EncoderSpec extends FunSuite {
       (PeripheralID, 0x02030405), (SessionID, 0x03040506),
       (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (SkillGroupState, Some(AgentState.BUSY_OTHER)), (StateDuration, 0x04050607),
-      (SkillGroupNumber, 0x06070809), (SkillGroupID, 0x0708090a), (SkillGroupPriority, 0x0809:Short),
-      (AgentStateTag, Some(AgentState.HOLD)), (EventReasonCode, 0x090a:Short), (MRDID, 0x090a0b0c),
+      (SkillGroupNumber, 0x06070809), (SkillGroupID, 0x0708090a), (SkillGroupPriority, 0x0809: Short),
+      (AgentStateTag, Some(AgentState.HOLD)), (EventReasonCode, 0x090a: Short), (MRDID, 0x090a0b0c),
       (NumTasks, 0x0a0b0c0d), (AgentMode, false), (MaxTaskLimit, 0x09080706), (ICMAgentID, 0x08070605),
-      (AgentAvailabilityStatusTag, Some(AgentAvailabilityStatus.ICM_AVAILABLE)), (NumFltSkillGroups, 0x0706:Short),
+      (AgentAvailabilityStatusTag, Some(AgentAvailabilityStatus.ICM_AVAILABLE)), (NumFltSkillGroups, 0x0706: Short),
       (CLIENT_SIGNATURE, "ClientSignature"),
       (AGENT_ID, "1001"), (AGENT_EXTENSION, "3001"), (AGENT_INSTRUMENT, "3001"),
       (DURATION, 0x06050403), (NEXT_AGENT_STATE, Some(AgentState.TALKING)),
       (DIRECTION, Some(CallDirection.In)),
-      (SKILL_GROUP_NUMBER, 0x0708090a), (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a:Short),
+      (SKILL_GROUP_NUMBER, 0x0708090a), (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a: Short),
       (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER)))
 
     assert(msg.encode == raw)
@@ -661,7 +661,7 @@ class EncoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(CALL_REACHED_NETWORK_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)), (ConnectionCallID, 0x03040506),
-      (LineHandle, 0x0405:Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
+      (LineHandle, 0x0405: Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
       (TrunkUsedDeviceType, Some(DeviceIDType.TRUNK_IDENTIFIER)), (CalledDeviceType, Some(DeviceIDType.ROUTE_POINT)),
       (LocalConnectionStateTag, Some(LocalConnectionState.CONNECT)), (EventCauseTag, Some(EventCause.NEW_CALL)),
       (CONNECTION_DEVID, "ConnectionDeviceID"),
@@ -698,11 +698,11 @@ class EncoderSpec extends FunSuite {
       6,5,0x33, 0x30, 0x30, 0x31,0,
       62,4,7,8,9,10, 63,4,8,9,10,11, 64,2,9,10, 65,2,0,7)
     val msg: Message = List((MessageTypeTag, Some(QUERY_AGENT_STATE_CONF)), (InvokeID, 0x01020304),
-      (AgentStateTag, Some(AgentState.HOLD)), (NumSkillGroups, 0x0203:Short), (MRDID, 0x03040506),
+      (AgentStateTag, Some(AgentState.HOLD)), (NumSkillGroups, 0x0203: Short), (MRDID, 0x03040506),
       (NumTasks, 0x04050607), (AgentMode, false), (MaxTaskLimit, 0x05060708), (ICMAgentID, 0x06070809),
       (AgentAvailabilityStatusTag, Some(AgentAvailabilityStatus.APPLICATION_AVAILABLE)),
       (AGENT_ID, "1001"), (AGENT_EXTENSION, "3001"), (AGENT_INSTRUMENT, "3001"), (SKILL_GROUP_NUMBER, 0x0708090a),
-      (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a:Short),
+      (SKILL_GROUP_ID, 0x08090a0b), (SKILL_GROUP_PRIORITY, 0x090a: Short),
       (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER)))
 
     assert(msg.encode == raw)
@@ -718,10 +718,10 @@ class EncoderSpec extends FunSuite {
       62,4,4,5,6,7, 64,2,3,4)
     val msg: Message = List((MessageTypeTag, Some(SET_AGENT_STATE_REQ)), (InvokeID, 0x06070809),
       (PeripheralID, 0x05060708), (AgentStateTag, Some(AgentState.LOGIN)),
-      (AgentWorkModeTag, Some(AgentWorkMode.AUTO_IN)), (NumSkillGroups, 0x0102:Short),
-      (EventReasonCode, 0x0203:Short), (ForcedFlagTag, Some(ForcedFlag.TRUE)), (AgentServiceReq, BitSet.empty),
+      (AgentWorkModeTag, Some(AgentWorkMode.AUTO_IN)), (NumSkillGroups, 0x0102: Short),
+      (EventReasonCode, 0x0203: Short), (ForcedFlagTag, Some(ForcedFlag.TRUE)), (AgentServiceReq, BitSet.empty),
       (AGENT_INSTRUMENT, "3001"), (AGENT_ID, "1001"), (AGENT_PASSWORD, "Password"), (POSITION_ID, "PositionID"),
-      (SUPERVISOR_ID, "SupervisorID"), (SKILL_GROUP_NUMBER, 0x04050607), (SKILL_GROUP_PRIORITY, 0x0304:Short))
+      (SUPERVISOR_ID, "SupervisorID"), (SKILL_GROUP_NUMBER, 0x04050607), (SKILL_GROUP_PRIORITY, 0x0304: Short))
 
     assert(msg.encode == raw)
   }
@@ -772,7 +772,7 @@ class EncoderSpec extends FunSuite {
       0x49,0x44,0)
     val msg: Message = List((MessageTypeTag, Some(CONFERENCE_CALL_CONF)), (InvokeID, 0x01020304),
       (NewConnectionCallID, 0x02030405), (NewConnectionDeviceIDType, Some(ConnectionDeviceIDType.DYNAMIC)),
-      (NumParties, 0x0304:Short), (LineHandle, 0x0405:Short), (LineTypeTag, Some(LineType.INSIDE)),
+      (NumParties, 0x0304: Short), (LineHandle, 0x0405: Short), (LineTypeTag, Some(LineType.INSIDE)),
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"), (PARTY_CALLID, 0x03040506),
       (PARTY_DEVID_TYPE, Some(DeviceIDType.AGENT_DEVICE)), (PARTY_DEVID, "ConnectedPartyDeviceID"))
 
@@ -786,7 +786,7 @@ class EncoderSpec extends FunSuite {
       0x44,0)
     val msg: Message = List((MessageTypeTag, Some(CONSULTATION_CALL_CONF)), (InvokeID, 0x01020304),
       (NewConnectionCallID, 0x02030405), (NewConnectionDeviceIDType, Some(ConnectionDeviceIDType.STATIC)),
-      (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
+      (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"))
 
     assert(msg.encode == raw)
@@ -813,7 +813,7 @@ class EncoderSpec extends FunSuite {
       0x44,0)
     val msg: Message = List((MessageTypeTag, Some(MAKE_CALL_CONF)), (InvokeID, 0x01020304),
       (NewConnectionCallID, 0x02030405), (NewConnectionDeviceIDType, Some(ConnectionDeviceIDType.STATIC)),
-      (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
+      (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"))
 
     assert(msg.encode == raw)
@@ -826,7 +826,7 @@ class EncoderSpec extends FunSuite {
       0x44,0)
     val msg: Message = List((MessageTypeTag, Some(MAKE_PREDICTIVE_CALL_CONF)), (InvokeID, 0x01020304),
       (NewConnectionCallID, 0x02030405), (NewConnectionDeviceIDType, Some(ConnectionDeviceIDType.STATIC)),
-      (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
+      (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.OUTBOUND_ACD)),
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"))
 
     assert(msg.encode == raw)
@@ -857,7 +857,7 @@ class EncoderSpec extends FunSuite {
       0x49,0x44,0)
     val msg: Message = List((MessageTypeTag, Some(TRANSFER_CALL_CONF)), (InvokeID, 0x01020304),
       (NewConnectionCallID, 0x02030405), (NewConnectionDeviceIDType, Some(ConnectionDeviceIDType.STATIC)),
-      (NumParties, 0x0304:Short), (LineHandle, 0x0405:Short), (LineTypeTag, Some(LineType.INBOUND_ACD)),
+      (NumParties, 0x0304: Short), (LineHandle, 0x0405: Short), (LineTypeTag, Some(LineType.INBOUND_ACD)),
       (NEW_CONNECTION_DEVID, "NewConnectionDeviceID"), (PARTY_CALLID, 0x03040506),
       (PARTY_DEVID_TYPE, Some(DeviceIDType.AGENT_DEVICE)), (PARTY_DEVID, "ConnectedPartyDeviceID"))
 
@@ -869,14 +869,14 @@ class EncoderSpec extends FunSuite {
       0,0,1,1, 0,0,0,2, 0,0,1,1, 0,0,4,1, 0,0,0,3, 70,2,7,8, 71,2,0,4)
     val msg: Message = List((MessageTypeTag, Some(QUERY_DEVICE_INFO_CONF)), (InvokeID, 0x01020304),
       (PeripheralTypeTag, Some(PeripheralType.VRU)), (TypeOfDeviceTag, Some(TypeOfDevice.TRUNK_GROUP)),
-      (ClassOfDeviceTag, BitSet.empty + ClassOfDevice.VOICE), (NumLines, 0x0203:Short), (Reserved16, 0x0304:Short),
-      (MaxActiveCalls, 0x0405:Short), (MaxHeldCalls, 0x0506:Short), (MaxDeviceInConference, 0x0607:Short),
+      (ClassOfDeviceTag, BitSet.empty + ClassOfDevice.VOICE), (NumLines, 0x0203: Short), (Reserved16, 0x0304: Short),
+      (MaxActiveCalls, 0x0405: Short), (MaxHeldCalls, 0x0506: Short), (MaxDeviceInConference, 0x0607: Short),
       (MakeCallSetup, BitSet.empty + AgentStateMask.AGENT_LOGIN + AgentStateMask.AGENT_RESERVED),
       (TransferConferenceSetup, BitSet.empty + TransferConferenceSetupMask.CONF_SETUP_CONSULT_ANY),
       (CallEventsSupported, BitSet.empty + CallEventMessageMask.CALL_DELIVERED + CallEventMessageMask.CALL_CONFERENCED),
       (CallControlSupported, BitSet.empty + CallControlMask.QUERY_AGENT_STATE + CallControlMask.MAKE_CALL),
       (OtherFeaturesSupported, BitSet.empty + OtherFeatureMask.POST_ROUTE + OtherFeatureMask.UNIQUE_CONSULT_CALLID),
-      (LINE_HANDLE, 0x0708:Short), (LINE_TYPE, Some(LineType.SUPERVISOR)))
+      (LINE_HANDLE, 0x0708: Short), (LINE_TYPE, Some(LineType.SUPERVISOR)))
 
     assert(msg.encode == raw)
   }
@@ -901,8 +901,8 @@ class EncoderSpec extends FunSuite {
       82,14,0x45,0x43,0x43,0x56,0x61,0x72,0,0x45,0x43,0x43,0x56,0x61,0x6c,0,
       83,18,1,0x45,0x43,0x43,0x41,0x72,0x72,0,0x45,0x43,0x43,0x41,0x72,0x72,0x56,0x61,0x6c,0)
     val msg: Message = List((MessageTypeTag, Some(SNAPSHOT_CALL_CONF)), (InvokeID, 0x01020304),
-      (CallTypeTag, Some(CallType.PREROUTE_ACD_IN)), (NumCTIClients, 0x0203:Short), (NumCallDevices, 0x0304:Short),
-      (NumNamedVariables, 0x0405:Short), (NumNamedArrays, 0x0506:Short),
+      (CallTypeTag, Some(CallType.PREROUTE_ACD_IN)), (NumCTIClients, 0x0203: Short), (NumCallDevices, 0x0304: Short),
+      (NumNamedVariables, 0x0405: Short), (NumNamedArrays, 0x0506: Short),
       (CalledPartyDisposition, Some(DispositionCodeValue.Abandoned_Ring)),
       (ANI, "09012345678"), (UUI, ByteString(0,1,2,3,4,5,6,7,8,9)), (DNIS, "0398765432"),
       (DIALED_NUMBER, "0120123123"), (CED, "321"), (ROUTER_CALL_KEY_DAY, 0x06070809),
@@ -925,7 +925,7 @@ class EncoderSpec extends FunSuite {
       75,2,0,3,
       218,2,0,2)
     val msg: Message = List((MessageTypeTag, Some(SNAPSHOT_DEVICE_CONF)), (InvokeID, 0x01020304),
-      (NumCalls, 0x0203:Short), (CALL_CONN_CALLID, 0x03040506),
+      (NumCalls, 0x0203: Short), (CALL_CONN_CALLID, 0x03040506),
       (CALL_CONN_DEVID_TYPE, Some(ConnectionDeviceIDType.STATIC)), (CALL_CONN_DEVID, "CallConnectionDeviceID"),
       (CALL_STATE, Some(LocalConnectionState.CONNECT)), (SILENT_MONITOR_STATUS, Some(SilentMonitorStatus.TARGET)))
 
@@ -943,12 +943,12 @@ class EncoderSpec extends FunSuite {
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.STATIC)), (ConnectionCallID, 0x06070809),
       (QueueDeviceType, Some(DeviceIDType.QUEUE)), (ServiceNumber, 0x04050607), (ServiceID, 0x05060708),
-      (NumQueued, 0x0607:Short), (NumSkillGroups, 0x0708:Short),
+      (NumQueued, 0x0607: Short), (NumSkillGroups, 0x0708: Short),
       (LocalConnectionStateTag, Some(LocalConnectionState.NULL)), (EventCauseTag, Some(EventCause.NONE)),
       (CONNECTION_DEVID, "ConnectionDeviceID"),
       (SKILL_GROUP_NUMBER, 0x08090a0b),
       (SKILL_GROUP_ID, 0x090a0b0c),
-      (SKILL_GROUP_PRIORITY, 0x0a0b:Short))
+      (SKILL_GROUP_PRIORITY, 0x0a0b: Short))
 
     assert(msg.encode == raw)
   }
@@ -1051,9 +1051,9 @@ class EncoderSpec extends FunSuite {
       82,14,0x45,0x43,0x43,0x56,0x61,0x72,0,0x45,0x43,0x43,0x56,0x61,0x6c,0,
       83,18,1,0x45,0x43,0x43,0x41,0x72,0x72,0,0x45,0x43,0x43,0x41,0x72,0x72,0x56,0x61,0x6c,0)
     val msg: Message = List((MessageTypeTag, Some(AGENT_PRE_CALL_EVENT)), (MonitorID, 0x01020304),
-      (NumNamedVariables, 0x0203:Short), (NumNamedArrays, 0x0304:Short), (ServiceNumber, 0x04050607),
+      (NumNamedVariables, 0x0203: Short), (NumNamedArrays, 0x0304: Short), (ServiceNumber, 0x04050607),
       (ServiceID, 0x05060708), (SkillGroupNumber, 0x06070809), (SkillGroupID, 0x0708090a),
-      (SkillGroupPriority, 0x0809:Short), (MRDID, 0x090a0b0c),
+      (SkillGroupPriority, 0x0809: Short), (MRDID, 0x090a0b0c),
       (AGENT_INSTRUMENT, "3001"), (ROUTER_CALL_KEY_DAY, 0x06070809),
       (ROUTER_CALL_KEY_CALLID, 0x0708090a), (ROUTER_CALL_KEY_SEQUENCE_NUM, 0x08090a0b),
       (ANI, "09012345678"), (UUI, ByteString(0,1,2,3,4,5,6,7,8,9)),
@@ -1117,7 +1117,7 @@ class EncoderSpec extends FunSuite {
     val msg: Message = List((MessageTypeTag, Some(RTP_STARTED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (ClientPort, 0x03040506), (RTPDirectionTag, Some(RTPDirection.BiDirectional)),
       (RTPTypeTag, Some(RTPType.Audio)), (BitRate, 0x04050607), (EchoCancellation, false),
-      (PacketSize, 0x05060708), (PayloadType, 0x0607:Short),
+      (PacketSize, 0x05060708), (PayloadType, 0x0607: Short),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.STATIC)), (ConnectionCallID, 0x06070809),
       (CONNECTION_DEVID, "ConnectionDeviceID"), (CLIENT_ADDRESS, "ClientAddress"),
       (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"),
@@ -1155,7 +1155,7 @@ class EncoderSpec extends FunSuite {
       0x43,0x6f,0x6e,0x6e,0x65,0x63,0x74,0x69,0x6f,0x6e,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0)
     val msg: Message = List((MessageTypeTag, Some(SUPERVISOR_ASSIST_CONF)), (InvokeID, 0x02030405),
       (ConnectionCallID, 0x01020304), (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)),
-      (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.DID)), (CONNECTION_DEVID, "ConnectionDeviceID"))
+      (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.DID)), (CONNECTION_DEVID, "ConnectionDeviceID"))
 
     assert(msg.encode == raw)
   }
@@ -1166,7 +1166,7 @@ class EncoderSpec extends FunSuite {
       0x43,0x6f,0x6e,0x6e,0x65,0x63,0x74,0x69,0x6f,0x6e,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0)
     val msg: Message = List((MessageTypeTag, Some(EMERGENCY_CALL_CONF)), (InvokeID, 0x02030405),
       (ConnectionCallID, 0x01020304), (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)),
-      (LineHandle, 0x0304:Short), (LineTypeTag, Some(LineType.DID)), (CONNECTION_DEVID, "ConnectionDeviceID"))
+      (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.DID)), (CONNECTION_DEVID, "ConnectionDeviceID"))
 
     assert(msg.encode == raw)
   }
@@ -1207,7 +1207,7 @@ class EncoderSpec extends FunSuite {
       86,5,0x31,0x30,0x30,0x31,0,
       87,2,0,4, 88,2,0,10, 89,4,4,5,6,7)
     val msg: Message = List((MessageTypeTag, Some(AGENT_TEAM_CONFIG_EVENT)), (PeripheralID, 0x01020304),
-      (TeamID, 0x02030405), (NumberOfAgents, 0x0304:Short), (ConfigOperationTag, Some(ConfigOperation.RemoveAgent)),
+      (TeamID, 0x02030405), (NumberOfAgents, 0x0304: Short), (ConfigOperationTag, Some(ConfigOperation.RemoveAgent)),
       (AGENT_TEAM_NAME, "AgentTeamName"), (ATC_AGENT_ID, "1001"), (AGENT_FLAGS, BitSet.empty + AgentFlags.Supervisor),
       (ATC_AGENT_STATE, Some(AgentState.HOLD)), (ATC_STATE_DURATION, 0x04050607))
 
@@ -1224,7 +1224,7 @@ class EncoderSpec extends FunSuite {
   test("encoding 134: LIST_AGENT_TEAM_CONF") {
     val raw = ByteString(0,0,0,134, 2,3,4,5, 0,64, 0,2, 0,1, 92,4,3,4,5,6)
     val msg: Message = List((MessageTypeTag, Some(LIST_AGENT_TEAM_CONF)), (InvokeID, 0x02030405),
-      (NumberOfAgentTeams, 64:Short), (SegmentNumber, 2:Short), (More, true), (LIST_TEAM_ID, 0x03040506))
+      (NumberOfAgentTeams, 64: Short), (SegmentNumber, 2: Short), (More, true), (LIST_TEAM_ID, 0x03040506))
 
     assert(msg.encode == raw)
   }

@@ -33,6 +33,7 @@ import scala.concurrent.duration._
 /**
   * Tests for AgentStateMap.
   */
+/*
 @RunWith(classOf[JUnitRunner])
 class AgentStateMapOldSpec(_system: ActorSystem) extends TestKit(_system)
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {
@@ -106,3 +107,4 @@ class AgentStateMapOldSpec(_system: ActorSystem) extends TestKit(_system)
     }
   }
 }
+*/

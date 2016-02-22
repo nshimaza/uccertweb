@@ -32,6 +32,14 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
   }
 
+  "AgentStateController" must {
+    "return logout agent state in JSON format" in {
+      val jsonResult = contentAsJson(route(app, FakeRequest(GET, "/ext/100")).get)
+
+      (jsonResult \ "state").as[String] mustBe "LOGOUT"
+    }
+  }
+
 //  "CountController" should {
 //
 //    "return an increasing count" in {

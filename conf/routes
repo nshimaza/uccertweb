@@ -9,4 +9,4 @@ GET     /                           controllers.HomeController.index
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 # Extention
-GET     /ext/:ext                   controllers.AgentStateService.extension(ext: Int)
+GET     /ext/:ext                   controllers.AgentStateController.extension(ext: Int)

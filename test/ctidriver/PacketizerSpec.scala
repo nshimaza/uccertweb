@@ -29,7 +29,7 @@ import org.scalatest.{ MustMatchers, WordSpec }
 @RunWith(classOf[JUnitRunner])
 class PacketizerSpec extends WordSpec with MustMatchers {
   "Packetizer" must {
-    "start with state WAIT_LENGH" in {
+    "start with state WaitLength" in {
       val packetizer = Packetizer()
 
       packetizer.state mustBe packetizer.State.WaitLength
@@ -47,21 +47,21 @@ class PacketizerSpec extends WordSpec with MustMatchers {
       packetizer(ByteString(1, 2, 3)) mustBe Seq[ByteString]()
     }
 
-    "stay on state WAIT_LENGTH until 4 bytes received" in {
+    "stay on state WaitLength until 4 bytes received" in {
       val packetizer = Packetizer()
 
       packetizer(ByteString(1, 2, 3)) mustBe Seq()
       packetizer.state mustBe packetizer.State.WaitLength
     }
 
-    "transit to state WAIT_BODY when 4 bytes received" in {
+    "transit to state WaitBody when 4 bytes received" in {
       val packetizer = Packetizer()
 
       packetizer(ByteString(0, 0, 1, 2)) mustBe Seq()
       packetizer.state mustBe packetizer.State.WaitBody
     }
 
-    "transit to state WAIT_BODY when 4 bytes received separately" in {
+    "transit to state WaitBody when 4 bytes received separately" in {
       val packetizer = Packetizer()
 
       packetizer(ByteString(0)) mustBe Seq()
@@ -74,7 +74,7 @@ class PacketizerSpec extends WordSpec with MustMatchers {
       packetizer.state mustBe packetizer.State.WaitBody
     }
 
-    "transit to state WAIT_BODY when more than 4 bytes received" in {
+    "transit to state WaitBody when more than 4 bytes received" in {
       val packetizer = Packetizer()
 
       packetizer apply ByteString(0, 0, 3, 4, 5) mustBe Seq()
@@ -90,7 +90,7 @@ class PacketizerSpec extends WordSpec with MustMatchers {
       packetizer.buf.head mustBe 5.toByte
     }
 
-    "decode and keep message length when transit to WAIT_BODY" in {
+    "decode and keep message length when transit to WaitBody" in {
       val packetizer = Packetizer()
 
       packetizer(ByteString(0,0,0x10,0xe0, 5,6,7,8)) mustBe Seq()
@@ -122,7 +122,7 @@ class PacketizerSpec extends WordSpec with MustMatchers {
       packetizer.offset mustBe (-(MaxMessageLen + 4))
     }
 
-    "transit back to state WAIT_LENGTH when desired bytes are received" in {
+    "transit back to state WaitLength when desired bytes are received" in {
       val packetizer = Packetizer()
 
       packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8)) mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
@@ -130,7 +130,7 @@ class PacketizerSpec extends WordSpec with MustMatchers {
       packetizer.offset mustBe (-4)
     }
 
-    "send entire single message to listener when it reached next WAIT_LENGTH state" in {
+    "return entire single message to listener when it reached next WaitLength state" in {
       val packetizer = Packetizer()
 
       packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8)) mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
@@ -155,5 +155,149 @@ class PacketizerSpec extends WordSpec with MustMatchers {
       packetizer.offset mustBe (-4)
       packets mustBe Seq(ByteString(1,2,3,4, 5,6,7,8), ByteString(2,3,4,5, 6,7,8))
     }
+  }
+
+  "Packetizer2" must {
+    "start with state WaitLength" in {
+      val packetizer = Packetizer2()
+
+      packetizer.state mustBe Packetizer2.WaitLength
+    }
+
+    "start with offset -4" in {
+      val packetizer = Packetizer2()
+
+      packetizer.offset mustBe -4
+    }
+
+    "return empty Seq[ByteString] on receive until entire packet becomes available" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(1, 2, 3))
+      new_packetizer.packets mustBe Seq[ByteString]()
+    }
+
+    "stay on state WaitLength until 4 bytes received" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(1, 2, 3))
+      new_packetizer.packets mustBe Seq()
+      new_packetizer.state mustBe Packetizer2.WaitLength
+    }
+
+    "transit to state WaitBody when 4 bytes received" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(0, 0, 1, 2))
+      new_packetizer.packets mustBe Seq()
+      new_packetizer.state mustBe Packetizer2.WaitBody
+    }
+
+    "transit to state WaitBody when 4 bytes received separately" in {
+      val packetizer = Packetizer2()
+
+      val packetizer1 = packetizer(ByteString(0))
+      packetizer1.packets mustBe Seq()
+      packetizer1.state mustBe Packetizer2.WaitLength
+      val packetizer2 = packetizer1(ByteString(0))
+      packetizer2.packets mustBe Seq()
+      packetizer2.state mustBe Packetizer2.WaitLength
+      val packetizer3 = packetizer2(ByteString(3))
+      packetizer3.packets mustBe Seq()
+      packetizer3.state mustBe Packetizer2.WaitLength
+      val packetizer4 = packetizer3(ByteString(4))
+      packetizer4.packets mustBe Seq()
+      packetizer4.state mustBe Packetizer2.WaitBody
+    }
+
+    "transit to state WaitBody when more than 4 bytes received" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(0, 0, 3, 4, 5))
+      new_packetizer.packets mustBe Seq()
+      new_packetizer.state mustBe Packetizer2.WaitBody
+    }
+
+    "keep remaining data received when successfully decode message length" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(0, 0, 3, 4, 5))
+      new_packetizer.packets mustBe Seq()
+      new_packetizer.state mustBe Packetizer2.WaitBody
+      new_packetizer.buf.size mustBe 1
+      new_packetizer.buf.head mustBe 5.toByte
+    }
+
+    "decode and keep message length when transit to WaitBody" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(0,0,0x10,0xe0, 5,6,7,8))
+      new_packetizer.packets mustBe Seq()
+      new_packetizer.state mustBe Packetizer2.WaitBody
+      new_packetizer.offset mustBe (4 - (0x000010e0 + 4))
+    }
+
+    "transit to OutOfSync state when negative message length is decoded" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(encodeByteString(-1: Int))
+
+      new_packetizer.state mustBe Packetizer2.OutOfSync
+    }
+
+    "transit to OutOfSync state when decoded message length is greater than MaxMessageLen" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(encodeByteString(MaxMessageLen + 1: Int))
+
+      new_packetizer.state mustBe Packetizer2.OutOfSync
+    }
+
+    "decode mesasge length when it is just equal to MaxMessageLen" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(encodeByteString(MaxMessageLen))
+      new_packetizer.packets mustBe Seq()
+      new_packetizer.state mustBe Packetizer2.WaitBody
+      new_packetizer.offset mustBe (-(MaxMessageLen + 4))
+    }
+
+    "transit back to state WaitLength when desired bytes are received" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8))
+      new_packetizer.packets mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
+      new_packetizer.state mustBe Packetizer2.WaitLength
+      new_packetizer.offset mustBe (-4)
+    }
+
+    "return entire single message to listener when it reached next WaitLength state" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8))
+      new_packetizer.packets mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
+      new_packetizer.state mustBe Packetizer2.WaitLength
+      new_packetizer.offset mustBe (-4)
+    }
+
+    "keep remaining bytes after sending an entire message" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8, 9,10))
+      new_packetizer.packets mustBe Seq(ByteString(1,2,3,4, 5,6,7,8))
+      new_packetizer.state mustBe Packetizer2.WaitLength
+      new_packetizer.offset mustBe (-2)
+      new_packetizer.buf mustBe ByteString(9, 10)
+    }
+
+    "can separate multiple messages received at a time" in {
+      val packetizer = Packetizer2()
+
+      val new_packetizer = packetizer(ByteString(0,0,0,4, 1,2,3,4, 5,6,7,8, 0,0,0,3, 2,3,4,5, 6,7,8))
+      new_packetizer.state mustBe Packetizer2.WaitLength
+      new_packetizer.offset mustBe (-4)
+      new_packetizer.packets mustBe Seq(ByteString(1,2,3,4, 5,6,7,8), ByteString(2,3,4,5, 6,7,8))
+    }
+
   }
 }

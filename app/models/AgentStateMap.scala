@@ -44,6 +44,18 @@ trait AgentStateMapFactory {
   def apply(extensionRange: Range): AgentStateMap
 }
 
+trait UsesAgentStateMap {
+  def agentStateMapFactory: AgentStateMapFactory
+}
+
+trait MixInAgentStateMapImplFactory {
+  def agentStateMapFactory = new AgentStateMapImplFactory
+}
+
+class AgentStateMapImplFactory extends AgentStateMapFactory {
+  def apply(extensionRange: Range) = new AgentStateMapImpl(extensionRange)
+}
+
 class AgentStateMapImpl @Inject()(@Assisted extensionRange: Range) extends AgentStateMap {
   val stateMap: Map[Int, Agent[(AgentState, Int)]] = extensionRange.map(n => (n, Agent((LOGOUT, 0)))).toMap
 

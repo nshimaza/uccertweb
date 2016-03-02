@@ -20,6 +20,8 @@ package ctidriver
 
 import akka.util.ByteString
 
+import scala.annotation.tailrec
+
 /**
   * Created by nshimaza on 2016/02/21.
   */
@@ -84,3 +86,70 @@ object Packetizer {
     new Packetizer
   }
 }
+
+/**
+  * Pure functional packetizer.  It is purely immutable.
+  *
+  * @param buf temporary buffer to hold unprocessed bytes
+  * @param state holds current state
+  * @param offset holds internal offet tward next message boundary
+  * @param packets holds sequence of packetized input bytes
+  */
+case class Packetizer2 private (buf: ByteString, state: Packetizer2.State, offset: Int, packets: Seq[ByteString]) {
+  def apply(data: ByteString): Packetizer2 = {
+    loop(buf ++ data, state, offset + data.size, Seq.empty)
+  }
+
+  @tailrec
+  private def loop(buf: ByteString,
+                   state: Packetizer2.State,
+                   offset: Int,
+                   result: Seq[ByteString]): Packetizer2 = {
+    if (offset < 0) {
+      Packetizer2(buf, state, offset, result.reverse)
+    } else {
+      state match {
+        case Packetizer2.OutOfSync =>
+          Packetizer2(buf, state, offset, result)
+
+        case Packetizer2.WaitLength =>
+          // at the state WaitLength, the head of buf is aligned to message length field
+          // now you have plenty bytes to decode message length
+          val message_length = buf.toInt
+          if (message_length < 0 || message_length > MaxMessageLen) {
+            Packetizer2(buf, Packetizer2.OutOfSync, offset, result.reverse)
+          } else {
+            // here you have buf which contains message aligned to Message Type field at the head
+            // we can transit to the next state for waiting body
+            // the message length doesn't include Message Type filed so you need to wait 4 more bytes
+            loop(buf.drop(4), Packetizer2.WaitBody, buf.size - 4 - (message_length + 4), result)
+          }
+
+        case Packetizer2.WaitBody =>
+          // at the state WaitBody, the head of buf is aligned to message type field
+          // now you have at least one entire message in buf
+
+          // take single message to packet
+          val len = buf.size - offset
+          val packet = buf.take(len)
+
+          // next message length begins from "len" bytes from the head of buf
+          // we can transit to the next state for waiting message length
+          // we have "offset" bytes remaining and we need 4 bytes to continue
+          loop(buf.drop(len), Packetizer2.WaitLength, offset - 4, packet +: result)
+      }
+    }
+  }
+}
+
+object Packetizer2 {
+  sealed abstract class State
+  case object WaitLength extends State
+  case object WaitBody extends State
+  case object OutOfSync extends State
+
+  def apply(data: ByteString = ByteString.empty): Packetizer2 = {
+    new Packetizer2(ByteString.empty, Packetizer2.WaitLength, -4, Seq()).apply(data)
+  }
+}
+

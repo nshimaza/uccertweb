@@ -32,22 +32,8 @@ import akka.util.ByteString
   * New connection from another client results unknown behavior.
   */
 
-object FakeCtiServerProtocol {
-  case class WarmRestart(new_probe: ActorRef)
-  case object ClientHandlerReady
-  case class Scenario(scenario: List[ByteString])
-  case object Tick
-
-
-
-  case class Packet(body: ByteString)
-  case class AddServerProve(p: ActorRef)
-  case class RemoveServerProve(p: ActorRef)
-  case object Rewind
-}
-
-class FakeCtiServer(port: Int) extends Actor {
-  import FakeCtiServerProtocol._
+class MockCtiServer(port: Int) extends Actor {
+  import MockCtiServerProtocol._
   import context.system
 
   var scenario: List[ByteString] = List()
@@ -65,7 +51,7 @@ class FakeCtiServer(port: Int) extends Actor {
 
     case c @ Connected(remote, local) =>
       val peer = sender()
-      val new_handler = context.actorOf(Props(classOf[FakeCtiServerHandler], self, peer))
+      val new_handler = context.actorOf(Props(classOf[MockCtiServerHandler], peer))
       peer ! Register(new_handler)
       handler.foreach(_ ! PoisonPill)
       handler = Some(new_handler)
@@ -89,6 +75,10 @@ class FakeCtiServer(port: Int) extends Actor {
       curr = curr.tail
       handler.foreach(_ ! packet)
 
+    case CloseClient =>
+      handler.foreach(_ ! CloseClient)
+
+
 
 
 
@@ -98,15 +88,19 @@ class FakeCtiServer(port: Int) extends Actor {
   }
 }
 
-class FakeCtiServerHandler(parent: ActorRef, peer: ActorRef) extends Actor {
-  import FakeCtiServerProtocol._
+class MockCtiServerHandler(peer: ActorRef) extends Actor {
+  import MockCtiServerProtocol._
 
   case object InitializationDone
   self ! InitializationDone
 
   def receive = {
+    case CloseClient =>
+      peer ! Close
+      context stop self
+
     case InitializationDone =>
-      parent ! ClientHandlerReady
+      context.parent ! ClientHandlerReady
 
     case Packet(body) =>
       peer ! Write(body)
@@ -115,10 +109,26 @@ class FakeCtiServerHandler(parent: ActorRef, peer: ActorRef) extends Actor {
 //      println("FakeCtiServerHander received data from client (ignored):", data)
 
     case p @ PeerClosed =>
-      parent ! p
+      context.parent ! p
       context stop self
   }
 }
+
+object MockCtiServerProtocol {
+  case class WarmRestart(new_probe: ActorRef)
+  case object ClientHandlerReady
+  case class Scenario(scenario: List[ByteString])
+  case object Tick
+  case object CloseClient
+
+
+
+  case class Packet(body: ByteString)
+  case class AddServerProve(p: ActorRef)
+  case class RemoveServerProve(p: ActorRef)
+  case object Rewind
+}
+
 
 class LoopbackServer(port: Int) extends Actor {
   import context.system
@@ -139,7 +149,7 @@ class LoopbackServerHandler extends Actor {
   }
 }
 
-class TCPClient(server: InetSocketAddress, listener: ActorRef) extends Actor {
+class MockTCPClient(server: InetSocketAddress, listener: ActorRef) extends Actor {
   import context.system
 
   IO(Tcp) ! Connect(server)

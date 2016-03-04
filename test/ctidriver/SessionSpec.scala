@@ -24,7 +24,7 @@ import akka.actor.{ActorRef, Actor, ActorSystem, Props}
 import akka.io.Tcp._
 import akka.testkit.{ TestActorRef, TestActors, TestKit, TestProbe }
 import akka.util.ByteString
-import ctidriver.FakeCtiServerProtocol._
+import ctidriver.MockCtiServerProtocol._
 import ctidriver.MessageType._
 import ctidriver.Tag._
 import org.junit.runner.RunWith
@@ -52,7 +52,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
   def this() = this(ActorSystem("SessionSpec"))
 
   val sv_port = 42029
-  val server = system.actorOf(Props(classOf[FakeCtiServer], sv_port))
+  val server = system.actorOf(Props(classOf[MockCtiServer], sv_port))
 
   override def afterAll {
     TestKit.shutdownActorSystem(system)

@@ -87,10 +87,11 @@ class XXXXXPacketizerOldDoNotUse(listener: ByteString => Unit) {
 
 
 object SessionProtocol {
+  case class Received(data: ByteString)
   case class Send(data: ByteString)
   case object Close
 }
-
+/*
 trait UsesSocketActor { val socketActor: ActorRef }
 
 trait MixInSocketActorSample {
@@ -108,7 +109,7 @@ class SocketActorImpl(server: InetSocketAddress, filter: MessageFilter) extends 
   import akka.io.Tcp._
   import context.system
 
-  val packetizer = Packetizer()
+  val packetizer = Packetizer1()
 
   IO(Tcp) ! Connect(server)
 
@@ -134,7 +135,7 @@ class SocketActorImpl(server: InetSocketAddress, filter: MessageFilter) extends 
       }
   }
 }
-
+*/
 /*
 object foo {
   import ctidriver.Tag._

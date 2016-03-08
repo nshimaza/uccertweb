@@ -27,28 +27,7 @@ import akka.io.{Tcp, IO}
 /**
   * Created by nshimaza on 2016/03/02.
   */
-trait SocketActor extends Actor {
-}
-
-trait SocketActorFactory {
-  def apply(context: ActorContext, server: InetSocketAddress, name: String): ActorRef
-}
-
-trait UsesSocketActor {
-  def socketActorFactory: SocketActorFactory
-}
-
-object SocketActorImplFactory extends SocketActorFactory {
-  def apply(context: ActorContext, server: InetSocketAddress, name: String): ActorRef = {
-    context.actorOf(Props(classOf[SocketActorImpl], server), name)
-  }
-}
-
-trait MixInSocketActorImpl {
-  def socketActorFactory = SocketActorImplFactory
-}
-
-class SocketActorImpl(server: InetSocketAddress) extends SocketActor {
+class SocketActorImpl(server: InetSocketAddress) extends Actor {
   import context.system
 
   private val listener = context.parent
@@ -81,3 +60,12 @@ class SocketActorImpl(server: InetSocketAddress) extends SocketActor {
   }
 }
 
+trait SocketActorPropsFactory {
+  def apply(server: InetSocketAddress): Props
+}
+
+class SocketActorImplPropsFactory extends SocketActorPropsFactory {
+  def apply(server: InetSocketAddress) = {
+    Props(classOf[SocketActorImpl], server)
+  }
+}

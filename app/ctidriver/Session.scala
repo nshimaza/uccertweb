@@ -31,7 +31,7 @@ import ctidriver.MessageType._
   */
 trait Session
   extends Actor
-    with UsesSocketActor {
+     {
 }
 
 trait SessionFactory {
@@ -54,7 +54,7 @@ object SessionImplFactory extends SessionFactory {
 
 trait SessionImpl
   extends Session
-    with UsesSocketActor {
+     {
 
   def receive = { case m => }
 }

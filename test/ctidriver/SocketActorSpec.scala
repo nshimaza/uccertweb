@@ -222,11 +222,9 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
 case class SocketActorSpecChildTerminated(child: ActorRef)
 case class ToSocketActor(m: Any)
 
-class SocketActorSpecParentMock(server: InetSocketAddress, probe: ActorRef)
-  extends Actor
-    with MixInSocketActorImpl {
+class SocketActorSpecParentMock(server: InetSocketAddress, probe: ActorRef) extends Actor {
 
-  val socketActor = socketActorFactory(context, server, "SocketActor")
+  val socketActor = context.actorOf(Props(classOf[SocketActorImpl], server), "SocketActor")
   context.watch(socketActor)
 
   def receive = {

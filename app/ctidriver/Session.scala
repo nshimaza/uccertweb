@@ -20,7 +20,7 @@ package ctidriver
 
 import java.net.InetSocketAddress
 
-import akka.actor.{ Actor, ActorRef, Props }
+import akka.actor.{ActorContext, Actor, ActorRef, Props}
 import akka.io.{ IO, Tcp }
 import akka.util.ByteString
 import ctidriver.MessageType._
@@ -29,6 +29,43 @@ import ctidriver.MessageType._
   * Use this class instance only within an Actor.
   * This code is not thread safe.  Never call single instance from multiple threads.
   */
+trait Session
+  extends Actor
+    with UsesSocketActor {
+}
+
+trait SessionFactory {
+  def apply(context: ActorContext): ActorRef
+}
+
+trait UsesSession {
+  def sessionFactory: SessionFactory
+}
+
+trait MixInSessionImpl {
+  def sessionFactory = SessionImplFactory
+}
+
+object SessionImplFactory extends SessionFactory {
+  def apply(context: ActorContext) = {
+    context.actorOf(Props(classOf[SessionImpl]))
+  }
+}
+
+trait SessionImpl
+  extends Session
+    with UsesSocketActor {
+
+  def receive = { case m => }
+}
+
+object SessionProtocol {
+  case class Received(data: ByteString)
+  case class Send(data: ByteString)
+  case object Close
+}
+
+/*
 class XXXXXPacketizerOldDoNotUse(listener: ByteString => Unit) {
 
   object State extends Enumeration {
@@ -83,14 +120,9 @@ class XXXXXPacketizerOldDoNotUse(listener: ByteString => Unit) {
     }
   }
 }
+*/
 
 
-
-object SessionProtocol {
-  case class Received(data: ByteString)
-  case class Send(data: ByteString)
-  case object Close
-}
 /*
 trait UsesSocketActor { val socketActor: ActorRef }
 
@@ -169,6 +201,7 @@ object bar {
 }
 */
 
+/*
 class SocketActorOld(cti_server: InetSocketAddress, listener: ActorRef) extends Actor {
   import akka.io.Tcp._
   import context.system
@@ -197,6 +230,7 @@ class SocketActorOld(cti_server: InetSocketAddress, listener: ActorRef) extends 
   }
 
 }
+*/
 
 
 

@@ -28,6 +28,7 @@ import org.scalatest.{ MustMatchers, WordSpec }
   */
 @RunWith(classOf[JUnitRunner])
 class PacketizerSpec extends WordSpec with MustMatchers {
+/*
   "Packetizer1" must {
     "start with state WaitLength" in {
       val packetizer = Packetizer1()
@@ -156,6 +157,7 @@ class PacketizerSpec extends WordSpec with MustMatchers {
       packets mustBe Seq(ByteString(1,2,3,4, 5,6,7,8), ByteString(2,3,4,5, 6,7,8))
     }
   }
+*/
 
   "Packetizer" must {
     "start with state WaitLength" in {

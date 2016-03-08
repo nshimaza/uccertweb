@@ -57,6 +57,23 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
   override def afterAll {
     TestKit.shutdownActorSystem(system)
   }
+
+  "Session" must {
+    "exit" in {
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 /*
   "PacketizerActor" must {
     "start with state WAIT_LENGTH" in {
@@ -126,6 +143,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
   }
 */
 
+/*
   "PacketizerOld" must {
     "start with state WAIT_LENGTH" in {
       val packetizer = new XXXXXPacketizerOldDoNotUse(_ => Unit)
@@ -253,7 +271,9 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       data mustBe Seq(ByteString(1,2,3,4, 5,6,7,8), ByteString(2,3,4,5, 6,7,8))
     }
   }
+*/
 
+/*
   "SocketActor" must {
     "connect to server" in {
       val probe = TestProbe()
@@ -363,6 +383,7 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system)
       msg.decode mustBe failure_event_msg
    }
   }
+*/
 
 //  "SessionActor" must {
 //    "accept server InetSockAddr and message listener on construction" in {

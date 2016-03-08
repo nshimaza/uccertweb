@@ -96,6 +96,7 @@ object Packetizer {
 }
 
 
+/*
 class Packetizer1 {
   var buf = ByteString.empty
   var state = State.WaitLength
@@ -157,3 +158,4 @@ object Packetizer1 {
     new Packetizer1
   }
 }
+*/

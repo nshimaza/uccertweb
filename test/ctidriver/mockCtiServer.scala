@@ -75,6 +75,9 @@ class MockCtiServer(port: Int) extends Actor {
       curr = curr.tail
       handler.foreach(_ ! packet)
 
+    case Packet(data) =>
+      probe.foreach(_ ! data)
+
     case CloseClient =>
       handler.foreach(_ ! CloseClient)
 
@@ -106,7 +109,7 @@ class MockCtiServerHandler(peer: ActorRef) extends Actor {
       peer ! Write(body)
 
     case Received(data) =>
-//      println("FakeCtiServerHander received data from client (ignored):", data)
+      context.parent ! Packet(data)
 
     case p @ PeerClosed =>
       context.parent ! p

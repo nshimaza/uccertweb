@@ -62,9 +62,13 @@ package object ctidriver {
   object InvokeIDGen {
     private var id: Int = 0
 
-    def next = synchronized {
+    def next() = synchronized {
       id += 1
       id
+    }
+
+    def reset() = synchronized {
+      id = 0
     }
   }
 

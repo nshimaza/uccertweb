@@ -20,15 +20,17 @@ package ctidriver
 
 import java.net.InetSocketAddress
 
-import akka.actor.{Props, ActorContext, ActorRef, Actor}
+import akka.actor.{Props, Actor}
 import akka.io.Tcp._
 import akka.io.{Tcp, IO}
+import akka.util.ByteString
 
 /**
   * Created by nshimaza on 2016/03/02.
   */
 class SocketActorImpl(server: InetSocketAddress) extends Actor {
   import context.system
+  import SocketActorProtocol._
 
   private val listener = context.parent
   private var packetizer = Packetizer()
@@ -37,24 +39,26 @@ class SocketActorImpl(server: InetSocketAddress) extends Actor {
 
   def receive = {
     case CommandFailed(c: Connect) =>
-      listener ! CommandFailed(c)
+//      listener ! CommandFailed(c)
+      listener ! OpenSocketFailed
       context stop self
 
     case c @ Connected(remote, local) =>
-      listener ! c
+//      listener ! c
+      listener ! SocketOpened
       val connection = sender()
       connection ! Register(self)
       context become {
-        case SessionProtocol.Send(data) => connection ! Write(data.withlength)
+        case Send(data) => connection ! Write(data.withlength)
 
-        case SessionProtocol.Close => connection ! Tcp.Close
+        case CloseSocket => connection ! Tcp.Close
 
         case Received(data) =>
           packetizer = packetizer(data)
-          packetizer.packets.foreach { listener ! SessionProtocol.Received(_) }
+          packetizer.packets.foreach { listener ! PacketReceived(_) }
 
         case c: ConnectionClosed =>
-          listener ! c
+          listener ! SocketClosed
           context stop self
       }
   }
@@ -68,4 +72,13 @@ class SocketActorImplPropsFactory extends SocketActorPropsFactory {
   def apply(server: InetSocketAddress) = {
     Props(classOf[SocketActorImpl], server)
   }
+}
+
+object SocketActorProtocol {
+  case object OpenSocketFailed
+  case object SocketOpened
+  case object SocketClosed
+  case object CloseSocket
+  case class PacketReceived(packet: ByteString)
+  case class Send(rawMessageBody: ByteString)
 }

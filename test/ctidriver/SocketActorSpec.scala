@@ -22,10 +22,10 @@ import java.net.InetSocketAddress
 
 import akka.actor._
 import akka.testkit.{TestProbe, ImplicitSender, TestKit}
-import akka.io.Tcp._
 import akka.util.ByteString
 import ctidriver.MockCtiServerProtocol._
 import ctidriver.MessageType._
+import ctidriver.SocketActorProtocol._
 import ctidriver.Tag.Status
 import ctidriver.Tag._
 import org.junit.runner.RunWith
@@ -57,33 +57,33 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
     mockServer ! WarmRestart(serverProbe.ref)
     val mockProbe = TestProbe()
     val mockParent = system.actorOf(Props(classOf[SocketActorSpecParentMock], server, mockProbe.ref))
-    mockProbe.expectMsgClass(classOf[Connected])
+    mockProbe.expectMsg(SocketOpened)
     serverProbe.expectMsg(ClientHandlerReady)
 
     (serverProbe, mockProbe, mockParent)
   }
 
   "SocketActor" must {
-    "send CommandFailed to parent when connection failed" in {
+    "send SocketOpenFailed to parent when connection failed" in {
       val failServer = new InetSocketAddress("localhost", serverPort + 1)
       val probe = TestProbe()
       val mock = system.actorOf(Props(classOf[SocketActorSpecParentMock], failServer, probe.ref))
 
-      probe.expectMsgClass(classOf[CommandFailed])
+      probe.expectMsg(OpenSocketFailed)
       probe.expectMsgClass(classOf[SocketActorSpecChildTerminated])
 
       TestHelpers.stopActors(probe.ref, mock)
     }
 
-    "send Connected to parent when connection succeed" in {
+    "send SocketOpened to parent when connection succeed" in {
       val mockProbe = TestProbe()
       val mockParent = system.actorOf(Props(classOf[SocketActorSpecParentMock], server, mockProbe.ref))
 
-      mockProbe.expectMsgClass(classOf[Connected])
+      mockProbe.expectMsg(SocketOpened)
 
       TestHelpers.stopActors(mockProbe.ref, mockParent)
     }
-
+    /*
     "contains remote info in Connected message" in {
       val mockProbe = TestProbe()
       val mock = system.actorOf(Props(classOf[SocketActorSpecParentMock], server, mockProbe.ref))
@@ -95,22 +95,22 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
 
       TestHelpers.stopActors(mockProbe.ref, mock)
     }
-
+    */
     "packetize received stream" in {
       val (serverProbe, mockProbe, mockParent) = setupProbeAndMock()
 
       mockServer ! Scenario(List(ByteString(0,0,0,4), ByteString(1,2,3,4), ByteString(5,6,7,8),
-        ByteString(0,0), ByteString(0,3, 9,8,7,6), ByteString(5,4,3)))
+        ByteString(0,0), ByteString(0,3 ,9,8,7,6), ByteString(5,4,3)))
       mockServer ! Tick
       mockServer ! Tick
       mockServer ! Tick
-      mockProbe.expectMsg(SessionProtocol.Received(ByteString(1,2,3,4,5,6,7,8)))
+      mockProbe.expectMsg(PacketReceived(ByteString(1,2,3,4, 5,6,7,8)))
       mockServer ! Tick
       mockServer ! Tick
       mockServer ! Tick
-      mockProbe.expectMsg(SessionProtocol.Received(ByteString(9,8,7,6,5,4,3)))
+      mockProbe.expectMsg(PacketReceived(ByteString(9,8,7,6, 5,4,3)))
 
-      TestHelpers.stopActors(serverProbe.ref, mockProbe.ref, mockParent)
+      TestHelpers.stopActors(mockParent, mockProbe.ref, serverProbe.ref)
     }
 
     "work with OPEN_REQ and OPEN_CONF" in {
@@ -123,7 +123,7 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
         (AgentStateMaskTag, BitSet.empty + AgentStateMask.AGENT_AVAILABLE + AgentStateMask.AGENT_HOLD),
         (ConfigMsgMask, BitSet.empty), (Reserved1, 0), (Reserved2, 0), (Reserved3, 0),
         (CLIENT_ID, "ClientID"), (CLIENT_PASSWORD, ByteString()), (CLIENT_SIGNATURE, "ClientSignature"),
-        (AGENT_EXTENSION, "3001"),(AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (APP_PATH_ID, 0x03040506)).encode
+        (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (APP_PATH_ID, 0x03040506)).encode
       val openConfBody = ByteString(0,0,0,4, 4,3,2,1, 0,0,0,0x10, 2,3,4,5, 0,0,0,0x13, 4,5,6,7, 0,1, 0,17, 0,3,
         4,5,0x33, 0x30, 0x30, 0x31,0,
         5,5,0x31, 0x30, 0x30, 0x31,0,
@@ -139,12 +139,12 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
         (MULTI_LINE_AGENT_CONTROL, false))
 
       mockServer ! Scenario(List(openConfRaw))
-      mockParent ! ToSocketActor(SessionProtocol.Send(openReqBody))
+      mockParent ! ToSocketActor(Send(openReqBody))
       mockServer ! Tick
-      val msg = mockProbe.expectMsgClass(classOf[SessionProtocol.Received])
-      msg.data.decode mustBe openConfExpected
+      val msg = mockProbe.expectMsgClass(classOf[PacketReceived])
+      msg.packet.decode mustBe openConfExpected
 
-      TestHelpers.stopActors(serverProbe.ref, mockProbe.ref, mockParent)
+      TestHelpers.stopActors(mockParent, mockProbe.ref, serverProbe.ref)
     }
 
     "work with FAILURE_EVENT" in {
@@ -157,7 +157,7 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
         (AgentStateMaskTag, BitSet.empty + AgentStateMask.AGENT_AVAILABLE + AgentStateMask.AGENT_HOLD),
         (ConfigMsgMask, BitSet.empty), (Reserved1, 0), (Reserved2, 0), (Reserved3, 0),
         (CLIENT_ID, "ClientID"), (CLIENT_PASSWORD, ByteString()), (CLIENT_SIGNATURE, "ClientSignature"),
-        (AGENT_EXTENSION, "3001"),(AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (APP_PATH_ID, 0x03040506)).encode
+        (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (APP_PATH_ID, 0x03040506)).encode
       val openConfRaw = List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, 0x04030201),
         (ServiceGranted, BitSet.empty + CtiServiceMask.ALL_EVENTS), (MonitorID, 0x02030405),
         (PGStatus, BitSet.empty + PGStatusCode.OPC_DOWN + PGStatusCode.CC_DOWN + PGStatusCode.LIMITED_FUNCTION),
@@ -170,53 +170,52 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
       val failureEventRaw = failureEventMsg.encode.withlength
 
       mockServer ! Scenario(List(openConfRaw, failureEventRaw))
-      mockParent ! ToSocketActor(SessionProtocol.Send(openReqBody))
+      mockParent ! ToSocketActor(Send(openReqBody))
       mockServer ! Tick
       mockServer ! Tick
-      mockProbe.expectMsgClass(classOf[SessionProtocol.Received])
-      val msg = mockProbe.expectMsgClass(classOf[SessionProtocol.Received])
-      msg.data.decode mustBe failureEventMsg
+      mockProbe.expectMsgClass(classOf[PacketReceived])
+      val msg = mockProbe.expectMsgClass(classOf[PacketReceived])
+      msg.packet.decode mustBe failureEventMsg
 
-      TestHelpers.stopActors(serverProbe.ref, mockProbe.ref, mockParent)
+      TestHelpers.stopActors(mockParent, mockProbe.ref, serverProbe.ref)
+    }
+
+    "send SocketClosed and terminate on connection closed by peer" in {
+      val (serverProbe, mockProbe, mockParent) = setupProbeAndMock()
+
+      mockServer ! Scenario(List(ByteString(0,0,0,4), ByteString(1,2,3,4), ByteString(5,6,7,8),
+        ByteString(0,0), ByteString(0,3, 9,8,7,6), ByteString(5,4,3)))
+      mockServer ! Tick
+      mockServer ! Tick
+      mockServer ! Tick
+      mockProbe.expectMsg(PacketReceived(ByteString(1,2,3,4, 5,6,7,8)))
+      mockServer ! Tick
+      mockServer ! Tick
+      mockServer ! CloseClient
+      mockProbe.expectMsg(SocketClosed)
+      mockProbe.expectMsgClass(classOf[SocketActorSpecChildTerminated])
+
+      TestHelpers.stopActors(mockParent, mockProbe.ref, serverProbe.ref)
+    }
+
+    "send SocketClosed and terminate on completion of Close" in {
+      val (serverProbe, mockProbe, mockParent) = setupProbeAndMock()
+
+      mockServer ! Scenario(List(ByteString(0,0,0,4), ByteString(1,2,3,4), ByteString(5,6,7,8),
+        ByteString(0,0), ByteString(0,3, 9,8,7,6), ByteString(5,4,3)))
+      mockServer ! Tick
+      mockServer ! Tick
+      mockServer ! Tick
+      mockProbe.expectMsg(PacketReceived(ByteString(1,2,3,4, 5,6,7,8)))
+      mockServer ! Tick
+      mockServer ! Tick
+      mockParent ! ToSocketActor(CloseSocket)
+      mockProbe.expectMsg(SocketClosed)
+      mockProbe.expectMsgClass(classOf[SocketActorSpecChildTerminated])
+
+      TestHelpers.stopActors(mockParent, mockProbe.ref, serverProbe.ref)
     }
   }
-
-  "send ConnectionClosed and terminate on connection closed by peer" in {
-    val (serverProbe, mockProbe, mockParent) = setupProbeAndMock()
-
-    mockServer ! Scenario(List(ByteString(0,0,0,4), ByteString(1,2,3,4), ByteString(5,6,7,8),
-      ByteString(0,0), ByteString(0,3, 9,8,7,6), ByteString(5,4,3)))
-    mockServer ! Tick
-    mockServer ! Tick
-    mockServer ! Tick
-    mockProbe.expectMsg(SessionProtocol.Received(ByteString(1,2,3,4,5,6,7,8)))
-    mockServer ! Tick
-    mockServer ! Tick
-    mockServer ! CloseClient
-    mockProbe.expectMsgClass(classOf[ConnectionClosed])
-    mockProbe.expectMsgClass(classOf[SocketActorSpecChildTerminated])
-
-    TestHelpers.stopActors(serverProbe.ref, mockProbe.ref, mockParent)
-  }
-
-  "send ConnectionClosed and terminate on completion of Close" in {
-    val (serverProbe, mockProbe, mockParent) = setupProbeAndMock()
-
-    mockServer ! Scenario(List(ByteString(0,0,0,4), ByteString(1,2,3,4), ByteString(5,6,7,8),
-      ByteString(0,0), ByteString(0,3, 9,8,7,6), ByteString(5,4,3)))
-    mockServer ! Tick
-    mockServer ! Tick
-    mockServer ! Tick
-    mockProbe.expectMsg(3.second, SessionProtocol.Received(ByteString(1,2,3,4,5,6,7,8)))
-    mockServer ! Tick
-    mockServer ! Tick
-    mockParent ! ToSocketActor(SessionProtocol.Close)
-    mockProbe.expectMsgClass(3.second, classOf[ConnectionClosed])
-    mockProbe.expectMsgClass(3.second, classOf[SocketActorSpecChildTerminated])
-
-    TestHelpers.stopActors(serverProbe.ref, mockProbe.ref, mockParent)
-  }
-
 }
 
 case class SocketActorSpecChildTerminated(child: ActorRef)

@@ -19,50 +19,93 @@
 package ctidriver
 
 import java.net.InetSocketAddress
+import javax.inject.Inject
 
 import akka.actor.{ActorContext, Actor, ActorRef, Props}
-import akka.io.{ IO, Tcp }
 import akka.util.ByteString
+import com.google.inject.assistedinject.Assisted
 import ctidriver.MessageType._
+import ctidriver.Tag._
+
+import scala.collection.immutable.BitSet
 
 /**
   * Use this class instance only within an Actor.
   * This code is not thread safe.  Never call single instance from multiple threads.
   */
-trait Session
-  extends Actor
-     {
+class Session(server: InetSocketAddress, socketActorPropsFactory: SocketActorPropsFactory)
+  extends Actor {
+
+  val socketActor = context.actorOf(socketActorPropsFactory(server))
+
+  def connecting: Receive = {
+    case akka.io.Tcp.Connected =>
+      val msg = List((MessageTypeTag, Some(OPEN_REQ)), (InvokeID, InvokeIDGen.next())) ++ Session.openReqBody
+      socketActor ! SessionProtocol.Send(msg.encode.withlength)
+      context.become(opening)
+
+    case akka.io.Tcp.CommandFailed =>
+      context stop self
+  }
+
+  def opening: Receive = {
+    case SessionProtocol.Received(data) =>
+      val msg = data.decode
+      msg.findEnum(MessageTypeTag) match {
+        case Some(OPEN_CONF) =>
+          context.become(established)
+
+        case _ =>
+          socketActor ! SessionProtocol.Close
+      }
+
+    case _ =>
+      context stop self
+  }
+
+  def established: Receive = {
+    case SessionProtocol.Received =>
+  }
+
+  def receive = connecting
 }
 
-trait SessionFactory {
-  def apply(context: ActorContext): ActorRef
+trait SessionPropsFactory {
+  def apply(): Props
 }
 
-trait UsesSession {
-  def sessionFactory: SessionFactory
-}
-
-trait MixInSessionImpl {
-  def sessionFactory = SessionImplFactory
-}
-
-object SessionImplFactory extends SessionFactory {
-  def apply(context: ActorContext) = {
-    context.actorOf(Props(classOf[SessionImpl]))
+class SessionImplPropsFactory @Inject()(@Assisted server: InetSocketAddress,
+                                        socketActorPropsFactory: SocketActorPropsFactory)
+  extends SessionPropsFactory {
+  def apply() = {
+    Props(classOf[Session], server, socketActorPropsFactory)
   }
 }
 
-trait SessionImpl
-  extends Session
-     {
-
-  def receive = { case m => }
-}
 
 object SessionProtocol {
   case class Received(data: ByteString)
   case class Send(data: ByteString)
   case object Close
+}
+
+object Session {
+  val openReqBody = List((VersionNumber, ProtocolVersion), (IdleTimeout, NoIdleTimeout), (PeripheralID, 5000),
+    (ServiceRequested, BitSet.empty + CtiServiceMask.ALL_EVENTS),
+    (CallMsgMask, BitSet.empty),
+    (AgentStateMaskTag, BitSet.empty +
+      AgentStateMask.AGENT_LOGIN +
+      AgentStateMask.AGENT_LOGOUT +
+      AgentStateMask.AGENT_NOT_READY +
+      AgentStateMask.AGENT_AVAILABLE +
+      AgentStateMask.AGENT_TALKING +
+      AgentStateMask.AGENT_WORK_NOT_READY +
+      AgentStateMask.AGENT_WORK_READY +
+      AgentStateMask.AGENT_BUSY_OTHER +
+      AgentStateMask.AGENT_RESERVED +
+      AgentStateMask.AGENT_HOLD),
+    (ConfigMsgMask, BitSet.empty), (Reserved1, 0), (Reserved2, 0), (Reserved3, 0),
+    (CLIENT_ID, "UCCERTWeb"), (CLIENT_PASSWORD, ByteString()), (CLIENT_SIGNATURE, "UCCERTWeb"))
 }
 
 /*

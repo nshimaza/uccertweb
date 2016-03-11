@@ -52,8 +52,8 @@ class MockCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
     mockServer ! WarmRestart(serverProbe.ref)
     val clientProbe = TestProbe()
     val client = system.actorOf(Props(classOf[MockTCPClient], serverAddr, clientProbe.ref))
-    clientProbe.expectMsgClass(3.second, classOf[Connected])
-    serverProbe.expectMsg(3.second, ClientHandlerReady)
+    clientProbe.expectMsgClass(classOf[Connected])
+    serverProbe.expectMsg(ClientHandlerReady)
 
     (serverProbe, clientProbe, client)
   }
@@ -63,7 +63,7 @@ class MockCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
       val probe = TestProbe()
       val client = system.actorOf(Props(classOf[MockTCPClient], serverAddr, probe.ref))
 
-      val msg = probe.expectMsgClass(3.second, classOf[Connected])
+      val msg = probe.expectMsgClass(classOf[Connected])
 
       msg.remoteAddress.getHostName mustBe "localhost"
       msg.remoteAddress.getPort mustBe serverPort
@@ -77,7 +77,7 @@ class MockCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
 
       mockServer ! Scenario(List(ByteString("Tick1"), ByteString("Tick2")))
       mockServer ! Tick
-      clientProbe.expectMsg(3.second, ByteString("Tick1"))
+      clientProbe.expectMsg(ByteString("Tick1"))
 
       TestHelpers.stopActors(serverProbe.ref, clientProbe.ref, client)
     }
@@ -87,10 +87,19 @@ class MockCtiServerSpec(_system: ActorSystem) extends TestKit(_system)
 
       mockServer ! Scenario(List(ByteString("message 1"), ByteString("message 2")))
       mockServer ! Tick
-      clientProbe.expectMsg(3.second, ByteString("message 1"))
+      clientProbe.expectMsg(ByteString("message 1"))
 
       mockServer ! Tick
-      clientProbe.expectMsg(3.second, ByteString("message 2"))
+      clientProbe.expectMsg(ByteString("message 2"))
+
+      TestHelpers.stopActors(serverProbe.ref, clientProbe.ref, client)
+    }
+
+    "forward received data to probe" in {
+      val (serverProbe, clientProbe, client) = setupClientConnection()
+
+      client ! ByteString("hello")
+      serverProbe.expectMsg(ByteString("hello"))
 
       TestHelpers.stopActors(serverProbe.ref, clientProbe.ref, client)
     }
@@ -129,10 +138,10 @@ class LoopbackServerSpec(_system: ActorSystem) extends TestKit(_system)
       val probe = TestProbe()
       val client = system.actorOf(Props(new MockTCPClient(serverAddr, probe.ref)))
 
-      probe.expectMsgClass(3.second, classOf[Connected])
+      probe.expectMsgClass(classOf[Connected])
 
       client ! ByteString("Hello World.")
-      probe.expectMsg(3.second, ByteString("Hello World."))
+      probe.expectMsg(ByteString("Hello World."))
 
       TestHelpers.stopActors(probe.ref, client)
     }

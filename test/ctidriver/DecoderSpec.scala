@@ -39,14 +39,15 @@ class DecoderSpec extends FunSuite {
   test("decoding 001: FAILURE_CONF") {
     val src = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97)
     val msg: Message = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x01020304),
-      (Status, Some(StatusCode.INVALID_MONITOR_STATUS)))
+      (StatusCodeTag, Some(StatusCode.INVALID_MONITOR_STATUS)))
 
     assert(src.decode == msg)
   }
 
   test("decoding 002: FAILURE_EVENT") {
     val src = ByteString(0,0,0,2, 0,0,0,17)
-    val msg: Message = List((MessageTypeTag, Some(FAILURE_EVENT)), (Status, Some(StatusCode.UNSPECIFIED_FAILURE)))
+    val msg: Message = List((MessageTypeTag, Some(FAILURE_EVENT)),
+      (StatusCodeTag, Some(StatusCode.UNSPECIFIED_FAILURE)))
 
     assert(src.decode == msg)
   }
@@ -106,7 +107,7 @@ class DecoderSpec extends FunSuite {
 
   test("decoding 007: CLOSE_REQ") {
     val src = ByteString(0,0,0,7, 0,0,0,98)
-    val msg: Message = List((MessageTypeTag, Some(CLOSE_REQ)), (Status, Some(StatusCode.INVALID_REQUEST_TYPE)))
+    val msg: Message = List((MessageTypeTag, Some(CLOSE_REQ)), (StatusCodeTag, Some(StatusCode.INVALID_REQUEST_TYPE)))
 
     assert(src.decode == msg)
   }
@@ -1010,7 +1011,7 @@ class DecoderSpec extends FunSuite {
       6,5,0x33, 0x30, 0x30, 0x31,0,
       226,18,0x43,0x6c,0x69,0x65,0x6e,0x74,0x41,0x64,0x64,0x72,0x65,0x73,0x73,0x49,0x50,0x76,0x36,0)
     val msg: Message = List((MessageTypeTag, Some(CLIENT_SESSION_CLOSED_EVENT)), (SessionID, 0x01020304),
-      (PeripheralID, 0x02030405), (Status, Some(StatusCode.UNSPECIFIED_FAILURE)), (ClientPort, 0x03040506),
+      (PeripheralID, 0x02030405), (StatusCodeTag, Some(StatusCode.UNSPECIFIED_FAILURE)), (ClientPort, 0x03040506),
       (CLIENT_ADDRESS, "ClientAddress"), (CLIENT_ID, "ClientID"), (CLIENT_SIGNATURE, "ClientSignature"),
       (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"),
       (CLIENT_ADDRESS_IPV6, "ClientAddressIPv6"))

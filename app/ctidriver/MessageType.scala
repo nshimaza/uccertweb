@@ -284,9 +284,9 @@ object MessageType extends IntEnum {
     //   0: UNKNOWN_TYPE
     List(RawBytes),
     //   1: FAILURE_CONF
-    List(InvokeID, Status),
+    List(InvokeID, StatusCodeTag),
     //   2: FAILURE_EVENT
-    List(Status),
+    List(StatusCodeTag),
     //   3: OPEN_REQ
     List(InvokeID, VersionNumber, IdleTimeout, PeripheralID, ServiceRequested, CallMsgMask, AgentStateMaskTag,
       ConfigMsgMask, Reserved1, Reserved2, Reserved3),
@@ -298,7 +298,7 @@ object MessageType extends IntEnum {
     //   6: HEARTBEAT_CONF
     List(InvokeID),
     //   7: CLOSE_REQ
-    List(Status),
+    List(StatusCodeTag),
     //   8: CLOSE_CONF
     List(InvokeID),
     //   9: CALL_DELIVERED_EVENT
@@ -534,7 +534,7 @@ object MessageType extends IntEnum {
     //  99: CLIENT_SESSION_OPENED_EVENT
     List(SessionID, PeripheralID, ServiceGranted, CallMsgMask, AgentStateMaskTag, ClientPort),
     // 100: CLIENT_SESSION_CLOSED_EVENT
-    List(SessionID, PeripheralID, Status, ClientPort),
+    List(SessionID, PeripheralID, StatusCodeTag, ClientPort),
     // 101: SESSION_MONITOR_START_REQ
     List(InvokeID, SessionID),
     // 102: SESSION_MONITOR_START_CONF

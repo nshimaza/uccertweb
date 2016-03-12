@@ -94,16 +94,12 @@ class MockCtiServer(port: Int) extends Actor {
 class MockCtiServerHandler(peer: ActorRef) extends Actor {
   import MockCtiServerProtocol._
 
-  case object InitializationDone
-  self ! InitializationDone
+  context.parent ! ClientHandlerReady
 
   def receive = {
     case CloseClient =>
       peer ! Close
       context stop self
-
-    case InitializationDone =>
-      context.parent ! ClientHandlerReady
 
     case Packet(body) =>
       peer ! Write(body)

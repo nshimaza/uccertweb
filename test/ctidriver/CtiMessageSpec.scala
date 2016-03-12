@@ -33,12 +33,14 @@ import org.scalatest.{ WordSpecLike, MustMatchers }
 class CtiMessageSpec extends WordSpecLike with MustMatchers {
   "CtiMessage" must {
     "have function findField" in {
-      val msg: Message = List((MessageTypeTag, Some(FAILURE_EVENT)), (Status, Some(StatusCode.UNSPECIFIED_FAILURE)))
+      val msg: Message = List((MessageTypeTag, Some(FAILURE_EVENT)),
+        (StatusCodeTag, Some(StatusCode.UNSPECIFIED_FAILURE)))
       msg.findField(MessageTypeTag)
     }
 
     "return None on findField when given tag is not found" in {
-      val msg: Message = List((MessageTypeTag, Some(FAILURE_EVENT)), (Status, Some(StatusCode.UNSPECIFIED_FAILURE)))
+      val msg: Message = List((MessageTypeTag, Some(FAILURE_EVENT)),
+        (StatusCodeTag, Some(StatusCode.UNSPECIFIED_FAILURE)))
       msg.findField(InvokeID) must be(None)
     }
 

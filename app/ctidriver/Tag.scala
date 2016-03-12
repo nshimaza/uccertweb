@@ -636,7 +636,7 @@ object Tag extends Enumeration {
   SnapshotDeviceType,
   ClientEventStateTag,
   StateDuration,
-  Status,
+  StatusCodeTag,
   SupervisorAssistCallMethod,
   SupervisorConnectionCallID,
   SupervisorConnectionDeviceIDType,
@@ -1035,7 +1035,7 @@ object Tag extends Enumeration {
     DeviceIDType.decode, 	// SnapshotDeviceType
     ClientEventReportState.decode, 	// ClientEventStateTag
     decFxInt, 	// StateDuration
-    StatusCode.decode, 	// Status
+    StatusCode.decode, 	// StatusCodeTag
     decFxIntBool, 	// SupervisorAssistCallMethod
     decFxInt, 	// SupervisorConnectionCallID
     ConnectionDeviceIDType.decode, 	// SupervisorConnectionDeviceIDType
@@ -1743,7 +1743,7 @@ object Tag extends Enumeration {
     DeviceIDType.encode, 	// SnapshotDeviceType
     ClientEventReportState.encode, 	// ClientEventStateTag
     encFxInt, 	// StateDuration
-    StatusCode.encode, 	// Status
+    StatusCode.encode, 	// StatusCodeTag
     encFxIntBool, 	// SupervisorAssistCallMethod
     encFxInt, 	// SupervisorConnectionCallID
     ConnectionDeviceIDType.encode, 	// SupervisorConnectionDeviceIDType

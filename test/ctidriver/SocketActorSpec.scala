@@ -26,7 +26,6 @@ import akka.util.ByteString
 import ctidriver.MockCtiServerProtocol._
 import ctidriver.MessageType._
 import ctidriver.SocketActorProtocol._
-import ctidriver.Tag.Status
 import ctidriver.Tag._
 import org.junit.runner.RunWith
 import org.scalatest.{MustMatchers, BeforeAndAfterAll, WordSpecLike}
@@ -166,7 +165,7 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
         (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (NUM_PERIPHERALS, 0x0506.toShort),
         (MULTI_LINE_AGENT_CONTROL, false)).encode.withlength
       val failureEventMsg = List((MessageTypeTag, Some(FAILURE_EVENT)),
-        (Status, Some(StatusCode.UNSPECIFIED_FAILURE)))
+        (StatusCodeTag, Some(StatusCode.UNSPECIFIED_FAILURE)))
       val failureEventRaw = failureEventMsg.encode.withlength
 
       mockServer ! Scenario(List(openConfRaw, failureEventRaw))

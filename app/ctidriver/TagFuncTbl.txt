@@ -331,7 +331,7 @@ AgentState.decode	AgentState.encode	SkillGroupState
 DeviceIDType.decode	DeviceIDType.encode	SnapshotDeviceType
 ClientEventReportState.decode	ClientEventReportState.encode	ClientEventStateTag
 decFxInt	encFxInt	StateDuration
-StatusCode.decode	StatusCode.encode	Status
+StatusCode.decode	StatusCode.encode	StatusCodeTag
 decFxIntBool	encFxIntBool	SupervisorAssistCallMethod
 decFxInt	encFxInt	SupervisorConnectionCallID
 ConnectionDeviceIDType.decode	ConnectionDeviceIDType.encode	SupervisorConnectionDeviceIDType

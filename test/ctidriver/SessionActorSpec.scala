@@ -40,7 +40,7 @@ import scala.collection.immutable.BitSet
 class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSender
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {
 
-  def this() = this(ActorSystem("sessionActorSpec"))
+  def this() = this(ActorSystem("SessionActorSpec"))
 
   val serverPort = 42031
   val server = new InetSocketAddress("localhost", serverPort)

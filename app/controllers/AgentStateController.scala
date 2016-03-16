@@ -2,7 +2,8 @@ package controllers
 
 import javax.inject._
 
-import models.{MixInAgentStateMapImplFactory, AgentStateMap, AgentStateMapFactory}
+import models.{AgentStateMap, AgentStateMapFactory}
+//import models.{MixInAgentStateMapImplFactory, AgentStateMap, AgentStateMapFactory}
 import play.api.Play
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -10,11 +11,11 @@ import play.api.mvc._
 /**
   * Created by nshimaza on 2016/02/21.
   */
-//@Singleton
-//class AgentStateController @Inject()(agentStateMapFactory: AgentStateMapFactory) extends Controller {
-class AgentStateController
-  extends Controller
-    with MixInAgentStateMapImplFactory {
+@Singleton
+class AgentStateController @Inject()(agentStateMapFactory: AgentStateMapFactory) extends Controller {
+//class AgentStateController
+//  extends Controller
+//    with MixInAgentStateMapImplFactory {
   val extLow = Play.current.configuration.getInt("uccertweb.ext.low").get
   val extHigh = Play.current.configuration.getInt("uccertweb.ext.high").get
 

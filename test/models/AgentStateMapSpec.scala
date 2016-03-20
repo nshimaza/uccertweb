@@ -2,16 +2,18 @@ package models
 
 import javax.inject._
 
-import com.google.inject.{Guice, Injector}
-import ctidriver.{CallDirection, AgentAvailabilityStatus, PeripheralType, AgentState}
+import com.google.inject.assistedinject.FactoryModuleBuilder
+import com.google.inject.{AbstractModule, Guice, Injector}
+import ctidriver.{AgentAvailabilityStatus, AgentState, CallDirection, PeripheralType}
 import ctidriver.MessageType._
 import ctidriver.Tag._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.{WordSpec, MustMatchers}
+import org.scalatest.{MustMatchers, WordSpec}
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class Mock @Inject()(agentStateMapFactory: AgentStateMapFactory) {
   val testedRange = 1000 to 1999
@@ -29,25 +31,25 @@ class AgentStateMapSpec extends WordSpec with MustMatchers {
       val pool = new AgentStateMapImpl(1000 to 1999)
     }
 
-    "have get(ext: Int): Option method to retrieve agent state of given extension" in {
+    "have apply(ext: Int): Option method to retrieve agent state of given extension" in {
       val pool = new AgentStateMapImpl(1000 to 1999)
-      pool.get(1000)
+      pool(1000)
     }
 
     "return Some for existing estension" in {
       val pool = new AgentStateMapImpl(1000 to 1999)
-      pool.get(1000).getClass mustBe classOf[Some[(AgentState.Value, String)]]
+      pool(1000).getClass mustBe classOf[Some[(AgentState.Value, String)]]
     }
 
     "return None for unknown extension" in {
       val pool = new AgentStateMapImpl(1000 to 1999)
-      pool.get(2000) mustBe None
+      pool(2000) mustBe None
     }
 
     "must be initialized with LOGOUT with reason code zero for all configured extensions" in {
       val tested_range = 1000 to 1999
       val pool = new AgentStateMapImpl(tested_range)
-      tested_range.foreach(i => pool.get(i) mustBe Some(AgentState.LOGOUT, 0))
+      tested_range.foreach { pool(_) mustBe Some(AgentState.LOGOUT, 0) }
     }
 
     "must receive AGENT_STATE_EVENT message" in {
@@ -87,37 +89,37 @@ class AgentStateMapSpec extends WordSpec with MustMatchers {
         (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER)))
       pool.receive(msg)
       Await.ready(pool.future(3001).get, 3.second)
-      pool.get(3001) mustBe Some((AgentState.HOLD, 0x090a))
+      pool(3001) mustBe Some((AgentState.HOLD, 0x090a))
     }
   }
 
   "AgentStateMap" must {
     "be instanciated via dependency injector" in {
-      val mock: Mock = Guice.createInjector(new AgentStateMapModule).getInstance(classOf[Mock])
+      val mock: Mock = Guice.createInjector(new AgentStateMapSpecModule).getInstance(classOf[Mock])
     }
 
     "have get(ext: Int): Option method to retrieve agent state of given extension" in {
-      val mock: Mock = Guice.createInjector(new AgentStateMapModule).getInstance(classOf[Mock])
-      mock.agentStateMap.get(1000)
+      val mock: Mock = Guice.createInjector(new AgentStateMapSpecModule).getInstance(classOf[Mock])
+      mock.agentStateMap(1000)
     }
 
     "return Some for existing estension" in {
-      val mock: Mock = Guice.createInjector(new AgentStateMapModule).getInstance(classOf[Mock])
-      mock.agentStateMap.get(1000).getClass mustBe classOf[Some[(AgentState.Value, String)]]
+      val mock: Mock = Guice.createInjector(new AgentStateMapSpecModule).getInstance(classOf[Mock])
+      mock.agentStateMap(1000).getClass mustBe classOf[Some[(AgentState.Value, String)]]
     }
 
     "return None for unknown extension" in {
-      val mock: Mock = Guice.createInjector(new AgentStateMapModule).getInstance(classOf[Mock])
-      mock.agentStateMap.get(2000) mustBe None
+      val mock: Mock = Guice.createInjector(new AgentStateMapSpecModule).getInstance(classOf[Mock])
+      mock.agentStateMap(2000) mustBe None
     }
 
     "must be initialized with LOGOUT with reason code zero for all configured extensions" in {
-      val mock: Mock = Guice.createInjector(new AgentStateMapModule).getInstance(classOf[Mock])
-      mock.testedRange.foreach(i => mock.agentStateMap.get(i) mustBe Some(AgentState.LOGOUT, 0))
+      val mock: Mock = Guice.createInjector(new AgentStateMapSpecModule).getInstance(classOf[Mock])
+      mock.testedRange.foreach { mock.agentStateMap(_) mustBe Some(AgentState.LOGOUT, 0) }
     }
 
     "must receive AGENT_STATE_EVENT message" in {
-      val mock: Mock = Guice.createInjector(new AgentStateMapModule).getInstance(classOf[Mock])
+      val mock: Mock = Guice.createInjector(new AgentStateMapSpecModule).getInstance(classOf[Mock])
       val msg = List((MessageTypeTag, Some(AGENT_STATE_EVENT)), (MonitorID, 0x01020304),
         (PeripheralID, 0x02030405), (SessionID, 0x03040506),
         (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
@@ -136,7 +138,7 @@ class AgentStateMapSpec extends WordSpec with MustMatchers {
     }
 
     "must reflect last received AGENT_STATE_EVENT" in {
-      val mock: Mock = Guice.createInjector(new AgentStateMapModule).getInstance(classOf[Mock])
+      val mock: Mock = Guice.createInjector(new AgentStateMapSpecModule).getInstance(classOf[Mock])
       val msg = List((MessageTypeTag, Some(AGENT_STATE_EVENT)), (MonitorID, 0x01020304),
         (PeripheralID, 0x02030405), (SessionID, 0x03040506),
         (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
@@ -153,7 +155,15 @@ class AgentStateMapSpec extends WordSpec with MustMatchers {
         (SKILL_GROUP_STATE, Some(AgentState.BUSY_OTHER)))
       mock.agentStateMap.receive(msg)
       Await.ready(mock.agentStateMap.future(1001).get, 3.second)
-      mock.agentStateMap.get(1001) mustBe Some((AgentState.HOLD, 0x090a))
+      mock.agentStateMap(1001) mustBe Some((AgentState.HOLD, 0x090a))
     }
+  }
+}
+
+class AgentStateMapSpecModule extends AbstractModule {
+  def configure() = {
+    install(new FactoryModuleBuilder()
+      .implement(classOf[AgentStateMap], classOf[AgentStateMapImpl])
+      .build(classOf[AgentStateMapFactory]))
   }
 }

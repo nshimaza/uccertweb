@@ -23,17 +23,16 @@ import javax.inject._
 import akka.agent.Agent
 import ctidriver._
 import ctidriver.AgentState._
-import com.google.inject.{ImplementedBy, AbstractModule}
+import com.google.inject.{AbstractModule, ImplementedBy}
 import com.google.inject.assistedinject.{Assisted, FactoryModuleBuilder}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Created by nshimaza on 2016/02/11.
   */
 trait AgentStateMap {
-  def get(extension: Int): Option[(AgentState, Int)]
+  def apply(extension: Int): Option[(AgentState, Int)]
 
   def future(extension: Int): Option[Future[(AgentState, Int)]]
 
@@ -41,7 +40,7 @@ trait AgentStateMap {
 }
 
 trait AgentStateMapFactory {
-  def apply(extensionRange: Range): AgentStateMap
+  def apply(extensionRange: Range)(implicit context: ExecutionContext): AgentStateMap
 }
 
 /*
@@ -58,10 +57,12 @@ class AgentStateMapImplFactory extends AgentStateMapFactory {
 }
 */
 
-class AgentStateMapImpl @Inject()(@Assisted extensionRange: Range) extends AgentStateMap {
+class AgentStateMapImpl @Inject()(@Assisted extensionRange: Range)
+                                 (implicit @Assisted context: ExecutionContext)
+  extends AgentStateMap {
   val stateMap: Map[Int, Agent[(AgentState, Int)]] = extensionRange.map(n => (n, Agent((LOGOUT, 0)))).toMap
 
-  def get(ext: Int) = for (agent <- stateMap.get(ext)) yield agent.get
+  def apply(ext: Int) = for (agent <- stateMap.get(ext)) yield agent()
 
   def future(ext: Int) = for (agent <- stateMap.get(ext)) yield agent.future
 

@@ -5,6 +5,7 @@ import javax.inject._
 import models.{AgentStateMap, AgentStateMapFactory}
 //import models.{MixInAgentStateMapImplFactory, AgentStateMap, AgentStateMapFactory}
 import play.api.Play
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -23,7 +24,7 @@ class AgentStateController @Inject()(agentStateMapFactory: AgentStateMapFactory)
 
   def extension(ext: Int) = Action {
     try {
-      val (state, reason) = agentMap.get(ext).get
+      val (state, reason) = agentMap.apply(ext).get
       val json = Json.obj("state" -> state.toString, "reason" -> reason)
       Ok(json.toString)
     } catch {

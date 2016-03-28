@@ -102,6 +102,7 @@ class AgentStateMapModule extends AbstractModule {
     install(new FactoryModuleBuilder()
       .implement(classOf[AgentStateMap], classOf[AgentStateMapImpl])
       .build(classOf[AgentStateMapFactory]))
-
+    bind(classOf[HAActorPropsFactory]).to(classOf[HAActorImplPropsFactory])
+    bind(classOf[SessionActorPropsFactory]).to(classOf[SessionActorImplPropsFactory])
   }
 }

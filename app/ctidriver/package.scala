@@ -47,6 +47,7 @@ package object ctidriver {
   val NoIdleTimeout: Int        = 0xffffffff
   val DefaultCtiServerPortA     = 42027
   val DefaultCtiServerPortB     = 43027
+  val DefaultMRDID              = 1
 
   val ctilog = Logger(LoggerFactory.getLogger("ctidriver"))
 

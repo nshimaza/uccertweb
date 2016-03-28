@@ -1,6 +1,10 @@
+import com.google.inject.AbstractModule
 import org.junit.runner.RunWith
+import org.scalatest.TestData
 import org.scalatest.junit.JUnitRunner
 import org.scalatestplus.play._
+import play.api.Application
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceInjectorBuilder}
 import play.api.test._
 import play.api.test.Helpers._
 
@@ -12,7 +16,19 @@ import play.api.test.Helpers._
 @RunWith(classOf[JUnitRunner])
 class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
-  "Routes" should {
+  override def newAppForTest(td: TestData): Application = new GuiceApplicationBuilder()
+    .bindings(new models.AgentStateMapModule)
+    .configure("uccertweb.ext.low" -> "123")
+    .configure("uccertweb.ext.high" -> "234")
+    .build()
+
+  "Routes" must {
+//    val application = new GuiceApplicationBuilder()
+//      .configure("uccertweb.ext.llow" -> "123")
+//      .build()
+
+//    val injector = new GuiceInjectorBuilder().injector()
+//    val application = injector.instanceOf(classOf[Application])
 
     "send 404 on a bad request" in  {
       route(app, FakeRequest(GET, "/boum")).map(status(_)) mustBe Some(NOT_FOUND)
@@ -20,6 +36,7 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
   }
 
+/*
   "HomeController" should {
 
     "render the index page" in {
@@ -31,10 +48,11 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
   }
+*/
 
   "AgentStateController" must {
     "return logout agent state in JSON format" in {
-      val jsonResult = contentAsJson(route(app, FakeRequest(GET, "/ext/100")).get)
+      val jsonResult = contentAsJson(route(app, FakeRequest(GET, "/ext/200")).get)
 
       (jsonResult \ "state").as[String] mustBe "LOGOUT"
     }
@@ -50,4 +68,10 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
 //
 //  }
 
+}
+
+class ApplicationSpecModule extends AbstractModule {
+  def configure() = {
+
+  }
 }

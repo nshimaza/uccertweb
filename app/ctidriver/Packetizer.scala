@@ -31,23 +31,23 @@ import scala.annotation.tailrec
   *
   * @param buf temporary buffer to hold unprocessed bytes
   * @param state holds current state
-  * @param offset holds internal offet tward next message boundary
-  * @param packets holds sequence of packetized input bytes
+  * @param offset holds internal offset tward next message boundary
+  * @param packets holds Listuence of packetized input bytes
   */
 case class Packetizer private(private[ctidriver] val buf: ByteString,
                               private[ctidriver] val state: Packetizer.State,
                               private[ctidriver] val offset: Int,
-                              packets: Seq[ByteString],
+                              packets: List[ByteString],
                               isOutOfSync: Boolean) {
   def apply(data: ByteString): Packetizer = {
-    loop(buf ++ data, state, offset + data.size, Seq.empty, isOutOfSync)
+    loop(buf ++ data, state, offset + data.size, Nil, isOutOfSync)
   }
 
   @tailrec
   private def loop(buf: ByteString,
                    state: Packetizer.State,
                    offset: Int,
-                   result: Seq[ByteString],
+                   result: List[ByteString],
                    isOutOfSync: Boolean): Packetizer = {
     if (isOutOfSync) {
       this.copy()
@@ -91,71 +91,6 @@ object Packetizer {
   case object WaitBody extends State
 
   def apply(data: ByteString = ByteString.empty): Packetizer = {
-    new Packetizer(ByteString.empty, Packetizer.WaitLength, -4, Seq(), false).apply(data)
+    new Packetizer(ByteString.empty, Packetizer.WaitLength, -4, Nil, false).apply(data)
   }
 }
-
-
-/*
-class Packetizer1 {
-  var buf = ByteString.empty
-  var state = State.WaitLength
-  var offset = -4
-
-  def apply(data: ByteString): Seq[ByteString] = {
-    offset = offset + data.size
-    buf = buf ++ data
-    var result: Seq[ByteString] = Seq.empty
-
-    while (offset >= 0) {
-      state match {
-        case State.WaitLength =>
-          // at the state WAIT_LENGTH, the head of buf is aligned to message length field
-          // now you have plenty bytes to decode message length
-          val message_length = buf.toInt
-          if (message_length < 0 || message_length > MaxMessageLen) {
-            val msg = s"Message length $message_length out of defined range (0 - $MaxMessageLen) decoded." +
-              "  Potential socket out of sync."
-            ctilog.error(msg)
-            throw new java.io.SyncFailedException(msg)
-          }
-          buf = buf.drop(4)
-          // here you have buf which contains message aligned to Message Type field at the head
-          // let's set next state for waiting body
-          state = State.WaitBody
-
-          // the message length doesn't include Message Type filed so you need to wait 4 more bytes
-          offset = buf.size - (message_length + 4)
-
-        case State.WaitBody =>
-          // at the state WAIT_BODY, the head of buf is aligned to message type field
-          // now you have at least one entire message in buf
-
-          // take single message to packet
-          val len = buf.size - offset
-          val packet = buf.take(len)
-
-          buf = buf.drop(len)
-          // here you have buf which is aligned to next message length
-          // let's set next state for waiting message length
-          // we need 4 bytes to continue
-          state = State.WaitLength
-          offset = buf.size - 4
-
-          result = packet +: result
-      }
-    }
-    result.reverse
-  }
-
-  object State extends Enumeration {
-    val WaitLength, WaitBody = Value
-  }
-}
-
-object Packetizer1 {
-  def apply() = {
-    new Packetizer1
-  }
-}
-*/

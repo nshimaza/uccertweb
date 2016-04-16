@@ -10,6 +10,7 @@ import org.scalatest.junit.JUnitRunner
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.util.{Failure, Success, Try}
 
 /**
   * Created by nshimaza on 2016/04/05.
@@ -110,6 +111,58 @@ class CtiFramingStageSpec extends WordSpec with MustMatchers {
 
       Await.result(f, 3.seconds) must contain theSameElementsInOrderAs
         Seq(ByteString(1,2,3,4, 5,6,7,8), ByteString(1,2,3,4, 5,6), ByteString(1,2,3,4, 5,6,7))
+    }
+
+    "stop stage when frame out of sync" in {
+      val i = Source(List(ByteString(1,2,3,4, 1,2,3,4, 5,6,7,8)))
+      val framing = new CtiFramingStage
+      val f: Future[Seq[ByteString]] = i.via(framing).runWith(Sink.seq)
+
+      val e = Await.ready(f, 3.seconds).value.get match {
+        case Failure(ex) => ex
+        case Success(m) => m
+      }
+
+      e mustBe a [java.lang.Exception]
+    }
+
+    "work immutably though single instance is used multiple time in a graph" in {
+      val i = Source(List(
+        ByteString(0,0),
+        ByteString(0,2, 0,0,0),
+        ByteString(4, 1,2, 0,0,0,2, 3,4),
+        ByteString(5,6, 7,8)
+      ))
+      val framing = new CtiFramingStage
+      // Here single 'framing' is referred twice. Those are materialized to different instance of processing stage.
+      // Each has its own internal state machine inside. Thus, those two instances should work individually.
+      // The object 'framing' acts as immutable and safely usable at multiple place.
+      val f = i.via(framing).via(framing).runWith(Sink.seq)
+
+      Await.result(f, 3.seconds) must contain theSameElementsInOrderAs Seq(ByteString(1,2,3,4, 5,6,7,8))
+    }
+
+    "work immutably though single instance is used multiple time in a graph DSL" in {
+      val i = Source(List(
+        ByteString(0,0),
+        ByteString(0,2, 0,0,0),
+        ByteString(4, 1,2, 0,0,0,2, 3,4),
+        ByteString(5,6, 7,8)
+      ))
+      val framing = new CtiFramingStage
+      val o = Sink.seq[ByteString]
+
+      val g = RunnableGraph.fromGraph(GraphDSL.create(o) { implicit builder =>
+        out =>
+          import GraphDSL.Implicits._
+
+          i ~> framing ~> framing ~> out
+
+          ClosedShape
+      })
+      val f = g.run()
+
+      Await.result(f, 3.seconds) must contain theSameElementsInOrderAs Seq(ByteString(1,2,3,4, 5,6,7,8))
     }
   }
 }

@@ -61,7 +61,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
     val msg = serverProbe.expectMsgClass(classOf[ByteString]).drop(4).decode
     msg.findEnum[MessageType](MessageTypeTag) mustBe Some(OPEN_REQ)
     val openConfRaw = (List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, msg.findT[Int](InvokeID).get)) ++
-      SessionActorSpec.openConfBody).encode.withlength
+      SessionActorSpec.openConfBody).encode.withLength
     mockServer ! Scenario(List(openConfRaw))
     mockServer ! Tick
     mockProbe.expectMsg(SessionEstablished)
@@ -120,7 +120,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val msg = serverProbe.expectMsgClass(classOf[ByteString]).drop(4).decode
       msg.findEnum[MessageType](MessageTypeTag) mustBe Some(OPEN_REQ)
       val openConfRaw = (List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, msg.findT[Int](InvokeID).get)) ++
-        SessionActorSpec.openConfBody).encode.withlength
+        SessionActorSpec.openConfBody).encode.withLength
       mockServer ! Scenario(List(openConfRaw))
       mockServer ! Tick
 
@@ -140,7 +140,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val msg = serverProbe.expectMsgClass(classOf[ByteString]).drop(4).decode
       msg.findEnum[MessageType](MessageTypeTag) mustBe Some(OPEN_REQ)
       val openConfRaw = (List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, msg.findT[Int](InvokeID).get)) ++
-        SessionActorSpec.openConfBody).encode.withlength
+        SessionActorSpec.openConfBody).encode.withLength
       val raw1 = openConfRaw.take(10)
       val raw2 = openConfRaw.drop(10).take(10)
       val raw3 = openConfRaw.drop(20)
@@ -195,7 +195,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       msg.findEnum[MessageType](MessageTypeTag) mustBe Some(OPEN_REQ)
 
       val failureConfRaw = (List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, msg.findT[Int](InvokeID).get)) ++
-        SessionActorSpec.failureConfBody).encode.withlength
+        SessionActorSpec.failureConfBody).encode.withLength
       mockServer ! Scenario(List(failureConfRaw))
       mockServer ! Tick
       mockProbe.expectMsg(OpenFailed)
@@ -240,7 +240,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val filter = MessageFilter(Traversable(MessageFilterEntry(Set(AGENT_STATE_EVENT), handler)))
       val (serverProbe, mockProbe, mock) = setupProbeAndMock(filter)
 
-      mockServer ! Scenario(List(SessionActorSpec.agentStateEvent.encode.withlength))
+      mockServer ! Scenario(List(SessionActorSpec.agentStateEvent.encode.withLength))
       mockServer ! Tick
       handlerProbe.expectMsg(SessionActorSpec.agentStateEvent)
 
@@ -253,7 +253,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val filter = MessageFilter(Traversable(MessageFilterEntry(Set(AGENT_STATE_EVENT), handler)))
       val (serverProbe, mockProbe, mock) = setupProbeAndMock(filter)
 
-      val agentStateEventRaw = SessionActorSpec.agentStateEvent.encode.withlength
+      val agentStateEventRaw = SessionActorSpec.agentStateEvent.encode.withLength
       val raw1 = agentStateEventRaw.take(15)
       val raw2 = agentStateEventRaw.drop(15).take(20)
       val raw3 = agentStateEventRaw.drop(35)
@@ -274,7 +274,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val filter = MessageFilter(Traversable(MessageFilterEntry(Set(FAILURE_EVENT, USER_MESSAGE_EVENT), handler)))
       val (serverProbe, mockProbe, mock) = setupProbeAndMock(filter)
 
-      val raw = SessionActorSpec.userMessageEvent.encode.withlength ++ SessionActorSpec.failureEvent.encode.withlength
+      val raw = SessionActorSpec.userMessageEvent.encode.withLength ++ SessionActorSpec.failureEvent.encode.withLength
       mockServer ! Scenario(List(raw))
       mockServer ! Tick
 
@@ -290,7 +290,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val filter = MessageFilter(Traversable(MessageFilterEntry(Set(BEGIN_CALL_EVENT), handler)))
       val (serverProbe, mockProbe, mock) = setupProbeAndMock(filter)
 
-      mockServer ! Scenario(List(SessionActorSpec.agentStateEvent.encode.withlength))
+      mockServer ! Scenario(List(SessionActorSpec.agentStateEvent.encode.withLength))
       mockServer ! Tick
       handlerProbe.expectNoMsg()
 
@@ -307,7 +307,7 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val filter = MessageFilter(Traversable(entry1, entry2))
       val (serverProbe, mockProbe, mock) = setupProbeAndMock(filter)
 
-      mockServer ! Scenario(List(SessionActorSpec.agentStateEvent.encode.withlength))
+      mockServer ! Scenario(List(SessionActorSpec.agentStateEvent.encode.withLength))
       mockServer ! Tick
       handlerProbe1.expectMsg(SessionActorSpec.agentStateEvent)
       handlerProbe2.expectMsg(SessionActorSpec.agentStateEvent)
@@ -325,8 +325,8 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val filter = MessageFilter(Traversable(entry1, entry2))
       val (serverProbe, mockProbe, mock) = setupProbeAndMock(filter)
 
-      mockServer ! Scenario(List(SessionActorSpec.userMessageEvent.encode.withlength ++
-        SessionActorSpec.agentStateEvent.encode.withlength))
+      mockServer ! Scenario(List(SessionActorSpec.userMessageEvent.encode.withLength ++
+        SessionActorSpec.agentStateEvent.encode.withLength))
       mockServer ! Tick
       handlerProbe1.expectMsg(SessionActorSpec.agentStateEvent)
       handlerProbe2.expectMsg(SessionActorSpec.userMessageEvent)
@@ -344,8 +344,8 @@ class SessionActorSpec(_system: ActorSystem) extends TestKit(_system) with Impli
       val filter = MessageFilter(Traversable(entry1, entry2))
       val (serverProbe, mockProbe, mock) = setupProbeAndMock(filter)
 
-      mockServer ! Scenario(List(SessionActorSpec.userMessageEvent.encode.withlength ++
-        SessionActorSpec.agentStateEvent.encode.withlength))
+      mockServer ! Scenario(List(SessionActorSpec.userMessageEvent.encode.withLength ++
+        SessionActorSpec.agentStateEvent.encode.withLength))
       mockServer ! Tick
       handlerProbe1.expectMsg(SessionActorSpec.agentStateEvent)
       handlerProbe2.expectMsg(SessionActorSpec.userMessageEvent)

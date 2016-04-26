@@ -82,7 +82,7 @@ class HAActorSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSe
     msg.findEnum[MessageType](MessageTypeTag) mustBe Some(OPEN_REQ)
 
     val openConfRaw = (List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, msg.findT[Int](InvokeID).get)) ++
-      SessionActorSpec.openConfBody).encode.withlength
+      SessionActorSpec.openConfBody).encode.withLength
     mockServerA ! Scenario(List(openConfRaw))
     mockServerA ! Tick
     serverProbeA.expectNoMsg(1.seconds)
@@ -211,7 +211,7 @@ class HAActorSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSe
       msgA.findEnum[MessageType](MessageTypeTag) mustBe Some(OPEN_REQ)
 
       val failureConfRaw = (List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, msgA.findT[Int](InvokeID).get)) ++
-        SessionActorSpec.failureConfBody).encode.withlength
+        SessionActorSpec.failureConfBody).encode.withLength
       mockServerA ! Scenario(List(failureConfRaw))
       mockServerA ! Tick
 
@@ -257,7 +257,7 @@ class HAActorSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSe
       msgB.findEnum[MessageType](MessageTypeTag) mustBe Some(OPEN_REQ)
 
       val openConfRaw = (List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, msgB.findT[Int](InvokeID).get)) ++
-        SessionActorSpec.openConfBody).encode.withlength
+        SessionActorSpec.openConfBody).encode.withLength
       mockServerB ! Scenario(List(openConfRaw))
       mockServerB ! Tick
       serverProbeB.expectNoMsg(1.seconds)

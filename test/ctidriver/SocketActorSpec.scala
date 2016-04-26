@@ -128,7 +128,7 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
         5,5,0x31, 0x30, 0x30, 0x31,0,
         6,5,0x33, 0x30, 0x30, 0x31,0,
         228,2,5,6, 224,2,0,0)
-      val openConfRaw = openConfBody.withlength
+      val openConfRaw = openConfBody.withLength
       val openConfExpected = List((MessageTypeTag, Some(OPEN_CONF)), (InvokeID, 0x04030201),
         (ServiceGranted, BitSet.empty + CtiServiceMask.ALL_EVENTS), (MonitorID, 0x02030405),
         (PGStatus, BitSet.empty + PGStatusCode.OPC_DOWN + PGStatusCode.CC_DOWN + PGStatusCode.LIMITED_FUNCTION),
@@ -163,10 +163,10 @@ class SocketActorSpec(_system: ActorSystem) extends TestKit(_system) with Implic
         (ICMCentralControllerTime, 0x04050607), (PeripheralOnline, true),
         (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)), (AgentStateTag, Some(AgentState.AVAILABLE)),
         (AGENT_EXTENSION, "3001"), (AGENT_ID, "1001"), (AGENT_INSTRUMENT, "3001"), (NUM_PERIPHERALS, 0x0506.toShort),
-        (MULTI_LINE_AGENT_CONTROL, false)).encode.withlength
+        (MULTI_LINE_AGENT_CONTROL, false)).encode.withLength
       val failureEventMsg = List((MessageTypeTag, Some(FAILURE_EVENT)),
         (StatusCodeTag, Some(StatusCode.UNSPECIFIED_FAILURE)))
-      val failureEventRaw = failureEventMsg.encode.withlength
+      val failureEventRaw = failureEventMsg.encode.withLength
 
       mockServer ! Scenario(List(openConfRaw, failureEventRaw))
       mockParent ! ToSocketActor(Send(openReqBody))

@@ -41,7 +41,7 @@ class Session(server: InetSocketAddress, socketActorPropsFactory: SocketActorPro
   def connecting: Receive = {
     case akka.io.Tcp.Connected =>
       val msg = List((MessageTypeTag, Some(OPEN_REQ)), (InvokeID, InvokeIDGen.next())) ++ Session.openReqBody
-      socketActor ! SessionProtocol.Send(msg.encode.withlength)
+      socketActor ! SessionProtocol.Send(msg.encode.withLength)
       context.become(opening)
 
     case akka.io.Tcp.CommandFailed =>

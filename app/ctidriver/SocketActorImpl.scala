@@ -49,7 +49,7 @@ class SocketActorImpl(server: InetSocketAddress) extends Actor {
       val connection = sender()
       connection ! Register(self)
       context become {
-        case Send(data) => connection ! Write(data.withlength)
+        case Send(data) => connection ! Write(data.withLength)
 
         case CloseSocket => connection ! Tcp.Close
 

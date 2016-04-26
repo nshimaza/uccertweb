@@ -144,7 +144,7 @@ package object ctidriver {
 
     def ++(s: Short): ByteString = buf ++ encodeByteString(s)
 
-    def withlength: ByteString = encodeByteString(buf.size - 4) ++ buf
+    def withLength: ByteString = encodeByteString(buf.size - 4) ++ buf
 
     def decode: Message = {
       val (msgType, len)  = MessageType.decode(Tag.MessageTypeTag, buf)

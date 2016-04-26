@@ -48,7 +48,7 @@ class SessionActorImpl(server: InetSocketAddress, filter: MessageFilter) extends
       val connection = sender()
       connection ! Tcp.Register(self)
       connection ! Tcp.Write((List((MessageTypeTag, Some(OPEN_REQ)), (InvokeID, InvokeIDGen.next())) ++
-        SessionActorImpl.openReqBody).encode.withlength)
+        SessionActorImpl.openReqBody).encode.withLength)
 
       context become {
         case c: Tcp.ConnectionClosed =>
@@ -81,7 +81,7 @@ class SessionActorImpl(server: InetSocketAddress, filter: MessageFilter) extends
                       }
 
                     case SessionActorProtocol.SendMessage(m) =>
-                      connection ! Tcp.Write(m.encode.withlength)
+                      connection ! Tcp.Write(m.encode.withLength)
 
                     case c: Tcp.ConnectionClosed =>
                       listener ! SessionActorProtocol.SocketClosed

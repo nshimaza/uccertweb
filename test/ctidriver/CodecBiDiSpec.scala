@@ -82,7 +82,7 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
 
   "CodecBiDi" must {
     "decode single complete message" in {
-      val raw = List(ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength)
+      val raw = List(ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength)
       val msg: Message = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x01020304),
         (StatusCodeTag, Some(StatusCode.INVALID_MONITOR_STATUS)))
 
@@ -94,8 +94,8 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
 
     "decode two messages in a raw byte chunk" in {
       val raw = List(
-        ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength ++
-        ByteString(0,0,0,2, 0,0,0,17).withlength
+        ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength ++
+        ByteString(0,0,0,2, 0,0,0,17).withLength
       )
       val msg1: Message = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x01020304),
         (StatusCodeTag, Some(StatusCode.INVALID_MONITOR_STATUS)))
@@ -110,8 +110,8 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
 
     "decode two messages in separate raw byte chunks" in {
       val raw = List(
-        ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength,
-        ByteString(0,0,0,2, 0,0,0,17).withlength
+        ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength,
+        ByteString(0,0,0,2, 0,0,0,17).withLength
       )
       val msg1: Message = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x01020304),
         (StatusCodeTag, Some(StatusCode.INVALID_MONITOR_STATUS)))
@@ -126,9 +126,9 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
 
     "decode three messages in a raw byte chunk" in {
       val raw = List(
-        ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength ++
-          ByteString(0,0,0,2, 0,0,0,17).withlength ++
-          ByteString(0,0,0,6, 3,4,6,7).withlength
+        ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength ++
+          ByteString(0,0,0,2, 0,0,0,17).withLength ++
+          ByteString(0,0,0,6, 3,4,6,7).withLength
       )
       val msg1: Message = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x01020304),
         (StatusCodeTag, Some(StatusCode.INVALID_MONITOR_STATUS)))
@@ -144,9 +144,9 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
 
     "decode three messages in separate raw byte chunks" in {
       val raw = List(
-        ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength,
-        ByteString(0,0,0,2, 0,0,0,17).withlength,
-        ByteString(0,0,0,6, 3,4,6,7).withlength
+        ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength,
+        ByteString(0,0,0,2, 0,0,0,17).withLength,
+        ByteString(0,0,0,6, 3,4,6,7).withLength
       )
       val msg1: Message = List((MessageTypeTag, Some(FAILURE_CONF)), (InvokeID, 0x01020304),
         (StatusCodeTag, Some(StatusCode.INVALID_MONITOR_STATUS)))
@@ -161,9 +161,9 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode messages interleaved into multiple chunks" in {
-      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength ++
-        ByteString(0,0,0,2, 0,0,0,17).withlength ++
-        ByteString(0,0,0,6, 3,4,6,7).withlength
+      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength ++
+        ByteString(0,0,0,2, 0,0,0,17).withLength ++
+        ByteString(0,0,0,6, 3,4,6,7).withLength
       val bytes1 = bytes.take(10)
       val bytes2 = bytes.drop(10).take(10)
       val bytes3 = bytes.drop(20).take(10)
@@ -182,9 +182,9 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode each message when same message type arrived" in {
-      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength ++
-        ByteString(0,0,0,6, 3,4,6,7).withlength ++
-        ByteString(0,0,0,6, 3,4,6,7).withlength
+      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength ++
+        ByteString(0,0,0,6, 3,4,6,7).withLength ++
+        ByteString(0,0,0,6, 3,4,6,7).withLength
       val bytes1 = bytes.take(10)
       val bytes2 = bytes.drop(10).take(10)
       val bytes3 = bytes.drop(20).take(10)
@@ -201,9 +201,9 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode only desired message" in {
-      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength ++
-        ByteString(0,0,0,2, 0,0,0,17).withlength ++
-        ByteString(0,0,0,6, 3,4,6,7).withlength
+      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength ++
+        ByteString(0,0,0,2, 0,0,0,17).withLength ++
+        ByteString(0,0,0,6, 3,4,6,7).withLength
       val bytes1 = bytes.take(10)
       val bytes2 = bytes.drop(10).take(10)
       val bytes3 = bytes.drop(20).take(10)
@@ -219,9 +219,9 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode only desired messages" in {
-      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength ++
-        ByteString(0,0,0,2, 0,0,0,17).withlength ++
-        ByteString(0,0,0,6, 3,4,6,7).withlength
+      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength ++
+        ByteString(0,0,0,2, 0,0,0,17).withLength ++
+        ByteString(0,0,0,6, 3,4,6,7).withLength
       val bytes1 = bytes.take(10)
       val bytes2 = bytes.drop(10).take(10)
       val bytes3 = bytes.drop(20).take(10)
@@ -238,9 +238,9 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode nothing with empty filter" in {
-      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength ++
-        ByteString(0,0,0,2, 0,0,0,17).withlength ++
-        ByteString(0,0,0,6, 3,4,6,7).withlength
+      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength ++
+        ByteString(0,0,0,2, 0,0,0,17).withLength ++
+        ByteString(0,0,0,6, 3,4,6,7).withLength
       val bytes1 = bytes.take(10)
       val bytes2 = bytes.drop(10).take(10)
       val bytes3 = bytes.drop(20).take(10)
@@ -253,9 +253,9 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode nothing when no message matched to given filter" in {
-      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withlength ++
-        ByteString(0,0,0,2, 0,0,0,17).withlength ++
-        ByteString(0,0,0,6, 3,4,6,7).withlength
+      val bytes = ByteString(0,0,0,1, 1,2,3,4, 0,0,0,97).withLength ++
+        ByteString(0,0,0,2, 0,0,0,17).withLength ++
+        ByteString(0,0,0,6, 3,4,6,7).withLength
       val bytes1 = bytes.take(10)
       val bytes2 = bytes.drop(10).take(10)
       val bytes3 = bytes.drop(20).take(10)
@@ -268,7 +268,7 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode all sample messages in separate byte strings" in {
-      val raw = MessageSamples.samples.map(_._2.withlength)
+      val raw = MessageSamples.samples.map(_._2.withLength)
 
       val f = buildSeqGraph(raw, MessageType.values).run()
 
@@ -276,7 +276,7 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode all sample messages in single byte string" in {
-      val raw = List(MessageSamples.samples.map(_._2.withlength).reduce(_ ++ _))
+      val raw = List(MessageSamples.samples.map(_._2.withLength).reduce(_ ++ _))
 
       val f = buildSeqGraph(raw, MessageType.values).run()
 
@@ -284,7 +284,7 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode all sample messages in large interleaved byte string" in {
-      val raw = interleave(MessageSamples.samples.map(_._2.withlength).reduce(_ ++ _), 200)
+      val raw = interleave(MessageSamples.samples.map(_._2.withLength).reduce(_ ++ _), 200)
 
       val f = buildSeqGraph(raw, MessageType.values).run()
 
@@ -292,7 +292,7 @@ class CodecBiDiSpec extends WordSpec with MustMatchers {
     }
 
     "decode all sample messages in small interleaved byte string" in {
-      val raw = interleave(MessageSamples.samples.map(_._2.withlength).reduce(_ ++ _), 5)
+      val raw = interleave(MessageSamples.samples.map(_._2.withLength).reduce(_ ++ _), 5)
 
       val f = buildSeqGraph(raw, MessageType.values).run()
 

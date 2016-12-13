@@ -66,7 +66,7 @@ object CodecBiDi {
 
     val inbound = Flow
       .fromGraph(new CtiFramingStage)
-      .filter(isInterestedMessage(_)).map(_.decode)
+      .filter(isInterestedMessage).map(_.decode)
 
     BidiFlow.fromFlows(outbound, inbound)
   }

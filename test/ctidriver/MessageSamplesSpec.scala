@@ -90,8 +90,9 @@ object MessageSamples {
       ByteString(0,0,0,6, 3,4,6,7)),
 
     // 007: CLOSE_REQ
-    (List((MessageTypeTag, Some(CLOSE_REQ)), (StatusCodeTag, Some(StatusCode.INVALID_REQUEST_TYPE))),
-      ByteString(0,0,0,7, 0,0,0,98)),
+    (List((MessageTypeTag, Some(CLOSE_REQ)), (InvokeID, 0x04050607),
+      (StatusCodeTag, Some(StatusCode.INVALID_REQUEST_TYPE))),
+      ByteString(0,0,0,7, 4,5,6,7, 0,0,0,98)),
 
     // 008: CLOSE_CONF
     (List((MessageTypeTag, Some(CLOSE_CONF)), (InvokeID, 0x03040506)),

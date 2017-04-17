@@ -110,8 +110,9 @@ class EncoderSpec extends FunSuite {
   }
 
   test("encoding 007: CLOSE_REQ") {
-    val raw = ByteString(0,0,0,7, 0,0,0,98)
-    val msg: Message = List((MessageTypeTag, Some(CLOSE_REQ)), (StatusCodeTag, Some(StatusCode.INVALID_REQUEST_TYPE)))
+    val raw = ByteString(0,0,0,7, 4,5,6,7, 0,0,0,98)
+    val msg: Message = List((MessageTypeTag, Some(CLOSE_REQ)), (InvokeID, 0x04050607),
+      (StatusCodeTag, Some(StatusCode.INVALID_REQUEST_TYPE)))
 
     assert(msg.encode == raw)
   }

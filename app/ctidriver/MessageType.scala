@@ -298,7 +298,7 @@ object MessageType extends IntEnum {
     //   6: HEARTBEAT_CONF
     List(InvokeID),
     //   7: CLOSE_REQ
-    List(StatusCodeTag),
+    List(InvokeID, StatusCodeTag),
     //   8: CLOSE_CONF
     List(InvokeID),
     //   9: CALL_DELIVERED_EVENT

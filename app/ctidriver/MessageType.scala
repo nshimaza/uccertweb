@@ -328,7 +328,7 @@ object MessageType extends IntEnum {
       LineTypeTag, ServiceNumber, ServiceID, SkillGroupNumber, SkillGroupID, SkillGroupPriority,
       CallingDeviceType, CalledDeviceType, LocalConnectionStateTag, EventCauseTag),
     //  16: CALL_FAILED_EVENT
-    List(PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, FailingDeviceType,
+    List(MonitorID, PeripheralID, PeripheralTypeTag, ConnectionDeviceIDTypeTag, ConnectionCallID, FailingDeviceType,
       CalledDeviceType, LocalConnectionStateTag, EventCauseTag),
     //  17: CALL_CONFERENCED_EVENT
     List(MonitorID, PeripheralID, PeripheralTypeTag, PrimaryDeviceIDType, PrimaryCallID, LineHandle,

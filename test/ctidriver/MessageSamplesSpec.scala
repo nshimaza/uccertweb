@@ -228,13 +228,13 @@ object MessageSamples {
         28,15,0x43,0x61,0x6c,0x6c,0x65,0x64,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0)),
 
     // 016: CALL_FAILED_EVENT
-    (List((MessageTypeTag, Some(CALL_FAILED_EVENT)),
+    (List((MessageTypeTag, Some(CALL_FAILED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
       (ConnectionDeviceIDTypeTag, Some(ConnectionDeviceIDType.DYNAMIC)), (ConnectionCallID, 0x03040506),
       (FailingDeviceType, Some(DeviceIDType.EXTERNAL)), (CalledDeviceType, Some(DeviceIDType.ROUTE_POINT)),
       (LocalConnectionStateTag, Some(LocalConnectionState.INITIATE)), (EventCauseTag, Some(EventCause.NEW_CALL)),
       (CONNECTION_DEVID, "ConnectionDeviceID"), (FAILING_DEVID, "FailingDeviceID"), (CALLED_DEVID, "CalledDeviceID")),
-      ByteString(0,0,0,16, 2,3,4,5, 0,17, 0,1, 3,4,5,6, 0,75, 0,74, 0,1, 0,22,
+      ByteString(0,0,0,16, 1,2,3,4, 2,3,4,5, 0,17, 0,1, 3,4,5,6, 0,75, 0,74, 0,1, 0,22,
         25,19,0x43,0x6f,0x6e,0x6e,0x65,0x63,0x74,0x69,0x6f,0x6e,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0,
         34,16,0x46,0x61,0x69,0x6c,0x69,0x6e,0x67,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0,
         28,15,0x43,0x61,0x6c,0x6c,0x65,0x64,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0)),

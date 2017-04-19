@@ -973,7 +973,7 @@ object Tag extends Enumeration {
     decFxInt, 	// PreviewCallsToHalf
     decFxInt, 	// PreviewCallsToday
     decFxInt, 	// PrimaryCallID
-    DeviceIDType.decode, 	// PrimaryDeviceIDType
+    ConnectionDeviceIDType.decode, 	// PrimaryDeviceIDType
     decFxShortBool, 	// Priority
     decFxInt, 	// QualityRecordingRate
     decFxInt, 	// QueryRuleID
@@ -1017,7 +1017,7 @@ object Tag extends Enumeration {
     decFxInt, 	// RouterCallsQNow
     decFxInt, 	// SecondaryCallID
     decFxInt, 	// SecondaryConnectionCallID
-    DeviceIDType.decode, 	// SecondaryDeviceIDType
+    ConnectionDeviceIDType.decode, 	// SecondaryDeviceIDType
     decFxShort, 	// SegmentNumber
     decFxInt, 	// ServerData
     ServerMode.decode, 	// ServerModeTag
@@ -1681,7 +1681,7 @@ object Tag extends Enumeration {
     encFxInt, 	// PreviewCallsToHalf
     encFxInt, 	// PreviewCallsToday
     encFxInt, 	// PrimaryCallID
-    DeviceIDType.encode, 	// PrimaryDeviceIDType
+    ConnectionDeviceIDType.encode, 	// PrimaryDeviceIDType
     encFxShortBool, 	// Priority
     encFxInt, 	// QualityRecordingRate
     encFxInt, 	// QueryRuleID
@@ -1725,7 +1725,7 @@ object Tag extends Enumeration {
     encFxInt, 	// RouterCallsQNow
     encFxInt, 	// SecondaryCallID
     encFxInt, 	// SecondaryConnectionCallID
-    DeviceIDType.encode, 	// SecondaryDeviceIDType
+    ConnectionDeviceIDType.encode, 	// SecondaryDeviceIDType
     encFxShort, 	// SegmentNumber
     encFxInt, 	// ServerData
     ServerMode.encode, 	// ServerModeTag

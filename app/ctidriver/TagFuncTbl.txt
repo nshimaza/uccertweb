@@ -269,7 +269,7 @@ decFxInt	encFxInt	PreviewCallsTo5
 decFxInt	encFxInt	PreviewCallsToHalf
 decFxInt	encFxInt	PreviewCallsToday
 decFxInt	encFxInt	PrimaryCallID
-DeviceIDType.decode	DeviceIDType.encode	PrimaryDeviceIDType
+ConnectionDeviceIDType.decode	ConnectionDeviceIDType.encode	PrimaryDeviceIDType
 decFxShortBool	encFxShortBool	Priority
 decFxInt	encFxInt	QualityRecordingRate
 decFxInt	encFxInt	QueryRuleID
@@ -313,7 +313,7 @@ decFxInt	encFxInt	RoutableTimeToday
 decFxInt	encFxInt	RouterCallsQNow
 decFxInt	encFxInt	SecondaryCallID
 decFxInt	encFxInt	SecondaryConnectionCallID
-DeviceIDType.decode	DeviceIDType.encode	SecondaryDeviceIDType
+ConnectionDeviceIDType.decode	ConnectionDeviceIDType.encode	SecondaryDeviceIDType
 decFxShort	encFxShort	SegmentNumber
 decFxInt	encFxInt	ServerData
 ServerMode.decode	ServerMode.encode	ServerModeTag

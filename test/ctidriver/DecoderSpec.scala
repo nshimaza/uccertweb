@@ -286,8 +286,8 @@ class DecoderSpec extends FunSuite {
   }
 
   test("decoding 017: CALL_CONFERENCED_EVENT") {
-    val src = ByteString(0,0,0,17, 1,2,3,4, 2,3,4,5, 0,17, 0,76, 6,7,8,9, 3,4, 0,4, 4,5,6,7, 5,6,7,8, 6,7,
-      7,8, 0,76, 7,8,9,10, 0,76, 0,70, 0,3, 0,25,
+    val src = ByteString(0,0,0,17, 1,2,3,4, 2,3,4,5, 0,17, 0,1, 6,7,8,9, 3,4, 0,4, 4,5,6,7, 5,6,7,8, 6,7,
+      7,8, 0,0, 7,8,9,10, 0,76, 0,70, 0,3, 0,25,
       35,16,0x50,0x72,0x69,0x6d,0x61,0x72,0x79,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0,
       36,18,0x53,0x65,0x63,0x6f,0x6e,0x64,0x61,0x72,0x79,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0,
       37,19,0x43,0x6f,0x6e,0x74,0x72,0x6f,0x6c,0x6c,0x65,0x72,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0,
@@ -299,10 +299,10 @@ class DecoderSpec extends FunSuite {
       0x49,0x44,0)
     val msg: Message = List((MessageTypeTag, Some(CALL_CONFERENCED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
-      (PrimaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)), (PrimaryCallID, 0x06070809),
+      (PrimaryDeviceIDType, Some(ConnectionDeviceIDType.DYNAMIC)), (PrimaryCallID, 0x06070809),
       (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
       (SkillGroupNumber, 0x04050607), (SkillGroupID, 0x05060708), (SkillGroupPriority, 0x0607: Short),
-      (NumParties, 0x0708: Short), (SecondaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)),
+      (NumParties, 0x0708: Short), (SecondaryDeviceIDType, Some(ConnectionDeviceIDType.STATIC)),
       (SecondaryCallID, 0x0708090a), (ControllerDeviceType, Some(DeviceIDType.AGENT_DEVICE)),
       (AddedPartyDeviceType, Some(DeviceIDType.TRUNK_IDENTIFIER)),
       (LocalConnectionStateTag, Some(LocalConnectionState.CONNECT)), (EventCauseTag, Some(EventCause.PARK)),
@@ -315,8 +315,8 @@ class DecoderSpec extends FunSuite {
   }
 
   test("decoding 018: CALL_TRANSFERRED_EVENT") {
-    val src = ByteString(0,0,0,18, 1,2,3,4, 2,3,4,5, 0,17, 0,76, 6,7,8,9, 3,4, 0,4, 4,5,6,7, 5,6,7,8, 6,7,
-      7,8, 0,76, 7,8,9,10, 0,76, 0,70, 0,3, 0,25,
+    val src = ByteString(0,0,0,18, 1,2,3,4, 2,3,4,5, 0,17, 0,1, 6,7,8,9, 3,4, 0,4, 4,5,6,7, 5,6,7,8, 6,7,
+      7,8, 0,0, 7,8,9,10, 0,76, 0,70, 0,3, 0,25,
       35,16,0x50,0x72,0x69,0x6d,0x61,0x72,0x79,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0,
       36,18,0x53,0x65,0x63,0x6f,0x6e,0x64,0x61,0x72,0x79,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0,
       42,21,0x54,0x72,0x61,0x6e,0x73,0x66,0x65,0x72,0x72,0x69,0x6e,0x67,0x44,0x65,0x76,0x69,0x63,0x65,0x49,0x44,0,
@@ -328,10 +328,10 @@ class DecoderSpec extends FunSuite {
       0x49,0x44,0)
     val msg: Message = List((MessageTypeTag, Some(CALL_TRANSFERRED_EVENT)), (MonitorID, 0x01020304),
       (PeripheralID, 0x02030405), (PeripheralTypeTag, Some(PeripheralType.ENTERPRISE_AGENT)),
-      (PrimaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)), (PrimaryCallID, 0x06070809),
+      (PrimaryDeviceIDType, Some(ConnectionDeviceIDType.DYNAMIC)), (PrimaryCallID, 0x06070809),
       (LineHandle, 0x0304: Short), (LineTypeTag, Some(LineType.SUPERVISOR)),
       (SkillGroupNumber, 0x04050607), (SkillGroupID, 0x05060708), (SkillGroupPriority, 0x0607: Short),
-      (NumParties, 0x0708: Short), (SecondaryDeviceIDType, Some(DeviceIDType.AGENT_DEVICE)),
+      (NumParties, 0x0708: Short), (SecondaryDeviceIDType, Some(ConnectionDeviceIDType.STATIC)),
       (SecondaryCallID, 0x0708090a), (TransferringDeviceType, Some(DeviceIDType.AGENT_DEVICE)),
       (TransferredDeviceType, Some(DeviceIDType.TRUNK_IDENTIFIER)),
       (LocalConnectionStateTag, Some(LocalConnectionState.CONNECT)), (EventCauseTag, Some(EventCause.PARK)),

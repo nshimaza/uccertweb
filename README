@@ -1,3 +1,5 @@
+NOTE: This repo implements CTI Message protocol of Cisco Unified Contact Center Enterprise.  Purpose of this project was learning Scala.  The code has never been tested with real product.
+
 This is your new Play application
 =================================
 
